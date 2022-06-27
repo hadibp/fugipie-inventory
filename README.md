@@ -1,0 +1,1 @@
+# fugipie-inventory

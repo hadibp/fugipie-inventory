@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ServicePage extends StatelessWidget {
+class HistoryPage extends StatelessWidget {
   TabController? _controller;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF2A2A43),
       appBar: AppBar(
-        title: Text('Servises'),
+        title: Text('History'),
         backgroundColor: Color(0xFF2A2A43),
         elevation: 0.0,
       ),
@@ -34,9 +34,9 @@ class ServicePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10)),
                       isScrollable: false,
                       tabs: [
-                        Tab(child: Text('Add a service',softWrap:false)),
-                        Tab(child: Text('To be returned',softWrap: false,)),
-                        Tab(child: Text('Bag')),
+                        Tab(child: Text('stock')),
+                        Tab(child: Text('sales',)),
+                        Tab(child: Text('service')),
                       ]),
                 ),
                 Expanded(

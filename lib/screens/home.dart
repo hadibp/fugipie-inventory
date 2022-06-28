@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fugipie_inventory/screens/history.dart';
 import '../screens/homepagebody.dart';
 import '../screens/stock.dart';
 import '../screens/sales.dart';
@@ -24,8 +25,8 @@ class _HomePageState extends State<HomePage> {
     HomePageBody(),
     const StockPage(),
     const SalesPage(),
-    const ServicePage(),
-    HomePageBody(),
+     ServicePage(),
+    HistoryPage(),
   ];
 
   @override

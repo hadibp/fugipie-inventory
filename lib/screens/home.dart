@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   final Screens = [
     HomePageBody(),
-    const StockPage(),
+     StockPage(),
     const SalesPage(),
      ServicePage(),
     HistoryPage(),

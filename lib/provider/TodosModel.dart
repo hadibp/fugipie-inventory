@@ -8,12 +8,12 @@ class TodosModel extends ChangeNotifier {
   final List<Task> _tasks = [
     Task(title: 'helo world'),
     Task(title: 'helo world 2'),
-    // Task(title: 'helo world 2'),
-    // Task(title: 'helo world 2'),
-    // Task(title: 'helo world 2'),
-    // Task(title: 'helo world 2'),
-    // Task(title: 'helo world 2'),
-    // Task(title: 'helo world 2'),
+    Task(title: 'helo world 2'),
+    Task(title: 'helo world 2'),
+    Task(title: 'helo world 2'),
+    Task(title: 'helo world 2'),
+    Task(title: 'helo world 2'),
+    Task(title: 'helo world 2'),
     // Task(title: 'helo world 2'),
     // Task(title: 'helo world 2'),
   ];

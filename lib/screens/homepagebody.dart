@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fugipie_inventory/toDo/task.dart';
 import 'package:provider/provider.dart';
 import 'package:fugipie_inventory/provider/TodosModel.dart';
 import 'package:fugipie_inventory/componants/slider.dart';
@@ -55,7 +56,7 @@ class _HomePageBodyState extends State<HomePageBody> {
 
   void _submit() {
     //we aren't interested in updating our ui so listen will be false
-    Provider.of<TodosModel>(context, listen: false).addTodo(newTask);
+    // Provider.of<TodosModel>(context, listen: false).addTodo(newTask);
     _textFieldController.clear();
     //cancelling the dialog
     Navigator.pop(context);
@@ -120,6 +121,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                     child: FloatingActionButton(
                       backgroundColor: Colors.blueAccent,
                       onPressed: (() {
+                        // print( value.tasks.length);
                         _showAddTextDialog();
                       }),
                       child: Icon(
@@ -134,13 +136,12 @@ class _HomePageBodyState extends State<HomePageBody> {
             ),
             Expanded(
               child: Container(
-                child: Consumer<TodosModel>(
-                  builder: (context, todos, child) => TaskList(
-                    tasks: todos.allTasks,
+                child: TaskList(
+                    // tasks: todos.allTasks,
                   ),
                 ),
               ),
-            ),
+           
           ],
         ),
       ),
@@ -148,22 +149,30 @@ class _HomePageBodyState extends State<HomePageBody> {
   }
 
   Future<void> _showAddTextDialog() async {
+    TextEditingController _textController = TextEditingController();
+    
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
+            // backgroundColor: Colors.black87,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            actionsAlignment: MainAxisAlignment.center,
             title: const Text("Add a new Task"),
             content: TextField(
+              controller:_textController,
               autofocus: true,
-              controller: _textFieldController,
+              
               decoration: const InputDecoration(hintText: "Add New Task"),
               onSubmitted: (_) => _submit(),
             ),
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  Provider.of<TodosModel>(context, listen: false)
-                      .addTodo(newTask);
+                  
+                  context.read<TodosModel>().addTodo(Task(title: _textController.text.toString()));
                   _textFieldController.clear();
                   Navigator.pop(context);
                 },
@@ -172,10 +181,7 @@ class _HomePageBodyState extends State<HomePageBody> {
                     ElevatedButton.styleFrom(minimumSize: const Size(120, 40)),
               )
             ],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            actionsAlignment: MainAxisAlignment.center,
+            
           );
         });
   }

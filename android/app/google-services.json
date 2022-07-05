@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "516065011435",
+    "project_id": "fugipie-inventory",
+    "storage_bucket": "fugipie-inventory.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:516065011435:android:f938a9bff40ff91483c0ae",
+        "android_client_info": {
+          "package_name": "com.example.fugipie_inventory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "516065011435-o549grmmrdci6uc6p1g4je2p9jc5uhl3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1AqUZpZpBxxSAl9TO6MIgFzAZ9u77q34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "516065011435-o549grmmrdci6uc6p1g4je2p9jc5uhl3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

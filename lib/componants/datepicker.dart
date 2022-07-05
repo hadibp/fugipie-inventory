@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 
 class DatePicker extends StatefulWidget {
-  DatePicker({Key? key}) : super(key: key);
+ const DatePicker({Key? key}) : super(key: key);
 
   @override
   State<DatePicker> createState() => _DatePickerState();
@@ -21,13 +21,13 @@ class _DatePickerState extends State<DatePicker> {
           Center(
               child: Text(
             '${selectedDate.year}/${selectedDate.month}/${selectedDate.day}',
-            style: TextStyle(fontSize: 25.0),
+            style:const TextStyle(fontSize: 25.0),
           )),
           ElevatedButton(
             onPressed: () {
               toselectDate(context);
             },
-            child: Text("Choose Date"),
+            child: const Text("Choose Date"),
           ),
         ],
       ),

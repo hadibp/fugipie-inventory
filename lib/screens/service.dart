@@ -16,7 +16,7 @@ class ServicePage extends StatelessWidget {
       body: Container(
         child: DefaultTabController(
           length: 3,
-          initialIndex: 1,
+          initialIndex: 0,
           child: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

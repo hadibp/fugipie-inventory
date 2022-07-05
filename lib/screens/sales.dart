@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fugipie_inventory/componants/sales/salesitem.dart';
+import '../bloc/counter/counter_bloc.dart';
 
 class SalesPage extends StatelessWidget {
   const SalesPage({Key? key}) : super(key: key);
@@ -153,40 +155,47 @@ void _salesbottommodal(context) {
                     children: [
                       SizedBox(
                         width: 130.0,
-                        child: const TextField(
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(10.0),
-                            filled: true,
-                            fillColor: Colors.grey,
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.white, width: 2.0),
-                            ),
-                          ),
-                          cursorHeight: 30,
-                          cursorColor: Colors.white,
-                          style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                          toolbarOptions: ToolbarOptions(selectAll: true),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                              Color.fromARGB(255, 164, 194, 15),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Icon(Icons.exposure_minus_1),
+                        child: BlocBuilder<CounterBloc, CounterState>(
+                          builder: (context, state) {
+                            return TextField(
+                              decoration: InputDecoration(
+                                
+                                hintText: state.counterValue.toString(),
+                                hintStyle: TextStyle(
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                                contentPadding: EdgeInsets.all(10.0),
+                                filled: true,
+                                fillColor: Colors.grey,
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Color.fromARGB(255, 2, 2, 2),
+                                      width: 2.0),
+                                ),
+                              ),
+                              cursorHeight: 30,
+                              cursorColor: Colors.white,
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 0, 0, 0)),
+                              toolbarOptions: ToolbarOptions(selectAll: true),
+                            );
+                          },
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            Color.fromARGB(255, 164, 194, 15),
+                          ),
+                        ),
+                        onPressed: ()=>context.read<CounterBloc>().add(DecrementEvent()),
+                        child: Icon(Icons.exposure_minus_1),
+                      ),
+                      ElevatedButton(
+                        onPressed: () =>context.read<CounterBloc>().add(IncrementEvent()),
                         child: Icon(Icons.add),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(

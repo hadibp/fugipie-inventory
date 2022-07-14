@@ -9,11 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fugipie_inventory/main.dart';
+import 'package:fugipie_inventory/repository/authRepository.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+      final authRepository =AuthRepository();
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget( MyApp());
+    await tester.pumpWidget( MyApp(authRepository : authRepository));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

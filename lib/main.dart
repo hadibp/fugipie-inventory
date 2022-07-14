@@ -1,19 +1,55 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutterfire_ui/auth.dart';
+import 'package:fugipie_inventory/firebase_options.dart';
 import 'package:fugipie_inventory/provider/TodosModel.dart';
+import 'package:fugipie_inventory/repository/authRepository.dart';
 import 'package:provider/provider.dart';
+import 'bloc/auth/appobserver.dart';
+import 'bloc/auth/bloc/authapp_bloc.dart';
 import 'bloc/counter/counter_bloc.dart';
-
+import 'config/routes.dart';
 import 'screens/home.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+Future<void> main() async {
+  return BlocOverrides.runZoned(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      final authRepository = AuthRepository();
+      runApp(MyApp(authRepository: authRepository));
+    },
+    blocObserver: AppBlocObserver(),
+  );
 }
 
 class MyApp extends StatelessWidget {
+  final AuthRepository _authRepository;
+  const MyApp({
+    Key? key,
+    required AuthRepository authRepository,
+  })  : _authRepository = authRepository,
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return RepositoryProvider.value(
+      value: _authRepository,
+      child: BlocProvider(
+        create: (_) => AuthappBloc(authRepository: _authRepository),
+        child: const Appview(),
+      ),
+    );
+  }
+}
+
+class Appview extends StatelessWidget {
+  const Appview({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -27,16 +63,10 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: HomePage(),
+        home: FlowBuilder(
+            state: context.select((AuthappBloc bloc) => bloc.state.status,),
+            onGeneratePages: onGenerateAppViewPage,),
       ),
-    );
-  }
-}
-
-class Somthingwentwrong extends StatelessWidget {
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(child: Text("somthing went wrong")),
     );
   }
 }

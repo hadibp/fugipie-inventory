@@ -6,6 +6,16 @@ import '../screens/stock.dart';
 import '../screens/sales.dart';
 import '../screens/service.dart';
 
+class HomeRoute extends StatelessWidget {
+  const HomeRoute({Key? key}) : super(key: key);
+  static MaterialPage page() =>const MaterialPage(child: HomeRoute());
+
+
+  @override
+  Widget build(BuildContext context) {
+    return HomePage();
+  }
+}
 
 class HomePage extends StatefulWidget {
   @override
@@ -23,9 +33,9 @@ class _HomePageState extends State<HomePage> {
 
   final Screens = [
     HomePageBody(),
-     StockPage(),
+    StockPage(),
     const SalesPage(),
-     ServicePage(),
+    ServicePage(),
     HistoryPage(),
   ];
 

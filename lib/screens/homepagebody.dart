@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fugipie_inventory/bloc/auth/bloc/authapp_bloc.dart';
 import 'package:fugipie_inventory/toDo/task.dart';
 import 'package:provider/provider.dart';
 import 'package:fugipie_inventory/provider/TodosModel.dart';
@@ -6,6 +8,9 @@ import 'package:fugipie_inventory/componants/slider.dart';
 import 'package:fugipie_inventory/componants/dropdown.dart';
 import 'package:fugipie_inventory/toDo/tasklist.dart';
 import 'package:flutter/cupertino.dart';
+
+
+
 
 class HomePageBody extends StatefulWidget {
   static const TextStyle optionStyle =
@@ -35,6 +40,7 @@ class _HomePageBodyState extends State<HomePageBody> {
   final List<String> imgList = ['1', '2', '3', '4'];
 
   final _textFieldController = TextEditingController();
+  final firebaseref = FirebaseFirestore.instance;
 
   String newTask = '';
 
@@ -64,6 +70,7 @@ class _HomePageBodyState extends State<HomePageBody> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.select((AuthappBloc bloc) => bloc.state.user);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xff181826),
@@ -74,9 +81,12 @@ class _HomePageBodyState extends State<HomePageBody> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.read<AuthappBloc>().add(AppLogoutRequsted());
+                },
                 icon: const Icon(
-                  CupertinoIcons.person_circle_fill,
+                  Icons.exit_to_app,
+                  // CupertinoIcons.person_circle_fill,
                   size: 50.0,
                 )),
           ),
@@ -93,6 +103,11 @@ class _HomePageBodyState extends State<HomePageBody> {
                   padding: const EdgeInsets.only(left: 18.0),
                   child: dropdowndate(listitem: _listitem),
                 ),
+                // CircleAvatar(
+                //   radius: 50.0,
+                //   backgroundImage: user.photo != null ? NetworkImage(user.photo!):null,
+                //   child: user.photo==null? const Icon(Icons.circle_sharp):null,
+                // )
               ],
             ),
             carouselslider(imgList: imgList),
@@ -135,13 +150,11 @@ class _HomePageBodyState extends State<HomePageBody> {
               ),
             ),
             Expanded(
-              child: Container(
-                child: TaskList(
-                    // tasks: todos.allTasks,
+              child: TaskList(
+                  // tasks: todos.allTasks,
+
                   ),
-                ),
-              ),
-           
+            ),
           ],
         ),
       ),
@@ -149,8 +162,6 @@ class _HomePageBodyState extends State<HomePageBody> {
   }
 
   Future<void> _showAddTextDialog() async {
-    TextEditingController _textController = TextEditingController();
-    
     return showDialog(
         context: context,
         builder: (context) {
@@ -162,27 +173,62 @@ class _HomePageBodyState extends State<HomePageBody> {
             actionsAlignment: MainAxisAlignment.center,
             title: const Text("Add a new Task"),
             content: TextField(
-              controller:_textController,
+              controller: _textFieldController,
               autofocus: true,
-              
               decoration: const InputDecoration(hintText: "Add New Task"),
               onSubmitted: (_) => _submit(),
             ),
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  
-                  context.read<TodosModel>().addTodo(Task(title: _textController.text.toString()));
+                  // context.read<TodosModel>().addTodo(Task(
+                  //     createdTime: DateTime.now(),
+                  // title: textController.text.toString()));
+                  print(_textFieldController.text + " wordsss");
+                  if (_textFieldController.text.isNotEmpty) {
+                    _insertRecord(_textFieldController.text);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("values didnt inserted")));
+                  }
                   _textFieldController.clear();
                   Navigator.pop(context);
                 },
-                child: const Text("Submit"),
                 style:
                     ElevatedButton.styleFrom(minimumSize: const Size(120, 40)),
+                child: const Text("Submit"),
               )
             ],
-            
           );
         });
+  }
+
+  void _insertRecord(String title) {
+    print("value :" + title);
+
+    var UniqueId = firebaseref.collection('newtodotest').doc().id;
+    firebaseref.collection('newtodotest').doc(UniqueId).
+    set({
+      'id': UniqueId,
+      'title': title,
+    }).then((value) => {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Inserted values"),
+            ),
+          )
+        });
+    print(UniqueId);
+
+    // with out id's----
+    // firebaseref.collection('newtodotest').add({
+    //   'title': title,
+    // }).then((value) => {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(
+    //           content: Text("Inserted Id : + ${value.id}"),
+    //         ),
+    //       )
+    //     });
   }
 }

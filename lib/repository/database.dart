@@ -12,3 +12,13 @@ class FirebaseApi {
     return docId.id;
   }
 }
+
+class DatbaseServices{
+  final String? uid;
+  DatbaseServices({this.uid});
+  final CollectionReference _ref = FirebaseFirestore.instance.collection('newTodos');
+
+
+
+  
+}

@@ -42,4 +42,6 @@ extension on firebas_auth.User {
   Users get toUser {
     return Users(id: uid, email: email, name: displayName, photo: photoURL);
   }
+
+  
 }

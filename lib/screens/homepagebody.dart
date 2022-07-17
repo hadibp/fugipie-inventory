@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fugipie_inventory/bloc/auth/bloc/authapp_bloc.dart';
+import 'package:fugipie_inventory/provider/usermodal.dart';
 import 'package:fugipie_inventory/toDo/task.dart';
 import 'package:provider/provider.dart';
 import 'package:fugipie_inventory/provider/TodosModel.dart';
@@ -13,6 +15,8 @@ import 'package:flutter/cupertino.dart';
 
 
 class HomePageBody extends StatefulWidget {
+
+
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
@@ -40,7 +44,9 @@ class _HomePageBodyState extends State<HomePageBody> {
   final List<String> imgList = ['1', '2', '3', '4'];
 
   final _textFieldController = TextEditingController();
-  final firebaseref = FirebaseFirestore.instance;
+  final _firebaseref = FirebaseFirestore.instance;
+  final _firebaseauth = FirebaseAuth.instance;
+  
 
   String newTask = '';
 
@@ -134,9 +140,9 @@ class _HomePageBodyState extends State<HomePageBody> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: FloatingActionButton(
+                      heroTag: 'tag homebody',
                       backgroundColor: Colors.blueAccent,
                       onPressed: (() {
-                        // print( value.tasks.length);
                         _showAddTextDialog();
                       }),
                       child: Icon(
@@ -162,6 +168,7 @@ class _HomePageBodyState extends State<HomePageBody> {
   }
 
   Future<void> _showAddTextDialog() async {
+    final String uid;
     return showDialog(
         context: context,
         builder: (context) {
@@ -187,6 +194,8 @@ class _HomePageBodyState extends State<HomePageBody> {
                   print(_textFieldController.text + " wordsss");
                   if (_textFieldController.text.isNotEmpty) {
                     _insertRecord(_textFieldController.text);
+
+
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("values didnt inserted")));
@@ -205,12 +214,13 @@ class _HomePageBodyState extends State<HomePageBody> {
 
   void _insertRecord(String title) {
     print("value :" + title);
-
-    var UniqueId = firebaseref.collection('newtodotest').doc().id;
-    firebaseref.collection('newtodotest').doc(UniqueId).
-    set({
-      'id': UniqueId,
+    var userid = _firebaseauth.currentUser?.uid;
+    // var id = 
+    var uniqueId = _firebaseref.collection('todolist').doc().id;
+    _firebaseref.collection('todolist').doc(uniqueId).set({
+      'id': uniqueId,
       'title': title,
+      'uid': userid,
     }).then((value) => {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -218,9 +228,9 @@ class _HomePageBodyState extends State<HomePageBody> {
             ),
           )
         });
-    print(UniqueId);
+    print(uniqueId);
 
-    // with out id's----
+     // with out id's----
     // firebaseref.collection('newtodotest').add({
     //   'title': title,
     // }).then((value) => {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fugipie_inventory/repository/database.dart';
 import 'package:provider/provider.dart';
@@ -6,26 +7,26 @@ import 'package:fugipie_inventory/toDo/task.dart';
 import '../provider/TodosModel.dart';
 
 class TaskList extends StatelessWidget {
-  final List<Task>? tasks;
-
-  TaskList({@required this.tasks});
+  
+  
+    var userid =  FirebaseAuth.instance.currentUser?.uid;
 
   final TextEditingController _textEditingFieldController =
       TextEditingController();
 
   final CollectionReference _todolistfireref =
-      FirebaseFirestore.instance.collection('newtodotest');
+      FirebaseFirestore.instance.collection('todolist');
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _todolistfireref.snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-        if (streamSnapshot.hasData) {
+      stream: _todolistfireref.where('uid',isEqualTo: userid ).snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
+        if (_streamSnapshot.hasData) {
           return ListView.builder(
-              itemCount: streamSnapshot.data?.docs.length,
+              itemCount: _streamSnapshot.data?.docs.length,
               itemBuilder: (context, index) {
-                final DocumentSnapshot data = streamSnapshot.data!.docs[index];
+                final DocumentSnapshot data = _streamSnapshot.data!.docs[index];
                 return Padding(
                   padding: const EdgeInsets.only(
                       top: 10.0, bottom: 4.0, left: 10.0, right: 10.0),

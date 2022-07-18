@@ -292,19 +292,16 @@ void _stockbottommodal(context) {
                         _discount.isNotEmpty) {
                       _insertstokRecord(_id, _date, _name, _vendor, _quantity,
                           _purchaseprize, _sellingprize, _discount);
-                   Navigator.of(context).pop();
-
+                      Navigator.of(context).pop();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("fill all the textfields")));
                     }
-
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),
                   ),
                   child: const Text('submit'),
-
                 ),
                 const SizedBox(
                   height: 5.0,

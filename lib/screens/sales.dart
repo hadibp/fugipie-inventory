@@ -1,10 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fugipie_inventory/componants/sales/salesitem.dart';
 import '../bloc/counter/counter_bloc.dart';
 
-class SalesPage extends StatelessWidget {
-  const SalesPage({Key? key}) : super(key: key);
+class SalesPage extends StatefulWidget {
+  SalesPage({Key? key}) : super(key: key);
+
+  @override
+  State<SalesPage> createState() => _SalesPageState();
+}
+
+class _SalesPageState extends State<SalesPage> {
+  final CollectionReference _todolistfireref =
+      FirebaseFirestore.instance.collection('stocklist');
+
+  var userid = FirebaseAuth.instance.currentUser?.uid;
+  String name = '';
+  TextEditingController _searchcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +42,7 @@ class SalesPage extends StatelessWidget {
                 color: Color(0xFF2A2A45),
               ),
               height: 100.0,
-              width: 200.0,
+              width: 180.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -36,9 +50,7 @@ class SalesPage extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 15.0),
                       child: TextField(
-                        onTap: (() {
-                          _salesbottommodal(context);
-                        }),
+                        controller: _searchcontroller,
                         enabled: true,
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
@@ -53,26 +65,146 @@ class SalesPage extends StatelessWidget {
                           hintStyle: TextStyle(color: Color(0xFF707091)),
                           fillColor: Color(0xFF707091),
                         ),
+                        onChanged: (val) {
+                          setState(() {
+                            name = val;
+                          });
+                          print(val);
+                        },
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          )
+          ),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  SalesItem(context ,name)),
+                );
+              },
+              icon: Icon(Icons.shopping_cart_checkout)),
         ],
       ),
-      body: Center(
-        child: Text(
-          'Enter product id to checkout!',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: _todolistfireref.where('uid', isEqualTo: userid).snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
+            if (_streamSnapshot.hasData) {
+              return ListView.builder(
+                itemCount: _streamSnapshot.data?.docs.length,
+                itemBuilder: ((context, index) {
+                  final data = _streamSnapshot.data!.docs[index].data()
+                      as Map<String, dynamic>;
+
+                  if (name.isEmpty) {
+                    print(name);
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        tileColor: Color(0xFF232333),
+                        title: Text(
+                          data['name'],
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          data['id'],
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 165, 163, 169)),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.add_shopping_cart,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            _salesbottommodal(context, data);
+                            print(name);
+                          },
+                        ),
+                      ),
+                    );
+                  } else if (data['id']
+                      .toString()
+                      .startsWith(name.toLowerCase())) {
+                    print(name);
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)),
+                        tileColor: Color(0xFF232333),
+                        title: Text(
+                          data['name'],
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          data['id'],
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 165, 163, 169)),
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.add_shopping_cart,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            _salesbottommodal(context, data);
+                            print(name);
+                          },
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
+              );
+            } else {
+              return Container(
+                child: Text(
+                  'no product available',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }
+          }),
     );
   }
 }
 
-void _salesbottommodal(context) {
+// textcontrolls
+
+TextEditingController _productidcontroller = TextEditingController();
+TextEditingController _datecontroller = TextEditingController();
+TextEditingController _productnamecontroller = TextEditingController();
+TextEditingController _vendorcontroller = TextEditingController();
+TextEditingController _quatitycontroller = TextEditingController();
+TextEditingController _purchaseprizecontroller = TextEditingController();
+TextEditingController _sellingprizecontroller = TextEditingController();
+TextEditingController _discountcontroller = TextEditingController();
+
+Future<void> _salesbottommodal(context, data) async {
+  if (data != null) {
+    _productidcontroller.text = data['id'];
+    _datecontroller.text = data['date'];
+    _productnamecontroller.text = data['name'];
+    _vendorcontroller.text = data['vendor'];
+    // _quatitycontroller.text = data['quantity'];
+    _purchaseprizecontroller.text = data['purchaseprize'];
+    _sellingprizecontroller.text = data['sellingprize'];
+    _discountcontroller.text = data['discound'];
+  }
+
+  final int sellingprise = int.parse(_sellingprizecontroller.text);
+  final int discountprise = int.parse(_discountcontroller.text);
+
+  final int totalamount = sellingprise - discountprise;
+  // final int totalamount = 10 + sellingprise;
   showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -93,8 +225,9 @@ void _salesbottommodal(context) {
               padding: EdgeInsets.all(32),
               children: [
                 buildText('Product Id'),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: _productidcontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Color(0xFF394371),
@@ -112,8 +245,9 @@ void _salesbottommodal(context) {
                   enabled: false,
                 ),
                 buildText('Product Name'),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: _productnamecontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Color(0xFF394371),
@@ -131,8 +265,9 @@ void _salesbottommodal(context) {
                   enabled: false,
                 ),
                 buildText('Vendor'),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: _vendorcontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Color(0xFF394371),
@@ -157,10 +292,11 @@ void _salesbottommodal(context) {
                         width: 130.0,
                         child: BlocBuilder<CounterBloc, CounterState>(
                           builder: (context, state) {
+                            _quatitycontroller.text =
+                                state.counterValue.toString();
                             return TextField(
+                              controller: _quatitycontroller,
                               decoration: InputDecoration(
-                                
-                                hintText: state.counterValue.toString(),
                                 hintStyle: TextStyle(
                                     color: Color.fromARGB(255, 255, 255, 255)),
                                 contentPadding: EdgeInsets.all(10.0),
@@ -191,11 +327,13 @@ void _salesbottommodal(context) {
                             Color.fromARGB(255, 164, 194, 15),
                           ),
                         ),
-                        onPressed: ()=>context.read<CounterBloc>().add(DecrementEvent()),
+                        onPressed: () =>
+                            context.read<CounterBloc>().add(DecrementEvent()),
                         child: Icon(Icons.exposure_minus_1),
                       ),
                       ElevatedButton(
-                        onPressed: () =>context.read<CounterBloc>().add(IncrementEvent()),
+                        onPressed: () =>
+                            context.read<CounterBloc>().add(IncrementEvent()),
                         child: Icon(Icons.add),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
@@ -204,9 +342,10 @@ void _salesbottommodal(context) {
                         ),
                       ),
                     ]),
-                buildText('selling price'),
-                const TextField(
-                  decoration: InputDecoration(
+                buildText('purchase price'),
+                TextField(
+                  controller: _purchaseprizecontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Colors.grey,
@@ -223,9 +362,10 @@ void _salesbottommodal(context) {
                   style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                   toolbarOptions: ToolbarOptions(selectAll: true),
                 ),
-                buildText('lowest price'),
-                const TextField(
-                  decoration: InputDecoration(
+                buildText('Selling price'),
+                TextField(
+                  controller: _sellingprizecontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Colors.grey,
@@ -233,8 +373,7 @@ void _salesbottommodal(context) {
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 2.0),
+                      borderSide: BorderSide(color: Colors.white, width: 2.0),
                     ),
                   ),
                   cursorHeight: 30,
@@ -243,8 +382,9 @@ void _salesbottommodal(context) {
                   toolbarOptions: ToolbarOptions(selectAll: true),
                 ),
                 buildText('Discount'),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: _discountcontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Colors.grey,
@@ -263,22 +403,28 @@ void _salesbottommodal(context) {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(14.0),
-                  child: Center(
-                    child: Text(
-                      '-----     \$42000    -----',
-                      style: TextStyle(color: Colors.grey, fontSize: 28.0),
-                    ),
+                  child: BlocBuilder<CounterBloc, CounterState>(
+                    builder: (context, state) {
+                      return Center(
+                        child: Text(
+                          '-----     \$ ${state.counterValue! * totalamount}    -----',
+                          style: TextStyle(color: Colors.grey, fontSize: 28.0),
+                        ),
+                      );
+                    },
                   ),
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 ElevatedButton(
                   onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SalesItem()),
-                          );
-                        },
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>  SalesItem(context ,data)),
+                    );
+                    print(
+                        'total  amount is${sellingprise + discountprise + totalamount}');
+                  },
                   child: Text('Add Item'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),

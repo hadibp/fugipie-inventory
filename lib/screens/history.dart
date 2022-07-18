@@ -78,7 +78,8 @@ class _HistoryPageState extends State<HistoryPage> {
                               )),
                         ]),
                         Text('To',style: TextStyle(color:Colors.white),),
-                        Row(children: [
+                        Row(
+                          children: [
                           TextButton(
                               style: TextButton.styleFrom(
                                   primary: Colors.grey,

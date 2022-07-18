@@ -99,7 +99,8 @@ class StockList extends StatelessWidget {
                     context,
                     index,
                   ) {
-                    final DocumentSnapshot data = _streamSnapshot.data!.docs[index];
+                    final DocumentSnapshot data =
+                        _streamSnapshot.data!.docs[index];
                     final docid = data['id'];
 
                     return Center(
@@ -143,7 +144,7 @@ class StockList extends StatelessWidget {
                             decoration: BoxDecoration(
                                 color: Color(0xFF373748),
                                 borderRadius: BorderRadius.circular(10.0)),
-                            margin:const EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                                 left: 18.0, right: 18.0, top: 10.0),
                             height: 40.0,
                             width: 400.0,
@@ -154,14 +155,14 @@ class StockList extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                   const Text(
+                                    const Text(
                                       "Product Name",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 13.0),
                                     ),
                                     Text(
                                       "${data['name']}",
-                                      style:const TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.white, fontSize: 13.0),
                                     ),
                                   ]),
@@ -171,7 +172,7 @@ class StockList extends StatelessWidget {
                             decoration: BoxDecoration(
                                 color: Color(0xFF373748),
                                 borderRadius: BorderRadius.circular(10.0)),
-                            margin:const EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                                 left: 18.0, right: 18.0, top: 10.0),
                             height: 40.0,
                             width: 400.0,
@@ -191,7 +192,7 @@ class StockList extends StatelessWidget {
                                     ),
                                     Text(
                                       "${data['vendor']}",
-                                      style:const TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.white, fontSize: 13.0),
                                     ),
                                   ]),
@@ -201,7 +202,7 @@ class StockList extends StatelessWidget {
                             decoration: BoxDecoration(
                                 color: Color(0xFF373748),
                                 borderRadius: BorderRadius.circular(10.0)),
-                            margin:const EdgeInsets.only(
+                            margin: const EdgeInsets.only(
                                 left: 18.0, right: 18.0, top: 10.0),
                             height: 40.0,
                             width: 400.0,
@@ -219,7 +220,7 @@ class StockList extends StatelessWidget {
                                     ),
                                     Text(
                                       "${data['quantity']}",
-                                      style:const TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.white, fontSize: 13.0),
                                     ),
                                   ]),
@@ -228,18 +229,18 @@ class StockList extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(25.0),
                             child: GestureDetector(
-                                child:const Text(
+                                child: const Text(
                                   'More > ',
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 onTap: () {
-                                        print(docid);
+                                  print(docid);
 
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                             StockListItem(context, data)),
+                                            StockListItem(context, data)),
                                   );
                                 }),
                           )
@@ -346,7 +347,7 @@ void _stockbottommodal(context) {
                 buildText('Product Name'),
                 TextField(
                   controller: _productnamecontroller,
-                  onChanged: (String text){
+                  onChanged: (String text) {
                     text = _productnamecontroller.text;
                     print(text);
                   },
@@ -388,64 +389,28 @@ void _stockbottommodal(context) {
                   toolbarOptions: ToolbarOptions(selectAll: true),
                 ),
                 buildText('Quantitiy'),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 150.0,
-                        child: BlocBuilder<CounterBloc, CounterState>(
-                          builder: (context, state) {
-                            _quatitycontroller.text =
-                                state.counterValue.toString();
-                            return TextField(
-                              controller: _quatitycontroller,
-                              decoration: const InputDecoration(
-                                // hintText: state.counterValue.toString(),
-                                hintStyle: TextStyle(
-                                    color: Color.fromARGB(255, 255, 255, 255)),
-                                contentPadding: EdgeInsets.all(10.0),
-                                filled: true,
-                                fillColor: Colors.grey,
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.0)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 2, 2, 2),
-                                      width: 2.0),
-                                ),
-                              ),
-                              cursorHeight: 30,
-                              cursorColor: Colors.white,
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 0, 0, 0)),
-                              toolbarOptions: ToolbarOptions(selectAll: true),
-                            );
-                          },
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            Color.fromARGB(255, 164, 194, 15),
-                          ),
-                        ),
-                        onPressed: () =>
-                            context.read<CounterBloc>().add(DecrementEvent()),
-                        child: Icon(Icons.exposure_minus_1),
-                      ),
-                      ElevatedButton(
-                        onPressed: () =>
-                            context.read<CounterBloc>().add(IncrementEvent()),
-                        child: Icon(Icons.add),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            Color.fromARGB(255, 25, 15, 171),
-                          ),
-                        ),
-                      ),
-                    ]),
+                TextField(
+                  controller: _quatitycontroller,
+                  decoration: const InputDecoration(
+                    // hintText: state.counterValue.toString(),
+                    hintStyle:
+                        TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Colors.grey,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Color.fromARGB(255, 2, 2, 2), width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  toolbarOptions: ToolbarOptions(selectAll: true),
+                ),
                 buildText('Purchase Prize'),
                 TextField(
                   controller: _purchaseprizecontroller,
@@ -509,7 +474,7 @@ void _stockbottommodal(context) {
                   onPressed: () {
                     final _id = _productidcontroller.text;
                     final _date = _datecontroller.text;
-                    final _name =  _productnamecontroller.text;
+                    final _name = _productnamecontroller.text;
                     final _vendor = _vendorcontroller.text;
                     final _quantity = _quatitycontroller.text;
                     final _purchaseprize = _purchaseprizecontroller.text;
@@ -526,8 +491,8 @@ void _stockbottommodal(context) {
                         _discount.isNotEmpty) {
                       _insertstokRecord(_id, _date, _name, _vendor, _quantity,
                           _purchaseprize, _sellingprize, _discount);
-                    Navigator.of(context).pop();
 
+                      Navigator.of(context).pop();
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("fill all the textfields")));
@@ -557,7 +522,8 @@ void _stockbottommodal(context) {
       });
 }
 
-void _insertstokRecord(  id,date, name,  vendor, quantity, purchaseprize, sellingprize, discount) {
+void _insertstokRecord(
+    id, date, name, vendor, quantity, purchaseprize, sellingprize, discount) {
   print(id +
       name +
       date +
@@ -569,11 +535,10 @@ void _insertstokRecord(  id,date, name,  vendor, quantity, purchaseprize, sellin
   var userid = _firebaseauth.currentUser?.uid;
 
   var uniqueId = _firebaseref.collection('stocklist').doc().id;
-  _firebaseref.collection('stocklist').doc(uniqueId).
-  set({
+  _firebaseref.collection('stocklist').doc(uniqueId).set({
     'uid': userid,
     'id': id,
-    'date':date,
+    'date': date,
     'name': name,
     'vendor': vendor,
     'quantity': quantity,

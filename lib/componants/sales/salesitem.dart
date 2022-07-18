@@ -1,13 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-int x = 8;
-
-double s = 0.1 * 0.1;
-
-int i = 1;
-
 class SalesItem extends StatelessWidget {
-  const SalesItem({Key? key}) : super(key: key);
+  var data;
+
+  SalesItem(context, this.data);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +13,7 @@ class SalesItem extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 70.0,
         backgroundColor: Color(0xff181826),
-        title: Text(
+        title: const Text(
           'Sales orders',
           style: TextStyle(color: Colors.white),
         ),
@@ -47,7 +44,7 @@ class SalesItem extends StatelessWidget {
                             color: Color(0xFF707091),
                           ),
                           iconColor: Colors.white,
-                          hintText: 'search product id',
+                          hintText: 'search product ${data['id']}',
                           hintStyle: TextStyle(color: Color(0xFF707091)),
                           fillColor: Color(0xFF707091),
                         ),
@@ -67,7 +64,7 @@ class SalesItem extends StatelessWidget {
               child: ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: x,
+                  itemCount: 3,
                   itemBuilder: (
                     context,
                     index,
@@ -94,7 +91,7 @@ class SalesItem extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      'Product id : 1001 $i',
+                                      'Product id : 1001 ',
                                       style: TextStyle(color: Colors.white),
                                       textAlign: TextAlign.right,
                                     ),
@@ -349,8 +346,9 @@ class SalesItem extends StatelessWidget {
             width: 300.0,
             height: 35.0,
             child: ElevatedButton(
-              onPressed: () {},
-              //  () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: Text('cancel'),
               style: ElevatedButton.styleFrom(
                 primary: Color.fromARGB(255, 220, 82, 72),
@@ -374,12 +372,12 @@ void _whatsappmodal(context) {
       ),
       context: context,
       builder: (BuildContext context) {
-        return Wrap(
-          children:[ Column(
+        return Wrap(children: [
+          Column(
             children: [
               buildText('Customer Name'),
               Padding(
-                padding: const EdgeInsets.only(left:40.0,right: 40.0),
+                padding: const EdgeInsets.only(left: 40.0, right: 40.0),
                 child: TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
@@ -400,7 +398,7 @@ void _whatsappmodal(context) {
               ),
               buildText('phone'),
               Padding(
-                padding: const EdgeInsets.only(left:40.0,right: 40.0),
+                padding: const EdgeInsets.only(left: 40.0, right: 40.0),
                 child: TextField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
@@ -424,19 +422,17 @@ void _whatsappmodal(context) {
                 child: ElevatedButton.icon(
                   icon: Icon(Icons.whatsapp),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SalesItem()),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) =>  SalesItem()),
+                    // );
                   },
-                  label: Text('Send Bill',
-        
-                  
+                  label: Text(
+                    'Send Bill',
                   ),
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.green),
+                    backgroundColor: MaterialStateProperty.all(Colors.green),
                   ),
                 ),
               ),
@@ -445,7 +441,6 @@ void _whatsappmodal(context) {
               ),
               SizedBox(
                 width: 320.0,
-        
                 child: ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text('Save Bill'),
@@ -457,8 +452,8 @@ void _whatsappmodal(context) {
                 ),
               )
             ],
-          ),]
-        );
+          ),
+        ]);
       });
 }
 
@@ -467,9 +462,10 @@ Widget buildText(String text) => Container(
       child: Text(
         text,
         style: TextStyle(
-            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.grey,
-            
-            ),
-      textAlign: TextAlign.left,      
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+          color: Colors.grey,
+        ),
+        textAlign: TextAlign.left,
       ),
     );

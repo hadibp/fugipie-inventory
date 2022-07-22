@@ -5,6 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fugipie_inventory/componants/sales/salesitem.dart';
 import '../bloc/counter/counter_bloc.dart';
 
+final CollectionReference _stocklistfireref =
+    FirebaseFirestore.instance.collection('stocklist');
+var userid = FirebaseAuth.instance.currentUser?.uid;
+
 class SalesPage extends StatefulWidget {
   SalesPage({Key? key}) : super(key: key);
 
@@ -13,10 +17,6 @@ class SalesPage extends StatefulWidget {
 }
 
 class _SalesPageState extends State<SalesPage> {
-  final CollectionReference _todolistfireref =
-      FirebaseFirestore.instance.collection('stocklist');
-
-  var userid = FirebaseAuth.instance.currentUser?.uid;
   String name = '';
   TextEditingController _searchcontroller = TextEditingController();
 
@@ -52,11 +52,11 @@ class _SalesPageState extends State<SalesPage> {
                       child: TextField(
                         controller: _searchcontroller,
                         enabled: true,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
+                        style:const TextStyle(color: Colors.white),
+                        decoration:const InputDecoration(
                           enabledBorder: InputBorder.none,
                           border: InputBorder.none,
-                          icon: const Icon(
+                          icon:  Icon(
                             Icons.search,
                             color: Color(0xFF707091),
                           ),
@@ -82,14 +82,15 @@ class _SalesPageState extends State<SalesPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  SalesItem(context ,name)),
+                  MaterialPageRoute(
+                      builder: (context) => SalesItem(context, name)),
                 );
               },
-              icon: Icon(Icons.shopping_cart_checkout)),
+              icon: Icon(Icons.shopping_cart_checkout),),
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-          stream: _todolistfireref.where('uid', isEqualTo: userid).snapshots(),
+          stream: _stocklistfireref.where('uid', isEqualTo: userid).snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
             if (_streamSnapshot.hasData) {
               return ListView.builder(
@@ -194,7 +195,7 @@ Future<void> _salesbottommodal(context, data) async {
     _datecontroller.text = data['date'];
     _productnamecontroller.text = data['name'];
     _vendorcontroller.text = data['vendor'];
-    // _quatitycontroller.text = data['quantity'];
+    _quatitycontroller.text = data['quantity'];
     _purchaseprizecontroller.text = data['purchaseprize'];
     _sellingprizecontroller.text = data['sellingprize'];
     _discountcontroller.text = data['discound'];
@@ -296,7 +297,7 @@ Future<void> _salesbottommodal(context, data) async {
                                 state.counterValue.toString();
                             return TextField(
                               controller: _quatitycontroller,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintStyle: TextStyle(
                                     color: Color.fromARGB(255, 255, 255, 255)),
                                 contentPadding: EdgeInsets.all(10.0),
@@ -311,6 +312,7 @@ Future<void> _salesbottommodal(context, data) async {
                                       color: Color.fromARGB(255, 2, 2, 2),
                                       width: 2.0),
                                 ),
+                                enabled: false,
                               ),
                               cursorHeight: 30,
                               cursorColor: Colors.white,
@@ -361,6 +363,7 @@ Future<void> _salesbottommodal(context, data) async {
                   cursorColor: Colors.white,
                   style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                   toolbarOptions: ToolbarOptions(selectAll: true),
+                  enabled: false,
                 ),
                 buildText('Selling price'),
                 TextField(
@@ -380,6 +383,7 @@ Future<void> _salesbottommodal(context, data) async {
                   cursorColor: Colors.white,
                   style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                   toolbarOptions: ToolbarOptions(selectAll: true),
+                  enabled: false,
                 ),
                 buildText('Discount'),
                 TextField(
@@ -415,20 +419,40 @@ Future<void> _salesbottommodal(context, data) async {
                   ),
                 ),
                 const SizedBox(height: 10.0),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>  SalesItem(context ,data)),
+                BlocBuilder<CounterBloc, CounterState>(
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        var total = state.counterValue! * totalamount;
+                        var uniqueId = _stocklistfireref
+                            .doc(userid)
+                            .collection('cart-collection')
+                            .doc()
+                            .id;
+
+                        _stocklistfireref
+                            .doc(userid)
+                            .collection('cart-collection')
+                            .doc(uniqueId)
+                            .set({
+                          "id": data['id'],
+                          "name": data['name'],
+                          "vendor": data['vendor'],
+                          "purchaseprize": data['purchaseprize'],
+                          "quantity": state.counterValue,
+                          "sellingprize": data['sellingprize'],
+                          "discound": data['discound'],
+                          "total": total,
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Add Item to cart'),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.green),
+                      ),
                     );
-                    print(
-                        'total  amount is${sellingprise + discountprise + totalamount}');
                   },
-                  child: Text('Add Item'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green),
-                  ),
                 ),
                 const SizedBox(
                   height: 5.0,

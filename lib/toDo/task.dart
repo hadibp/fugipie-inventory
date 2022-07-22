@@ -20,7 +20,7 @@ class Task {
 
   static Task fromjson(Map<String, dynamic> json) => Task(
         createdTime: Utils.toDateTime(json['createTime']),
-        title: json['title'], 
+        title: json['title'],
         id: json['id'],
         completed: json['completed'],
       );

@@ -5,7 +5,7 @@
 //   void dispose();
 // }
 
-// // Generic BLoC provider
+// // Generic BLoC modals
 // class BlocProvider<T extends BlocBase> extends StatefulWidget {
 //   BlocProvider({
 //     Key? key,
@@ -21,8 +21,8 @@
 
 //   static T of<T extends BlocBase>(BuildContext context) {
 //     final type = _typeOf<BlocProvider<T>>();
-//     BlocProvider<T> provider = context.ancestorWidgetOfExactType(type);
-//     return provider.bloc!;
+//     BlocProvider<T> modals = context.ancestorWidgetOfExactType(type);
+//     return modals.bloc!;
 //   }
 
 //   static Type _typeOf<T>() => T;

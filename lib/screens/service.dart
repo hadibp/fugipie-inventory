@@ -1,4 +1,8 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:fugipie_inventory/provider/serviceprovider.dart';
+import 'package:provider/provider.dart';
 
 import '../componants/servises/serviseitem.dart';
 
@@ -48,7 +52,7 @@ class ServicePage extends StatelessWidget {
                 Expanded(
                   child: TabBarView(children: [
                     tabOne(context),
-                    tabTwo(),
+                    tabTwo(context),
                     tabThree(),
                   ]),
                 ),
@@ -61,20 +65,20 @@ class ServicePage extends StatelessWidget {
   }
 }
 
-
-
 void _servicebottommodal(context) {
   showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.vertical(
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
           top: Radius.circular(10.0),
         ),
       ),
       elevation: 2.0,
       builder: (context) {
+        Serviceprovider serviceprovider = Provider.of(context);
+
         return DraggableScrollableSheet(
           initialChildSize: 0.8,
           builder: (_, controller) => Container(
@@ -84,8 +88,29 @@ void _servicebottommodal(context) {
               padding: EdgeInsets.all(32),
               children: [
                 buildText('Issue Id'),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: serviceprovider.issueidcontroller,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Colors.grey,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  toolbarOptions: ToolbarOptions(selectAll: true),
+                ),
+                buildText('Return Date'),
+                TextField(
+                  controller: serviceprovider.returndatecontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Colors.grey,
@@ -106,28 +131,10 @@ void _servicebottommodal(context) {
                   style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                   toolbarOptions: ToolbarOptions(selectAll: true),
                 ),
-                buildText('Return Date'),
-                const TextField(
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                  ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                  toolbarOptions: ToolbarOptions(selectAll: true),
-                ),
                 buildText('Service charge'),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: serviceprovider.servicechargecontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Colors.grey,
@@ -145,8 +152,9 @@ void _servicebottommodal(context) {
                   toolbarOptions: ToolbarOptions(selectAll: true),
                 ),
                 buildText('Name'),
-                const TextField(
-                  decoration: InputDecoration(
+                TextField(
+                  controller: serviceprovider.namecontroller,
+                  decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
                     fillColor: Colors.grey,
@@ -164,7 +172,8 @@ void _servicebottommodal(context) {
                   toolbarOptions: ToolbarOptions(selectAll: true),
                 ),
                 buildText('Phone'),
-                const TextField(
+                TextField(
+                  controller: serviceprovider.phonecontroller,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
@@ -184,7 +193,9 @@ void _servicebottommodal(context) {
                 ),
                 SizedBox(height: 20.0),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    serviceprovider.servicemodelvalidator(context);
+                  },
                   child: Text('submit'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green),
@@ -219,6 +230,8 @@ Widget buildText(String text) => Container(
     );
 
 Widget tabOne(context) {
+  Serviceprovider serviceprovider = Provider.of(context);
+
   return Center(
     child: Padding(
       padding: const EdgeInsets.only(bottom: 150.0),
@@ -228,7 +241,7 @@ Widget tabOne(context) {
         onPressed: (() {
           _servicebottommodal(context);
         }),
-        child: Icon(
+        child: const Icon(
           Icons.add,
           size: 40.0,
           color: Color(0xFF232338),
@@ -238,7 +251,11 @@ Widget tabOne(context) {
   );
 }
 
-Widget tabTwo() {
+Widget tabTwo(context) {
+  Serviceprovider serviceprovider = Provider.of(context);
+
+    
+  serviceprovider.getServiceModal.map((servicedata) {
   return Container(
     child: Column(children: [
       Padding(
@@ -252,12 +269,12 @@ Widget tabTwo() {
               isDense: true,
               contentPadding: EdgeInsets.only(top: 5.0, bottom: 10.0),
               focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                     color: Color.fromARGB(255, 255, 255, 255), width: 2.0),
                 borderRadius: BorderRadius.circular(40.0),
               ),
               border: OutlineInputBorder(
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                     color: Color.fromARGB(255, 255, 255, 255), width: 2.0),
                 borderRadius: BorderRadius.circular(40.0),
               ),
@@ -300,13 +317,13 @@ Widget tabTwo() {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'Product id : 10011',
+                              'Product id : ${servicedata.issueId}',
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
                         ),
                       ),
-                      Divider(
+                      const Divider(
                         height: 2.0,
                         thickness: 3.0,
                         color: Color.fromARGB(255, 78, 78, 78),
@@ -333,7 +350,7 @@ Widget tabTwo() {
                                       color: Colors.white, fontSize: 13.0),
                                 ),
                                 Text(
-                                  "23-08-2022",
+                                  "${servicedata.date}",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 13.0),
                                 ),
@@ -362,7 +379,7 @@ Widget tabTwo() {
                                       color: Colors.white, fontSize: 13.0),
                                 ),
                                 Text(
-                                  "Broken Display",
+                                  "${servicedata.issueId}",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 13.0,
@@ -392,7 +409,7 @@ Widget tabTwo() {
                                       color: Colors.white, fontSize: 13.0),
                                 ),
                                 Text(
-                                  "Aquibe",
+                                  "${servicedata.name}",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 13.0),
                                 ),
@@ -419,7 +436,7 @@ Widget tabTwo() {
                                       color: Colors.white, fontSize: 13.0),
                                 ),
                                 Text(
-                                  "\$8000",
+                                  "\$ ${servicedata.servicecharge}",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 13.0),
                                 ),
@@ -441,7 +458,7 @@ Widget tabTwo() {
                               height: 10.0,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Color.fromARGB(255, 255, 0, 0)),
+                                  color: Color.fromARGB(255, 229, 124, 124)),
                             )
                           ],
                         ),
@@ -469,141 +486,133 @@ Widget tabTwo() {
       ),
     ]),
   );
+  }).toList();
 }
 
 Widget tabThree() {
   return Container(
-    child: Expanded(
-      child: Container(
-        padding: EdgeInsets.all(2.0),
-        child: ListView.builder(
-            itemCount: 4,
-            itemBuilder: (
-              context,
-              index,
-            ) {
-              return Center(
-                  child: ListTile(
-                title: Center(
-                    child: Container(
-                  height: 250.0,
-                  width: 400.0,
-                  decoration: BoxDecoration(
-                      color: Color(0xFF3E3E5C),
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, left: 18.0, right: 18.0, bottom: 5.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Issue id : 10011',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
+    padding: EdgeInsets.all(2.0),
+    child: ListView.builder(
+        itemCount: 4,
+        itemBuilder: (
+          context,
+          index,
+        ) {
+          return Center(
+              child: ListTile(
+            title: Center(
+                child: Container(
+              height: 250.0,
+              width: 400.0,
+              decoration: BoxDecoration(
+                  color: Color(0xFF3E3E5C),
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Column(children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 20.0, left: 18.0, right: 18.0, bottom: 5.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Issue id : 10011',
+                        style: TextStyle(color: Colors.white),
                       ),
-                    ),
-                    Divider(
-                      height: 2.0,
-                      thickness: 3.0,
-                      color: Color.fromARGB(255, 78, 78, 78),
-                      indent: 18.0,
-                      endIndent: 18.0,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Isuue",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 13.0),
-                            ),
-                            Text(
-                              "Broken Display",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13.0,
-                              ),
-                              softWrap: true,
-                            ),
-                          ]),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Name",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 13.0),
-                            ),
-                            Text(
-                              "Aquibe",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 13.0),
-                            ),
-                          ]),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 15.0, left: 15.0, right: 35.0, bottom: 20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Completed",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13.0,
-                            ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  height: 2.0,
+                  thickness: 3.0,
+                  color: Color.fromARGB(255, 78, 78, 78),
+                  indent: 18.0,
+                  endIndent: 18.0,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Isuue",
+                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        ),
+                        Text(
+                          "Broken Display",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.0,
                           ),
-                          Container(
-                            width: 10.0,
-                            height: 10.0,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color.fromARGB(255, 255, 0, 0)),
-                          )
-                        ],
+                          softWrap: true,
+                        ),
+                      ]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Name",
+                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        ),
+                        Text(
+                          "Aquibe",
+                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        ),
+                      ]),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 15.0, left: 15.0, right: 35.0, bottom: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Completed",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.0,
+                        ),
                       ),
-                    ),
-                    Divider(
-                      height: 5.0,
-                      thickness: 5.0,
-                      color: Color.fromARGB(255, 78, 78, 78),
-                      indent: 18.0,
-                      endIndent: 18.0,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Service Charge",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 13.0),
-                            ),
-                            Text(
-                              "8000",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 13.0),
-                            ),
-                          ]),
-                    ),
-                  ]),
-                )),
-              ));
-            }),
-      ),
-    ),
+                      Container(
+                        width: 10.0,
+                        height: 10.0,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 255, 0, 0)),
+                      )
+                    ],
+                  ),
+                ),
+                Divider(
+                  height: 5.0,
+                  thickness: 5.0,
+                  color: Color.fromARGB(255, 78, 78, 78),
+                  indent: 18.0,
+                  endIndent: 18.0,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Service Charge",
+                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        ),
+                        Text(
+                          "8000",
+                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        ),
+                      ]),
+                ),
+              ]),
+            )),
+          ));
+        }),
   );
 }

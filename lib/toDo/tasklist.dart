@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fugipie_inventory/repository/database.dart';
 import 'package:provider/provider.dart';
 import 'package:fugipie_inventory/toDo/task.dart';
-import '../provider/TodosModel.dart';
+import '../modals/TodosModel.dart';
 
 class TaskList extends StatelessWidget {
   
@@ -120,7 +120,8 @@ class TaskList extends StatelessWidget {
   }
 
   Future<void> _delete(context, String productId) async {
-    await _todolistfireref.doc(productId).delete();
+    await _todolistfireref
+    .doc(productId).delete();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("todo deleted"),

@@ -21,7 +21,7 @@ class StockPage extends StatelessWidget {
       ),
       body: Center(
         child: FloatingActionButton(
-          // heroTag: 'tag 1',
+          
           backgroundColor: Colors.blueAccent,
           child: Icon(
             Icons.add,

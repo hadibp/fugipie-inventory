@@ -8,12 +8,22 @@ import 'package:fugipie_inventory/screens/stock.dart';
 
 import '../bloc/counter/counter_bloc.dart';
 
-class StockList extends StatelessWidget {
+class StockList extends StatefulWidget {
   StockList({Key? key}) : super(key: key);
+
+  @override
+  State<StockList> createState() => _StockListState();
+}
+
+class _StockListState extends State<StockList> {
+  String searchid = '';
 
   final CollectionReference _todolistfireref =
       FirebaseFirestore.instance.collection('stocklist');
+
   var userid = FirebaseAuth.instance.currentUser?.uid;
+
+  TextEditingController _searchcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +39,7 @@ class StockList extends StatelessWidget {
               appBar: AppBar(
                 toolbarHeight: 70.0,
                 backgroundColor: Color(0xff181826),
-                title: Text(
+                title:const Text(
                   'Stock',
                   style: TextStyle(color: Colors.white),
                 ),
@@ -45,14 +55,15 @@ class StockList extends StatelessWidget {
                       width: 200.0,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        children: const [
+                        children: [
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 15.0),
                               child: TextField(
+                                controller: _searchcontroller,
                                 enabled: true,
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
+                                style: const TextStyle(color: Colors.white),
+                                decoration: const InputDecoration(
                                   enabledBorder: InputBorder.none,
                                   border: InputBorder.none,
                                   icon: Icon(
@@ -65,6 +76,12 @@ class StockList extends StatelessWidget {
                                       TextStyle(color: Color(0xFF707091)),
                                   fillColor: Color(0xFF707091),
                                 ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchid = value;
+                                  });
+                                  print(value);
+                                },
                               ),
                             ),
                           ),
@@ -80,20 +97,22 @@ class StockList extends StatelessWidget {
                       child: FloatingActionButton(
                         heroTag: 'tag stock',
                         backgroundColor: Colors.blueAccent,
+                        onPressed: (() {
+                          _stockbottommodal(context);
+                        }),
                         child: Icon(
                           Icons.add,
                           size: 35.0,
                           color: Color(0xFF232338),
                         ),
-                        onPressed: (() {
-                          _stockbottommodal(context);
-                        }),
                       ),
                     ),
                   ),
                 ],
               ),
-              body: ListView.builder(
+              body: 
+              
+              ListView.builder(
                   itemCount: _streamSnapshot.data?.docs.length,
                   itemBuilder: (
                     context,
@@ -250,9 +269,6 @@ class StockList extends StatelessWidget {
                   }),
             );
           } else {
-            print(false);
-            print(_streamSnapshot.data?.docs.length);
-            print(_streamSnapshot.data?.size);
             return StockPage();
           }
         });

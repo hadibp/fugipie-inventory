@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_auth/firebase_auth.dart' as firebas_auth;
-import 'package:fugipie_inventory/provider/usermodal.dart';
+import 'package:fugipie_inventory/modals/usermodal.dart';
 
 class AuthRepository {
   final firebas_auth.FirebaseAuth _firebaseAuth;
@@ -26,15 +26,20 @@ class AuthRepository {
           email: email, password: password);
     } catch (_) {}
   }
-  Future<void> loginWithEmailAndPassword({required String email, required String password}) async{
-    try{
-      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-    }catch(_){}
+
+  Future<void> loginWithEmailAndPassword(
+      {required String email, required String password}) async {
+    try {
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+    } catch (_) {}
   }
-  Future<void> logout()async{
-    try{
+
+  Future<void> logout() async {
+    try {
       await Future.wait([_firebaseAuth.signOut()]);
-    }catch(_){};
+    } catch (_) {}
+    ;
   }
 }
 
@@ -42,6 +47,4 @@ extension on firebas_auth.User {
   Users get toUser {
     return Users(id: uid, email: email, name: displayName, photo: photoURL);
   }
-
-  
 }

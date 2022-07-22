@@ -2,14 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fugipie_inventory/bloc/auth/bloc/authapp_bloc.dart';
-import 'package:fugipie_inventory/provider/usermodal.dart';
+import 'package:fugipie_inventory/modals/usermodal.dart';
 import 'package:fugipie_inventory/toDo/task.dart';
-import 'package:provider/provider.dart';
-import 'package:fugipie_inventory/provider/TodosModel.dart';
+import 'package:fugipie_inventory/modals/TodosModel.dart';
 import 'package:fugipie_inventory/componants/slider.dart';
 import 'package:fugipie_inventory/componants/dropdown.dart';
 import 'package:fugipie_inventory/toDo/tasklist.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+
 
 
 

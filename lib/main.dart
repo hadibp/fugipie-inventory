@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:fugipie_inventory/firebase_options.dart';
-import 'package:fugipie_inventory/provider/TodosModel.dart';
+import 'package:fugipie_inventory/modals/TodosModel.dart';
+import 'package:fugipie_inventory/provider/serviceprovider.dart';
 import 'package:fugipie_inventory/repository/authRepository.dart';
 import 'package:provider/provider.dart';
 import 'bloc/auth/appobserver.dart';
@@ -59,6 +60,9 @@ class Appview extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CounterBloc(),
+        ),
+        ChangeNotifierProvider<Serviceprovider>(
+          create: (context) => Serviceprovider(),
         ),
       ],
       child: MaterialApp(

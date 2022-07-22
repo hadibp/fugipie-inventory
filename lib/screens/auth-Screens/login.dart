@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fugipie_inventory/bloc/cubit/cubit/login_cubit.dart';
 import 'package:fugipie_inventory/main.dart';
 import 'package:fugipie_inventory/repository/authRepository.dart';
-import 'package:fugipie_inventory/screens/auth-Screens/signup.dart';
+import './signup.dart';
+
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -159,7 +160,7 @@ class _LoginButton extends StatelessWidget {
                 onPressed: () {
                   context.read<LoginCubit>().loginwithcredential();
                 },
-                child: Text('submit'));
+                child:const Text('submit'));
       },
     );
   }
@@ -176,6 +177,6 @@ class _SignupButton extends StatelessWidget {
             SignUpPage.route(),
           );
         },
-        child: Text('signup'));
+        child:const Text('signup'));
   }
 }

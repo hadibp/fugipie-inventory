@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:fugipie_inventory/componants/sales/salesitem.dart';
 import 'package:fugipie_inventory/repository/authRepository.dart';
@@ -30,7 +31,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> loginwithcredential() async {
-    if (state.status == LoginStatus.submiting) return;
+    if (state.status == LoginStatus.submiting) return ;
     emit(state.copyWith(status: LoginStatus.submiting));
     try {
       await _authRepository.loginWithEmailAndPassword(

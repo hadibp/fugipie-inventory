@@ -37,7 +37,8 @@ class SignUpPage extends StatelessWidget {
     );
   }
 }
-final formkey =GlobalKey<FormState>();
+
+final formkey = GlobalKey<FormState>();
 
 class SignUPForm extends StatelessWidget {
   const SignUPForm({Key? key}) : super(key: key);
@@ -56,8 +57,8 @@ class SignUPForm extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              child:
-                  Image.asset('assets/images/fugipielogo.png', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fugipielogo.png',
+                  fit: BoxFit.cover),
             ),
             SizedBox(
               height: 40.0,
@@ -90,24 +91,24 @@ class _EmailInput extends StatelessWidget {
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return Container(
-          margin: EdgeInsets.only(left: 30.0, right: 30.0),
-          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: TextFormField(
-            style: TextStyle(color: Colors.white),
-            decoration: const InputDecoration(
-              contentPadding: EdgeInsets.all(15.0),
-              filled: true,
-              fillColor: Color(0xFF373748),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+            margin: EdgeInsets.only(left: 30.0, right: 30.0),
+            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+            child: TextFormField(
+              style: TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.all(15.0),
+                filled: true,
+                fillColor: Color(0xFF373748),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                ),
+                labelText: 'email',
+                labelStyle: TextStyle(color: Colors.white),
               ),
-              labelText: 'email',
-              labelStyle: TextStyle(color: Colors.white),
-            ),
-            onChanged: (email) {
-              context.read<SignupCubit>().emailChanged(email);
-            },
-            autofillHints: [AutofillHints.email],
+              onChanged: (email) {
+                context.read<SignupCubit>().emailChanged(email);
+              },
+              autofillHints: [AutofillHints.email],
               keyboardType: TextInputType.emailAddress,
               validator: (email) =>
                   email != null && !EmailValidator.validate(email)
@@ -165,9 +166,8 @@ class _SignupButton extends StatelessWidget {
             : ElevatedButton(
                 onPressed: () {
                   final form = formkey.currentState!;
-                  if(form.validate()){
-
-                  context.read<SignupCubit>().Signupformsubmitted();
+                  if (form.validate()) {
+                    context.read<SignupCubit>().Signupformsubmitted();
                   }
                 },
                 child: Text('Signup'));
@@ -175,5 +175,3 @@ class _SignupButton extends StatelessWidget {
     );
   }
 }
-
-

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fugipie_inventory/bloc/cubit/cubit/login_cubit.dart';
 import 'package:fugipie_inventory/main.dart';
 import 'package:fugipie_inventory/repository/authRepository.dart';
+import 'package:fugipie_inventory/screens/auth-Screens/forgetscreen.dart';
 import './signup.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -22,34 +23,34 @@ class LoginScreen extends StatelessWidget {
             create: (_) => LoginCubit(
                   context.read<AuthRepository>(),
                 ),
-            child:  LoginForm()),
+            child: LoginForm()),
       ),
     );
   }
 }
-  final formkey =GlobalKey<FormState>();
+
+final _formkey = GlobalKey<FormState>();
 
 class LoginForm extends StatelessWidget {
-   LoginForm({Key? key}) : super(key: key);
+  LoginForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status == LoginStatus.error) {
-        print('you are not authrorized');
-
+          print('you are not authrorized');
         }
         // TODO: implement listener
       },
       child: Form(
-        key: formkey,
+        key: _formkey,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              child:
-                  Image.asset('assets/images/fugipielogo.png', fit: BoxFit.cover),
+              child: Image.asset('assets/images/fugipielogo.png',
+                  fit: BoxFit.cover),
             ),
             const SizedBox(
               height: 40.0,
@@ -62,6 +63,7 @@ class LoginForm extends StatelessWidget {
             const SizedBox(
               height: 20.0,
             ),
+            const _ForgetPass(),
             const _LoginButton(),
             const SizedBox(
               height: 20.0,
@@ -154,7 +156,24 @@ class _ForgetPass extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Forget Password');
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right:50.0),
+          child: GestureDetector(
+            
+            child: Text(
+              'Forget Password',
+              style: TextStyle(color: Colors.blue),
+            ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>Forgetpage()));
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -170,10 +189,9 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 onPressed: () {
-                  final form = formkey.currentState!;
-                  if(form.validate()){
-
-                  context.read<LoginCubit>().loginwithcredential();
+                  final form = _formkey.currentState!;
+                  if (form.validate()) {
+                    context.read<LoginCubit>().loginwithcredential();
                   }
                 },
                 child: const Text('Login'));

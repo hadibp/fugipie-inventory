@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
@@ -37,6 +38,6 @@ class LoginCubit extends Cubit<LoginState> {
       await _authRepository.loginWithEmailAndPassword(
           email: state.email, password: state.password);
       emit(state.copyWith(status: LoginStatus.success));
-    } catch (_) {}
+    } catch (_)  {}
   }
 }

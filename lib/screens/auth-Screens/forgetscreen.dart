@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Forgetpage extends StatelessWidget {
   Forgetpage({Key? key}) : super(key: key);
@@ -16,23 +17,17 @@ class Forgetpage extends StatelessWidget {
       try {
         print('hit');
         await FirebaseAuth.instance
-            .sendPasswordResetEmail(email: _emailcontroller.text.trim());
+            .sendPasswordResetEmail(email: _emailcontroller.text);
         showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
-                content: Text('check you email'),
+                content: Text('check you inbox and spam'),
               );
             });
       } on FirebaseAuthException catch (e) {
         print(e);
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(e.message.toString()),
-              );
-            });
+        Fluttertoast.showToast(msg: e.code, gravity: ToastGravity.TOP);
       }
     }
 
@@ -88,7 +83,7 @@ class Forgetpage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 final form = _formkey.currentState!;
-                  passwordreset();
+                passwordreset();
                 if (form.validate()) {
                   print('object');
                 }

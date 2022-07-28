@@ -22,6 +22,7 @@ dependencies:
   flow_builder: ^0.0.9
   url_launcher: ^6.1.5
   email_validator: ^2.1.16
+  fluttertoast: ^8.0.9
 
 dev_dependencies:
   flutter_test:

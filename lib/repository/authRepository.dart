@@ -1,7 +1,12 @@
+
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_auth/firebase_auth.dart' as firebas_auth;
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fugipie_inventory/componants/errorhandlingdialougebox.dart';
 import 'package:fugipie_inventory/modals/usermodal.dart';
 
 class AuthRepository {
@@ -24,7 +29,11 @@ class AuthRepository {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-    } catch (_) {}
+    }  on FirebaseException catch (e ) {
+        Fluttertoast.showToast(msg: e.code,gravity: ToastGravity.TOP);
+      
+      print(e.code);
+    }
   }
 
   Future<void> loginWithEmailAndPassword(
@@ -32,13 +41,21 @@ class AuthRepository {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-    } catch (_) {}
+    } on FirebaseException catch (e ) {
+        Fluttertoast.showToast(msg: e.code,gravity: ToastGravity.TOP);
+      
+      print(e.code);
+    }
   }
 
   Future<void> logout() async {
     try {
       await Future.wait([_firebaseAuth.signOut()]);
-    } catch (_) {}
+    }  on FirebaseException catch (e ) {
+        Fluttertoast.showToast(msg: e.code,gravity: ToastGravity.TOP);
+      
+      print(e.code);
+    }
     ;
   }
 }

@@ -42,7 +42,7 @@ class HomePageBody extends StatefulWidget {
 class _HomePageBodyState extends State<HomePageBody> {
   final _listitem = ['one', 'two', 'three', 'four', 'details/month'];
 
-  final List<String> imgList = ['1', '2', '3', '4'];
+  final List<String> imgList = ['sales ', 'service', 'Current stock'];
 
   final _textFieldController = TextEditingController();
   final _firebaseref = FirebaseFirestore.instance;
@@ -85,6 +85,11 @@ class _HomePageBodyState extends State<HomePageBody> {
         toolbarHeight: 80.0,
         title: Image.asset('assets/images/fugipielogo.png', fit: BoxFit.cover),
         actions: [
+          CircleAvatar(
+                  radius: 20.0,
+                  backgroundImage: user.photo != null ? NetworkImage(user.photo!):null,
+                  child: user.photo==null? const Icon(Icons.circle_sharp):null,
+                ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
@@ -94,27 +99,23 @@ class _HomePageBodyState extends State<HomePageBody> {
                 icon: const Icon(
                   Icons.exit_to_app,
                   // CupertinoIcons.person_circle_fill,
-                  size: 50.0,
+                  size: 30.0,
                 )),
           ),
         ],
       ),
       body: Container(
-        color: const Color(0xFF232338),
+        color: const Color(0xFF181826),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 18.0),
+                  padding: const EdgeInsets.only(left: 18.0,top: 10.0),
                   child: dropdowndate(listitem: _listitem),
                 ),
-                // CircleAvatar(
-                //   radius: 50.0,
-                //   backgroundImage: user.photo != null ? NetworkImage(user.photo!):null,
-                //   child: user.photo==null? const Icon(Icons.circle_sharp):null,
-                // )
+                
               ],
             ),
             carouselslider(imgList: imgList),
@@ -174,16 +175,17 @@ class _HomePageBodyState extends State<HomePageBody> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            // backgroundColor: Colors.black87,
+            backgroundColor: Color(0xff232333),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
             actionsAlignment: MainAxisAlignment.center,
-            title: const Text("Add a new Task"),
+            title: const Text("Add a new Task",style: TextStyle(color:Colors.white)),
             content: TextField(
               controller: _textFieldController,
               autofocus: true,
-              decoration: const InputDecoration(hintText: "Add New Task"),
+              style: TextStyle(color:Colors.white),
+              decoration: const InputDecoration(hintText: "Add New Task",hintStyle: TextStyle(color:Colors.white)),
               onSubmitted: (_) => _submit(),
             ),
             actions: [

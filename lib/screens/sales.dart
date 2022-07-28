@@ -23,7 +23,7 @@ class _SalesPageState extends State<SalesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2A2A43),
+      backgroundColor: Color(0xFF181826),
       appBar: AppBar(
         toolbarHeight: 70.0,
         backgroundColor: Color(0xff181826),

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-
-
-
-
 class carouselslider extends StatefulWidget {
   const carouselslider({
     Key? key,
@@ -44,7 +40,7 @@ class _carouselsliderState extends State<carouselslider> {
                   width: MediaQuery.of(context).size.width,
                   margin: EdgeInsets.symmetric(horizontal: 5.0),
                   decoration: BoxDecoration(
-                      color: Color(0xFF4A4A6D),
+                      color: Color(0xFF232333),
                       borderRadius: BorderRadius.circular(10.0)),
                   child: Center(
                     child: Column(
@@ -52,7 +48,7 @@ class _carouselsliderState extends State<carouselslider> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'sales $i',
+                          '$i ',
                           style: TextStyle(
                             color: Colors.green,
                             fontWeight: FontWeight.w900,
@@ -60,7 +56,7 @@ class _carouselsliderState extends State<carouselslider> {
                           ),
                         ),
                         Text(
-                          '₹23220.0',
+                          '₹ 23220.0',
                           style: TextStyle(
                             color: Colors.white,
                             height: 2.0,
@@ -90,7 +86,7 @@ class _carouselsliderState extends State<carouselslider> {
                 shape: BoxShape.circle,
                 color: (Theme.of(context).brightness == Brightness.dark
                         ? Colors.white
-                        : Color(0xFFFFFFFF))
+                        : Color.fromARGB(255, 255, 255, 255))
                     .withOpacity(
                   _current == entry.key ? 0.9 : 0.4,
                 ),

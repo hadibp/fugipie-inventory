@@ -197,7 +197,7 @@ class StockListItem extends StatelessWidget {
                                       color: Colors.white, fontSize: 13.0),
                                 ),
                                 Text(
-                                  "\$ ${data?['purchaseprize']}",
+                                  "\$ ${data?['sellingprize']}",
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 13.0),
                                 ),
@@ -235,9 +235,9 @@ class StockListItem extends StatelessWidget {
                       SizedBox(
                         width: 300.0,
                         child: ElevatedButton(
-                          onPressed: ()  {
+                          onPressed: () {
                             print(data?.id);
-                             _updatestockitem(context, data);
+                            _updatestockitem(context, data);
                           },
                           style: ButtonStyle(
                             backgroundColor:
@@ -552,9 +552,10 @@ class StockListItem extends StatelessWidget {
                         'sellingprize': _sellingprize,
                         'discound': _discount
                       }).then((value) => ScaffoldMessenger.of(context)
-                          .showSnackBar( const SnackBar(
+                          .showSnackBar(const SnackBar(
                               content: Text("updated  the textfields"))));
-Navigator.of(context).pop();                   },
+                      Navigator.of(context).pop();
+                    },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.green),
                     ),

@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -36,6 +37,7 @@ class SignUpPage extends StatelessWidget {
     );
   }
 }
+final formkey =GlobalKey<FormState>();
 
 class SignUPForm extends StatelessWidget {
   const SignUPForm({Key? key}) : super(key: key);
@@ -48,29 +50,32 @@ class SignUPForm extends StatelessWidget {
         // TODO: implement listener
         print('you are not authrorized in signup');
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            child:
-                Image.asset('assets/images/fugipielogo.png', fit: BoxFit.cover),
-          ),
-          SizedBox(
-            height: 40.0,
-          ),
-          _EmailInput(),
-          SizedBox(
-            height: 20.0,
-          ),
-          _PasswordInput(),
-          SizedBox(
-            height: 20.0,
-          ),
-          _SignupButton(),
-          SizedBox(
-            height: 20.0,
-          ),
-        ],
+      child: Form(
+        key: formkey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              child:
+                  Image.asset('assets/images/fugipielogo.png', fit: BoxFit.cover),
+            ),
+            SizedBox(
+              height: 40.0,
+            ),
+            _EmailInput(),
+            SizedBox(
+              height: 20.0,
+            ),
+            _PasswordInput(),
+            SizedBox(
+              height: 20.0,
+            ),
+            _SignupButton(),
+            SizedBox(
+              height: 20.0,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -87,7 +92,7 @@ class _EmailInput extends StatelessWidget {
         return Container(
           margin: EdgeInsets.only(left: 30.0, right: 30.0),
           padding: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: TextField(
+          child: TextFormField(
             style: TextStyle(color: Colors.white),
             decoration: const InputDecoration(
               contentPadding: EdgeInsets.all(15.0),
@@ -102,8 +107,13 @@ class _EmailInput extends StatelessWidget {
             onChanged: (email) {
               context.read<SignupCubit>().emailChanged(email);
             },
-          ),
-        );
+            autofillHints: [AutofillHints.email],
+              keyboardType: TextInputType.emailAddress,
+              validator: (email) =>
+                  email != null && !EmailValidator.validate(email)
+                      ? 'Please enter a valid email'
+                      : null,
+            ));
       },
     );
   }
@@ -154,25 +164,16 @@ class _SignupButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 onPressed: () {
+                  final form = formkey.currentState!;
+                  if(form.validate()){
+
                   context.read<SignupCubit>().Signupformsubmitted();
+                  }
                 },
-                child: Text('submit'));
+                child: Text('Signup'));
       },
     );
   }
 }
 
-// class _SignupButton extends StatelessWidget {
-//   const _SignupButton({Key? key}) : super(key: key);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return ElevatedButton(
-//         onPressed: () {
-//           Navigator.of(context).push<void>(
-//             SignUpPage.route(),
-//           );
-//         },
-//         child: Text('signup'));
-//   }
-// }

@@ -107,7 +107,7 @@ class SalesItem extends StatelessWidget {
                                 height: 270.0,
                                 width: 400.0,
                                 decoration: BoxDecoration(
-                                    color: const Color(0xFF3E3E5C),
+                                    color: const Color(0xFF232333),
                                     borderRadius: BorderRadius.circular(10.0)),
                                 child: Column(
                                     mainAxisAlignment:
@@ -331,7 +331,7 @@ class SalesItem extends StatelessWidget {
                             children: [
                               Text(
                                 _streamSnapshot.hasData
-                                    ? 'items(${itemCount.toString()})'
+                                    ? 'items (${itemCount.toString()})'
                                     : '0',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 18.0),
@@ -349,8 +349,8 @@ class SalesItem extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 10.0),
                             child: Text(
                               _streamSnapshot.hasData
-                                  ? '\$ grandtotal}'
-                                  : '\$grandtotal',
+                                  ? '\$ grandtotal'
+                                  : '\$ grandtotal',
                               style: TextStyle(
                                   color: Colors.white, fontSize: 25.0),
                               textAlign: TextAlign.right,

@@ -1,13 +1,24 @@
-import 'dart:js';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fugipie_inventory/provider/serviceprovider.dart';
 import 'package:provider/provider.dart';
 
 import '../componants/servises/serviseitem.dart';
 
+bool progresscolor = false;
+
+final CollectionReference _servicelistfireref =
+    FirebaseFirestore.instance.collection('servises');
+var userid = FirebaseAuth.instance.currentUser?.uid;
+
+// final CollectionReference _bagfireref = _servicelistfireref
+//     .doc(userid)
+//     .collection('bag');
+
 class ServicePage extends StatelessWidget {
   TabController? _controller;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,43 +32,41 @@ class ServicePage extends StatelessWidget {
         child: DefaultTabController(
           length: 3,
           initialIndex: 0,
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(10)),
-                  width: 350.0,
-                  height: 40.0,
-                  margin: EdgeInsets.only(top: 25.0),
-                  child: TabBar(
-                      labelColor: Colors.white,
-                      indicator: BoxDecoration(
-                          color: Colors.blue,
-                          border: Border.all(color: Colors.blue),
-                          borderRadius: BorderRadius.circular(10)),
-                      isScrollable: false,
-                      tabs: [
-                        Tab(child: Text('Add a service', softWrap: false)),
-                        Tab(
-                            child: Text(
-                          'To be returned',
-                          softWrap: false,
-                        )),
-                        Tab(child: Text('Bag')),
-                      ]),
-                ),
-                Expanded(
-                  child: TabBarView(children: [
-                    tabOne(context),
-                    tabTwo(context),
-                    tabThree(),
-                  ]),
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blue),
+                    borderRadius: BorderRadius.circular(10)),
+                width: 350.0,
+                height: 40.0,
+                margin: EdgeInsets.only(top: 25.0),
+                child: TabBar(
+                    labelColor: Colors.white,
+                    indicator: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.blue),
+                        borderRadius: BorderRadius.circular(10)),
+                    isScrollable: false,
+                    tabs: [
+                      Tab(child: Text('Add a service', softWrap: false)),
+                      Tab(
+                          child: Text(
+                        'To be returned',
+                        softWrap: false,
+                      )),
+                      Tab(child: Text('Bag')),
+                    ]),
+              ),
+              Expanded(
+                child: TabBarView(children: [
+                  tabOne(context),
+                  tabTwo(context),
+                  tabThree(),
+                ]),
+              ),
+            ],
           ),
         ),
       ),
@@ -254,57 +263,292 @@ Widget tabOne(context) {
 Widget tabTwo(context) {
   Serviceprovider serviceprovider = Provider.of(context);
 
-    
-  serviceprovider.getServiceModal.map((servicedata) {
-  return Container(
-    child: Column(children: [
-      Padding(
-        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
-        child: Container(
-          //  height: 40.0,
-          child: TextField(
-            enabled: true,
-            style: TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              isDense: true,
-              contentPadding: EdgeInsets.only(top: 5.0, bottom: 10.0),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(
-                    color: Color.fromARGB(255, 255, 255, 255), width: 2.0),
-                borderRadius: BorderRadius.circular(40.0),
+  return StreamBuilder<QuerySnapshot>(
+      stream: _servicelistfireref.where('uid', isEqualTo: userid).snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
+        if (_streamSnapshot.hasData) {
+          return Column(children: [
+            Padding(
+              padding:
+                  const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
+              child: Container(
+                //  height: 40.0,
+                child: TextField(
+                  enabled: true,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.only(top: 5.0, bottom: 10.0),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          width: 2.0),
+                      borderRadius: BorderRadius.circular(40.0),
+                    ),
+                    border: OutlineInputBorder(
+                      borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          width: 2.0),
+                      borderRadius: BorderRadius.circular(40.0),
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: Color(0xFF707091),
+                    ),
+                    iconColor: Colors.white,
+                    hintText: 'search product id',
+                    hintStyle: TextStyle(color: Color(0xFF707091)),
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 55, 55, 90),
+                  ),
+                ),
               ),
-              border: OutlineInputBorder(
-                borderSide: const BorderSide(
-                    color: Color.fromARGB(255, 255, 255, 255), width: 2.0),
-                borderRadius: BorderRadius.circular(40.0),
-              ),
-              prefixIcon: const Icon(
-                Icons.search,
-                color: Color(0xFF707091),
-              ),
-              iconColor: Colors.white,
-              hintText: 'search product id',
-              hintStyle: TextStyle(color: Color(0xFF707091)),
-              filled: true,
-              fillColor: Color.fromARGB(255, 55, 55, 90),
             ),
-          ),
-        ),
-      ),
-      Expanded(
-        child: Container(
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(2.0),
+                child: ListView.builder(
+                    itemCount: _streamSnapshot.data?.docs.length,
+                    itemBuilder: (
+                      context,
+                      index,
+                    ) {
+                      final DocumentSnapshot data =
+                          _streamSnapshot.data!.docs[index];
+
+                      return Center(
+                          child: ListTile(
+                        title: Center(
+                            child: Container(
+                          height: 340.0,
+                          width: 400.0,
+                          decoration: BoxDecoration(
+                              color: Color(0xFF3E3E5C),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 20.0,
+                                  left: 18.0,
+                                  right: 18.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Product id : ${data['id']}',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(
+                              height: 2.0,
+                              thickness: 3.0,
+                              color: Color.fromARGB(255, 78, 78, 78),
+                              indent: 18.0,
+                              endIndent: 18.0,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 108, 108, 159),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 15.0, right: 15.0),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Return Date",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['returndate']}",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 108, 108, 159),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                ),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Isuue",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['servicecharge']}",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13.0,
+                                        ),
+                                        softWrap: true,
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 108, 108, 159),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Name",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['name']}",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 108, 108, 159),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Service Charge",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "\$ ${data['servicecharge']}",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 15.0, left: 20.0, right: 35.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "OnProgress",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Container(
+                                    width: 10.0,
+                                    height: 10.0,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: progresscolor
+                                          ? Color.fromARGB(255, 244, 16, 16)
+                                          : Color.fromARGB(255, 19, 164, 0),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: GestureDetector(
+                                  child: Text(
+                                    'More >',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ServiceItem(data),
+                                        ));
+                                  }),
+                            )
+                          ]),
+                        )),
+                      ));
+                    }),
+              ),
+            ),
+          ]);
+        } else {
+          return Text('no data');
+        }
+      });
+}
+// } else {
+//   return Text('no data');
+// }
+
+Widget tabThree() {
+  return StreamBuilder<QuerySnapshot>(
+      stream: _servicelistfireref.doc(userid).collection('bag').snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
+        var itemCount = _streamSnapshot.data?.docs.length;
+        print(itemCount);
+        return Container(
           padding: EdgeInsets.all(2.0),
           child: ListView.builder(
-              itemCount: 4,
+              itemCount: itemCount,
               itemBuilder: (
                 context,
                 index,
               ) {
+                final  data = _streamSnapshot.data?.docs[index];
                 return Center(
                     child: ListTile(
                   title: Center(
                       child: Container(
-                    height: 340.0,
+                    height: 250.0,
                     width: 400.0,
                     decoration: BoxDecoration(
                         color: Color(0xFF3E3E5C),
@@ -317,302 +561,110 @@ Widget tabTwo(context) {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'Product id : ${servicedata.issueId}',
+                              'Issue id :${data?['id']}',
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
                         ),
                       ),
-                      const Divider(
+                      Divider(
                         height: 2.0,
                         thickness: 3.0,
                         color: Color.fromARGB(255, 78, 78, 78),
                         indent: 18.0,
                         endIndent: 18.0,
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 108, 108, 159),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        margin:
-                            EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
-                        height: 40.0,
-                        width: 400.0,
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(left: 15.0, right: 15.0),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Return Date",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13.0),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Isuue",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 13.0),
+                              ),
+                              Text(
+                                "Broken Display",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13.0,
                                 ),
-                                Text(
-                                  "${servicedata.date}",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13.0),
-                                ),
-                              ]),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 108, 108, 159),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        margin:
-                            EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
-                        height: 40.0,
-                        width: 400.0,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 15.0,
-                            right: 15.0,
-                          ),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Isuue",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13.0),
-                                ),
-                                Text(
-                                  "${servicedata.issueId}",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                  softWrap: true,
-                                ),
-                              ]),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 108, 108, 159),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        margin:
-                            EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
-                        height: 40.0,
-                        width: 400.0,
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(left: 10.0, right: 10.0),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Name",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13.0),
-                                ),
-                                Text(
-                                  "${servicedata.name}",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13.0),
-                                ),
-                              ]),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 108, 108, 159),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        margin:
-                            EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
-                        height: 40.0,
-                        width: 400.0,
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(left: 10.0, right: 10.0),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Service Charge",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13.0),
-                                ),
-                                Text(
-                                  "\$ ${servicedata.servicecharge}",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 13.0),
-                                ),
-                              ]),
-                        ),
+                                softWrap: true,
+                              ),
+                            ]),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 15.0, left: 20.0, right: 35.0),
+                            left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Name",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 13.0),
+                              ),
+                              Text(
+                                "${data?['name']}",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 13.0),
+                              ),
+                            ]),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 15.0, left: 15.0, right: 35.0, bottom: 20.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "OnProgress",
-                              style: TextStyle(color: Colors.white),
+                              "Completed",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13.0,
+                              ),
                             ),
                             Container(
                               width: 10.0,
                               height: 10.0,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Color.fromARGB(255, 229, 124, 124)),
+                                  color: Color.fromARGB(255, 255, 0, 0)),
                             )
                           ],
                         ),
                       ),
+                      Divider(
+                        height: 5.0,
+                        thickness: 5.0,
+                        color: Color.fromARGB(255, 78, 78, 78),
+                        indent: 18.0,
+                        endIndent: 18.0,
+                      ),
                       Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: GestureDetector(
-                            child: Text(
-                              'More >',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const ServiceItem()),
-                              );
-                            }),
-                      )
+                        padding: EdgeInsets.only(
+                            left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Service Charge",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 13.0),
+                              ),
+                              Text(
+                                "${data?['servicecharge']}",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 13.0),
+                              ),
+                            ]),
+                      ),
                     ]),
                   )),
                 ));
               }),
-        ),
-      ),
-    ]),
-  );
-  }).toList();
-}
-
-Widget tabThree() {
-  return Container(
-    padding: EdgeInsets.all(2.0),
-    child: ListView.builder(
-        itemCount: 4,
-        itemBuilder: (
-          context,
-          index,
-        ) {
-          return Center(
-              child: ListTile(
-            title: Center(
-                child: Container(
-              height: 250.0,
-              width: 400.0,
-              decoration: BoxDecoration(
-                  color: Color(0xFF3E3E5C),
-                  borderRadius: BorderRadius.circular(10.0)),
-              child: Column(children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20.0, left: 18.0, right: 18.0, bottom: 5.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Issue id : 10011',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider(
-                  height: 2.0,
-                  thickness: 3.0,
-                  color: Color.fromARGB(255, 78, 78, 78),
-                  indent: 18.0,
-                  endIndent: 18.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Isuue",
-                          style: TextStyle(color: Colors.white, fontSize: 13.0),
-                        ),
-                        Text(
-                          "Broken Display",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13.0,
-                          ),
-                          softWrap: true,
-                        ),
-                      ]),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Name",
-                          style: TextStyle(color: Colors.white, fontSize: 13.0),
-                        ),
-                        Text(
-                          "Aquibe",
-                          style: TextStyle(color: Colors.white, fontSize: 13.0),
-                        ),
-                      ]),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 15.0, left: 15.0, right: 35.0, bottom: 20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Completed",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.0,
-                        ),
-                      ),
-                      Container(
-                        width: 10.0,
-                        height: 10.0,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromARGB(255, 255, 0, 0)),
-                      )
-                    ],
-                  ),
-                ),
-                Divider(
-                  height: 5.0,
-                  thickness: 5.0,
-                  color: Color.fromARGB(255, 78, 78, 78),
-                  indent: 18.0,
-                  endIndent: 18.0,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Service Charge",
-                          style: TextStyle(color: Colors.white, fontSize: 13.0),
-                        ),
-                        Text(
-                          "8000",
-                          style: TextStyle(color: Colors.white, fontSize: 13.0),
-                        ),
-                      ]),
-                ),
-              ]),
-            )),
-          ));
-        }),
-  );
+        );
+      });
 }

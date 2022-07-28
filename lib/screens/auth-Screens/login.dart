@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -6,7 +7,6 @@ import 'package:fugipie_inventory/bloc/cubit/cubit/login_cubit.dart';
 import 'package:fugipie_inventory/main.dart';
 import 'package:fugipie_inventory/repository/authRepository.dart';
 import './signup.dart';
-
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,50 +22,56 @@ class LoginScreen extends StatelessWidget {
             create: (_) => LoginCubit(
                   context.read<AuthRepository>(),
                 ),
-            child: const LoginForm()),
+            child:  LoginForm()),
       ),
     );
   }
 }
+  final formkey =GlobalKey<FormState>();
 
 class LoginForm extends StatelessWidget {
-  const LoginForm({Key? key}) : super(key: key);
+   LoginForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
-        if (state.status == LoginStatus.error) {}
-        // TODO: implement listener
+        if (state.status == LoginStatus.error) {
         print('you are not authrorized');
+
+        }
+        // TODO: implement listener
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            child:
-                Image.asset('assets/images/fugipielogo.png', fit: BoxFit.cover),
-          ),
-          SizedBox(
-            height: 40.0,
-          ),
-          const _EmailInput(),
-          SizedBox(
-            height: 20.0,
-          ),
-          _PasswordInput(),
-          SizedBox(
-            height: 20.0,
-          ),
-          _LoginButton(),
-          SizedBox(
-            height: 20.0,
-          ),
-          _SignupButton(),
-          SizedBox(
-            height: 20.0,
-          ),
-        ],
+      child: Form(
+        key: formkey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              child:
+                  Image.asset('assets/images/fugipielogo.png', fit: BoxFit.cover),
+            ),
+            const SizedBox(
+              height: 40.0,
+            ),
+            const _EmailInput(),
+            const SizedBox(
+              height: 20.0,
+            ),
+            const _PasswordInput(),
+            const SizedBox(
+              height: 20.0,
+            ),
+            const _LoginButton(),
+            const SizedBox(
+              height: 20.0,
+            ),
+            const _SignupButton(),
+            const SizedBox(
+              height: 20.0,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -82,7 +88,7 @@ class _EmailInput extends StatelessWidget {
         return Container(
             margin: EdgeInsets.only(left: 30.0, right: 30.0),
             padding: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: TextField(
+            child: TextFormField(
               style: TextStyle(color: Colors.white),
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.all(15.0),
@@ -97,6 +103,12 @@ class _EmailInput extends StatelessWidget {
               onChanged: (email) {
                 context.read<LoginCubit>().emailChanged(email);
               },
+              autofillHints: [AutofillHints.email],
+              keyboardType: TextInputType.emailAddress,
+              validator: (email) =>
+                  email != null && !EmailValidator.validate(email)
+                      ? 'Please enter a valid email'
+                      : null,
             ));
       },
     );
@@ -114,7 +126,7 @@ class _PasswordInput extends StatelessWidget {
         return Container(
           margin: EdgeInsets.only(left: 30.0, right: 30.0),
           padding: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: TextField(
+          child: TextFormField(
             obscureText: true,
             style: TextStyle(color: Colors.white),
             onChanged: (password) {
@@ -158,9 +170,13 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 onPressed: () {
+                  final form = formkey.currentState!;
+                  if(form.validate()){
+
                   context.read<LoginCubit>().loginwithcredential();
+                  }
                 },
-                child:const Text('submit'));
+                child: const Text('Login'));
       },
     );
   }
@@ -177,6 +193,6 @@ class _SignupButton extends StatelessWidget {
             SignUpPage.route(),
           );
         },
-        child:const Text('signup'));
+        child: const Text('signup'));
   }
 }

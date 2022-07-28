@@ -21,6 +21,7 @@ dependencies:
   flutterfire_ui: ^0.4.2+2
   flow_builder: ^0.0.9
   url_launcher: ^6.1.5
+  email_validator: ^2.1.16
 
 dev_dependencies:
   flutter_test:

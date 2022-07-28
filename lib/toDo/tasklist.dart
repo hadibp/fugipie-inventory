@@ -33,7 +33,7 @@ class TaskList extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
-                      color: Color(0xFF4A4A6D),
+                      color: Color(0xFF232333),
                     ),
                     child: ListTile(
                       title: Text(

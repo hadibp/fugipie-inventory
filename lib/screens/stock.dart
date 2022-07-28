@@ -21,7 +21,6 @@ class StockPage extends StatelessWidget {
       ),
       body: Center(
         child: FloatingActionButton(
-          
           backgroundColor: Colors.blueAccent,
           child: Icon(
             Icons.add,
@@ -331,8 +330,7 @@ Widget buildText(String text) => Container(
       ),
     );
 
-void _insertstokRecord(
-    id, name, date, vendor, quantity, purchaseprize, sellingprize, discount) {
+void _insertstokRecord(  id, name, date, vendor, quantity, purchaseprize, sellingprize, discount) {
   print(id +
       name +
       date +

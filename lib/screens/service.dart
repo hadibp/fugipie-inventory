@@ -22,10 +22,10 @@ class ServicePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 18, 18, 33),
+      backgroundColor: Color(0xFF181826),
       appBar: AppBar(
         title: Text('Servises'),
-        backgroundColor: Color(0xFF202034),
+        backgroundColor: Color(0xFF181826),
         elevation: 0.0,
       ),
       body: Container(
@@ -99,6 +99,26 @@ void _servicebottommodal(context) {
                 buildText('Issue Id'),
                 TextField(
                   controller: serviceprovider.issueidcontroller,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Colors.grey,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  toolbarOptions: ToolbarOptions(selectAll: true),
+                ),
+                buildText('Issue'),
+                TextField(
+                  controller: serviceprovider.issuecontroller,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
@@ -270,15 +290,15 @@ Widget tabTwo(context) {
           return Column(children: [
             Padding(
               padding:
-                  const EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0),
-              child: Container(
-                //  height: 40.0,
+                  const EdgeInsets.only(left: 40.0, right: 50.0, top: 15.0, bottom: 5.0),
+              child: SizedBox(
+                height: 40.0,
                 child: TextField(
                   enabled: true,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     isDense: true,
-                    contentPadding: EdgeInsets.only(top: 5.0, bottom: 10.0),
+                    contentPadding: EdgeInsets.only(top: 10.0, bottom: 15.0),
                     focusedBorder: OutlineInputBorder(
                       borderSide: const BorderSide(
                           color: Color.fromARGB(255, 255, 255, 255),
@@ -299,14 +319,14 @@ Widget tabTwo(context) {
                     hintText: 'search product id',
                     hintStyle: TextStyle(color: Color(0xFF707091)),
                     filled: true,
-                    fillColor: Color.fromARGB(255, 55, 55, 90),
+                    fillColor: Color(0xFF373748),
                   ),
                 ),
               ),
             ),
             Expanded(
               child: Container(
-                padding: EdgeInsets.all(2.0),
+                padding: EdgeInsets.all(3.0),
                 child: ListView.builder(
                     itemCount: _streamSnapshot.data?.docs.length,
                     itemBuilder: (
@@ -323,7 +343,7 @@ Widget tabTwo(context) {
                           height: 340.0,
                           width: 400.0,
                           decoration: BoxDecoration(
-                              color: Color(0xFF3E3E5C),
+                              color: Color(0xFF232333),
                               borderRadius: BorderRadius.circular(10.0)),
                           child: Column(children: [
                             Padding(
@@ -351,7 +371,7 @@ Widget tabTwo(context) {
                             ),
                             Container(
                               decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 108, 108, 159),
+                                  color: Color(0xFF373748),
                                   borderRadius: BorderRadius.circular(10.0)),
                               margin: EdgeInsets.only(
                                   left: 18.0, right: 18.0, top: 10.0),
@@ -381,7 +401,7 @@ Widget tabTwo(context) {
                             ),
                             Container(
                               decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 108, 108, 159),
+                                  color: Color(0xFF373748),
                                   borderRadius: BorderRadius.circular(10.0)),
                               margin: EdgeInsets.only(
                                   left: 18.0, right: 18.0, top: 10.0),
@@ -403,7 +423,7 @@ Widget tabTwo(context) {
                                             fontSize: 13.0),
                                       ),
                                       Text(
-                                        "${data['servicecharge']}",
+                                        "${data['issue']}",
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 13.0,
@@ -415,7 +435,7 @@ Widget tabTwo(context) {
                             ),
                             Container(
                               decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 108, 108, 159),
+                                  color: Color(0xFF373748),
                                   borderRadius: BorderRadius.circular(10.0)),
                               margin: EdgeInsets.only(
                                   left: 18.0, right: 18.0, top: 10.0),
@@ -445,7 +465,7 @@ Widget tabTwo(context) {
                             ),
                             Container(
                               decoration: BoxDecoration(
-                                  color: Color.fromARGB(255, 108, 108, 159),
+                                  color: Color(0xFF373748),
                                   borderRadius: BorderRadius.circular(10.0)),
                               margin: EdgeInsets.only(
                                   left: 18.0, right: 18.0, top: 10.0),
@@ -536,7 +556,7 @@ Widget tabThree() {
         var itemCount = _streamSnapshot.data?.docs.length;
         print(itemCount);
         return Container(
-          padding: EdgeInsets.all(2.0),
+          padding: EdgeInsets.only(top:10.0,left: 2.0,right: 2.0),
           child: ListView.builder(
               itemCount: itemCount,
               itemBuilder: (
@@ -548,15 +568,15 @@ Widget tabThree() {
                     child: ListTile(
                   title: Center(
                       child: Container(
-                    height: 250.0,
+                    // height: 250.0,
                     width: 400.0,
                     decoration: BoxDecoration(
-                        color: Color(0xFF3E3E5C),
+                        color: Color(0xFF232333),
                         borderRadius: BorderRadius.circular(10.0)),
                     child: Column(children: [
                       Padding(
                         padding: const EdgeInsets.only(
-                            top: 20.0, left: 18.0, right: 18.0, bottom: 5.0),
+                            top: 15.0, left: 18.0, right: 18.0, bottom: 5.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -567,7 +587,7 @@ Widget tabThree() {
                           ],
                         ),
                       ),
-                      Divider(
+                      const Divider(
                         height: 2.0,
                         thickness: 3.0,
                         color: Color.fromARGB(255, 78, 78, 78),
@@ -580,13 +600,13 @@ Widget tabThree() {
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "Isuue",
+                              const Text(
+                                "Issue",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 13.0),
                               ),
                               Text(
-                                "Broken Display",
+                                "${data?['issue']}",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 13.0,
@@ -645,7 +665,7 @@ Widget tabThree() {
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 15.0, right: 15.0, top: 15.0, bottom: 10.0),
+                            left: 15.0, right: 15.0, top: 15.0, bottom: 20.0),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

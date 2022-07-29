@@ -38,7 +38,7 @@ class ServiceItem extends StatelessWidget {
                 height: 500.0,
                 width: 400.0,
                 decoration: BoxDecoration(
-                    color: Color(0xFF3E3E5C),
+                    color: Color(0xFF232333),
                     borderRadius: BorderRadius.circular(10.0)),
                 child: Column(children: [
                   Padding(
@@ -63,7 +63,7 @@ class ServiceItem extends StatelessWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 108, 108, 159),
+                        color: Color(0xFF373748),
                         borderRadius: BorderRadius.circular(10.0)),
                     margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
                     height: 40.0,
@@ -88,7 +88,7 @@ class ServiceItem extends StatelessWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 108, 108, 159),
+                        color: Color(0xFF373748),
                         borderRadius: BorderRadius.circular(10.0)),
                     margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
                     height: 40.0,
@@ -107,7 +107,7 @@ class ServiceItem extends StatelessWidget {
                                   color: Colors.white, fontSize: 13.0),
                             ),
                             Text(
-                              "Broken Display",
+                              "${datas?['issue']}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 13.0,
@@ -119,7 +119,7 @@ class ServiceItem extends StatelessWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 108, 108, 159),
+                        color: Color(0xFF373748),
                         borderRadius: BorderRadius.circular(10.0)),
                     margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
                     height: 40.0,
@@ -144,7 +144,7 @@ class ServiceItem extends StatelessWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 108, 108, 159),
+                        color: Color(0xFF373748),
                         borderRadius: BorderRadius.circular(10.0)),
                     margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
                     height: 40.0,
@@ -169,7 +169,7 @@ class ServiceItem extends StatelessWidget {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 108, 108, 159),
+                        color: Color(0xFF373748),
                         borderRadius: BorderRadius.circular(10.0)),
                     margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
                     height: 40.0,
@@ -216,6 +216,7 @@ class ServiceItem extends StatelessWidget {
                             .doc(uniqueId)
                             .set({
                           "id": datas?['id'],
+                          "issue": datas?['issue'],
                           "name": datas?['name'],
                           "returndate": datas?['returndate'],
                           "servicecharge": datas?['servicecharge'],

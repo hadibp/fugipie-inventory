@@ -260,7 +260,7 @@ class _StockListState extends State<StockList> {
                                   ),
                                   onTap: () {
                                     print(docid);
-                                    final dataq = 'string';
+                                    final dataq =  _streamSnapshot.data?.docs[index];
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -414,12 +414,13 @@ class _StockListState extends State<StockList> {
                                   ),
                                   onTap: () {
                                     print(docid);
-                                    final dataq = 'string';
+                                    final dataq =  _streamSnapshot.data?.docs[index];
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              StockListItem(context, dataq)),
+                                        builder: (context) =>
+                                            StockListItem(context, dataq),
+                                      ),
                                     );
                                   }),
                             )

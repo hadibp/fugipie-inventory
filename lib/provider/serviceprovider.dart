@@ -15,6 +15,7 @@ class Serviceprovider extends ChangeNotifier {
   TextEditingController servicechargecontroller = TextEditingController();
   TextEditingController namecontroller = TextEditingController();
   TextEditingController phonecontroller = TextEditingController();
+  TextEditingController issuecontroller = TextEditingController();
 
   void servicemodelvalidator(context) async {
     if (issueidcontroller.text.isEmpty) {
@@ -47,6 +48,12 @@ class Serviceprovider extends ChangeNotifier {
           content: Text('phone number is empty'),
         ),
       );
+    } else if (issuecontroller.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('issue is empty'),
+        ),
+      );
     } else {
       isloadding = true;
       notifyListeners();
@@ -55,6 +62,7 @@ class Serviceprovider extends ChangeNotifier {
       FirebaseFirestore.instance.collection('servises').doc(uniqueId).set({
         'id': issueidcontroller.text,
         'uid': userid,
+        'issue':issuecontroller.text,
         'returndate': returndatecontroller.text,
         'servicecharge': servicechargecontroller.text,
         'name': namecontroller.text,
@@ -82,6 +90,7 @@ class Serviceprovider extends ChangeNotifier {
       (element) {
         serviceModel = ServiceModal(
             issueId: element.get('issueid'),
+            issue: element.get('issue'),
             date: element.get('date'),
             servicecharge: element.get('servicecharge'),
             name: element.get('name'),

@@ -29,10 +29,10 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2A2A43),
+      backgroundColor: Color(0xFF181826),
       appBar: AppBar(
         title: Text('History'),
-        backgroundColor: Color(0xFF2A2A43),
+        backgroundColor: Color(0xFF181826),
         elevation: 0.0,
       ),
       body: Container(
@@ -69,7 +69,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   child: Container(
                     height: 40.0,
                     width: 350.0,
-                    color: Color.fromARGB(255, 56, 67, 76),
+                    color: Color(0xFF373748),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -199,7 +199,7 @@ Widget _tabOne() {
                           // height: 250.0,
                           width: 400.0,
                           decoration: BoxDecoration(
-                              color: Color(0xFF3E3E5C),
+                              color: Color(0xFF232333),
                               borderRadius: BorderRadius.circular(10.0)),
                           child: Column(children: [
                             Padding(
@@ -225,9 +225,9 @@ Widget _tabOne() {
                                 ],
                               ),
                             ),
-                            Divider(
+                            const Divider(
                               height: 2.0,
-                              thickness: 3.0,
+                              thickness: 2.0,
                               color: Color.fromARGB(255, 78, 78, 78),
                               indent: 18.0,
                               endIndent: 18.0,
@@ -362,7 +362,7 @@ Widget _tabOne() {
                             ),
                             const Divider(
                               height: 5.0,
-                              thickness: 5.0,
+                              thickness: 2.0,
                               color: Color.fromARGB(255, 78, 78, 78),
                               indent: 18.0,
                               endIndent: 18.0,
@@ -438,7 +438,7 @@ Widget _tabTwo() {
                         // height: 250.0,
                         width: 400.0,
                         decoration: BoxDecoration(
-                            color: Color(0xFF3E3E5C),
+                            color: Color(0xFF232333),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Column(children: [
                           Padding(
@@ -664,7 +664,7 @@ Widget _tabTwo() {
                           ),
                           const Divider(
                             height: 5.0,
-                            thickness: 5.0,
+                            thickness: 3.0,
                             color: Color.fromARGB(255, 78, 78, 78),
                             indent: 18.0,
                             endIndent: 18.0,
@@ -732,7 +732,7 @@ Widget _tabThree() {
                         // height: 250.0,
                         width: 400.0,
                         decoration: BoxDecoration(
-                            color: Color(0xFF3E3E5C),
+                            color: Color(0xFF232333),
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Column(children: [
                           Padding(
@@ -748,7 +748,7 @@ Widget _tabThree() {
                               ],
                             ),
                           ),
-                          Divider(
+                          const Divider(
                             height: 2.0,
                             thickness: 3.0,
                             color: Color.fromARGB(255, 78, 78, 78),
@@ -786,7 +786,7 @@ Widget _tabThree() {
                                     style: TextStyle(color: Colors.white, fontSize: 13.0),
                                   ),
                                   Text(
-                                    "Broken Display",
+                                    "${data?['issue']}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13.0,
@@ -852,7 +852,7 @@ Widget _tabThree() {
                           ),
                           Divider(
                             height: 5.0,
-                            thickness: 5.0,
+                            thickness: 3.0,
                             color: Color.fromARGB(255, 78, 78, 78),
                             indent: 18.0,
                             endIndent: 18.0,

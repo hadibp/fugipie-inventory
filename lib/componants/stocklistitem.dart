@@ -9,9 +9,10 @@ import 'package:fugipie_inventory/componants/stocklist.dart';
 import '../bloc/counter/counter_bloc.dart';
 
 class StockListItem extends StatelessWidget {
-  StockListItem(context, this.datas);
+  StockListItem(context, this.data);
 
-  DocumentSnapshot? datas;
+  DocumentSnapshot? datas ;
+  String data;
 
   final CollectionReference _stockistfireref =
       FirebaseFirestore.instance.collection('stocklist');

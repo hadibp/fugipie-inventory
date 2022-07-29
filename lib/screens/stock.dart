@@ -326,7 +326,7 @@ Widget buildText(String text) => Container(
       child: Text(
         text,
         style: const TextStyle(
-            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.grey),
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.grey,),
       ),
     );
 
@@ -346,8 +346,9 @@ void _insertstokRecord(  id, name, date, vendor, quantity, purchaseprize, sellin
     'id': id,
     'uid': userid,
     'name': name,
+    'date': date,
     'vendor': vendor,
-    'quantitiy': quantity,
+    'quantity': quantity,
     'purchaseprize': purchaseprize,
     'sellingprize': sellingprize,
     'discound': discount,

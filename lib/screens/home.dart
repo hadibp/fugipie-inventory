@@ -38,6 +38,7 @@ class _HomePageState extends State<HomePage> {
     SalesPage(),
     ServicePage(),
     HistoryPage(),
+
   ];
 
   @override

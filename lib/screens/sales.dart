@@ -52,11 +52,11 @@ class _SalesPageState extends State<SalesPage> {
                       child: TextField(
                         controller: _searchcontroller,
                         enabled: true,
-                        style:const TextStyle(color: Colors.white),
-                        decoration:const InputDecoration(
+                        style: const TextStyle(color: Colors.white),
+                        decoration: const InputDecoration(
                           enabledBorder: InputBorder.none,
                           border: InputBorder.none,
-                          icon:  Icon(
+                          icon: Icon(
                             Icons.search,
                             color: Color(0xFF707091),
                           ),
@@ -79,20 +79,22 @@ class _SalesPageState extends State<SalesPage> {
             ),
           ),
           IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SalesItem(context, name)),
-                );
-              },
-              icon: Icon(Icons.shopping_cart_checkout),),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SalesItem(context, name)),
+              );
+            },
+            icon: Icon(Icons.shopping_cart_checkout),
+          ),
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
           stream: _stocklistfireref.where('uid', isEqualTo: userid).snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
             if (_streamSnapshot.hasData) {
+              print(_streamSnapshot.hasData);
               return ListView.builder(
                 itemCount: _streamSnapshot.data?.docs.length,
                 itemBuilder: ((context, index) {
@@ -101,6 +103,7 @@ class _SalesPageState extends State<SalesPage> {
 
                   if (name.isEmpty) {
                     print(name);
+                    print(_streamSnapshot.data?.docs.length);
 
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -155,6 +158,7 @@ class _SalesPageState extends State<SalesPage> {
                           ),
                           onPressed: () {
                             _salesbottommodal(context, data);
+                            print(_streamSnapshot.data?.docs.length);
                             print(name);
                           },
                         ),

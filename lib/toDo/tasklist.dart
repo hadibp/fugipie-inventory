@@ -22,11 +22,12 @@ class TaskList extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: _todolistfireref.where('uid',isEqualTo: userid ).snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
-        if (_streamSnapshot.hasData) {
+        if (_streamSnapshot.hasData ) {
+          // print(_streamSnapshot.data!.docs.isNotEmpty);
           return ListView.builder(
               itemCount: _streamSnapshot.data?.docs.length,
               itemBuilder: (context, index) {
-                final DocumentSnapshot data = _streamSnapshot.data!.docs[index];
+                final  data = _streamSnapshot.data?.docs[index];
                 return Padding(
                   padding: const EdgeInsets.only(
                       top: 10.0, bottom: 4.0, left: 10.0, right: 10.0),
@@ -37,7 +38,7 @@ class TaskList extends StatelessWidget {
                     ),
                     child: ListTile(
                       title: Text(
-                        data['title'],
+                        data?['title'],
                         style: TextStyle(color: Colors.white),
                       ),
                       trailing: Row(
@@ -55,7 +56,7 @@ class TaskList extends StatelessWidget {
                             ),
                             child: IconButton(
                               onPressed: () {
-                                _delete(context, data.id);
+                                _delete(context, data!.id);
                               },
                               icon: const Icon(
                                 Icons.delete,
@@ -69,8 +70,8 @@ class TaskList extends StatelessWidget {
                   ),
                 );
               });
-        } else {
-          return Text('not found');
+        } else{
+          return Container(child: Center(child: Text('not found',style: TextStyle(color: Colors.white),)));
         }
       },
     );

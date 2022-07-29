@@ -30,7 +30,7 @@ class _StockListState extends State<StockList> {
     return StreamBuilder<QuerySnapshot>(
         stream: _todolistfireref.where('uid', isEqualTo: userid).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
-          if (_streamSnapshot.data?.size != null) {
+          if (_streamSnapshot.hasData) {
             print(_streamSnapshot.data?.docs.length);
             print(_streamSnapshot.data?.size);
 
@@ -39,7 +39,7 @@ class _StockListState extends State<StockList> {
               appBar: AppBar(
                 toolbarHeight: 70.0,
                 backgroundColor: Color(0xff181826),
-                title:const Text(
+                title: const Text(
                   'Stock',
                   style: TextStyle(color: Colors.white),
                 ),
@@ -110,162 +110,325 @@ class _StockListState extends State<StockList> {
                   ),
                 ],
               ),
-              body: 
-              
-              ListView.builder(
+              body: ListView.builder(
                   itemCount: _streamSnapshot.data?.docs.length,
                   itemBuilder: (
                     context,
                     index,
                   ) {
-                    final DocumentSnapshot data =
-                        _streamSnapshot.data!.docs[index];
+                    final data = _streamSnapshot.data?.docs[index].data()
+                        as Map<String, dynamic>;
+
                     final docid = data['id'];
-
-                    return Center(
-                        child: ListTile(
-                      title: Center(
-                          child: Container(
-                        height: 270.0,
-                        width: 400.0,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF232333),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        child: Column(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 20.0,
-                                left: 18.0,
-                                right: 18.0,
-                                bottom: 5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  '11-02-2022',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                Text(
-                                  'Product id : ${data['id']}',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(
-                            height: 2.0,
-                            thickness: 3.0,
-                            color: Color.fromARGB(255, 78, 78, 78),
-                            indent: 18.0,
-                            endIndent: 18.0,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xFF373748),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            margin: const EdgeInsets.only(
-                                left: 18.0, right: 18.0, top: 10.0),
-                            height: 40.0,
-                            width: 400.0,
-                            child: Padding(
+                    if (searchid.isEmpty) {
+                      return Center(
+                          child: ListTile(
+                        title: Center(
+                            child: Container(
+                          height: 270.0,
+                          width: 400.0,
+                          decoration: BoxDecoration(
+                              color: Color(0xFF232333),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Column(children: [
+                            Padding(
                               padding: const EdgeInsets.only(
-                                  left: 15.0, right: 15.0),
+                                  top: 20.0,
+                                  left: 18.0,
+                                  right: 18.0,
+                                  bottom: 5.0),
                               child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      "Product Name",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 13.0),
-                                    ),
-                                    Text(
-                                      "${data['name']}",
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 13.0),
-                                    ),
-                                  ]),
-                            ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xFF373748),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            margin: const EdgeInsets.only(
-                                left: 18.0, right: 18.0, top: 10.0),
-                            height: 40.0,
-                            width: 400.0,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: 15.0,
-                                right: 15.0,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    '11-02-2022',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Text(
+                                    'Product id : ${data['id']}',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
                               ),
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      "Vendor",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 13.0),
-                                    ),
-                                    Text(
-                                      "${data['vendor']}",
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 13.0),
-                                    ),
-                                  ]),
                             ),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xFF373748),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            margin: const EdgeInsets.only(
-                                left: 18.0, right: 18.0, top: 10.0),
-                            height: 40.0,
-                            width: 400.0,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 10.0, right: 10.0),
-                              child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      "Quantity",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 13.0),
-                                    ),
-                                    Text(
-                                      "${data['quantity']}",
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 13.0),
-                                    ),
-                                  ]),
+                            const Divider(
+                              height: 2.0,
+                              thickness: 3.0,
+                              color: Color.fromARGB(255, 78, 78, 78),
+                              indent: 18.0,
+                              endIndent: 18.0,
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(25.0),
-                            child: GestureDetector(
-                                child: const Text(
-                                  'More > ',
-                                  style: TextStyle(color: Colors.white),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xFF373748),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 15.0, right: 15.0),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Product Name",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['name']}",
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xFF373748),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
                                 ),
-                                onTap: () {
-                                  print(docid);
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            StockListItem(context, data)),
-                                  );
-                                }),
-                          )
-                        ]),
-                      )),
-                    ));
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Vendor",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['vendor']}",
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xFF373748),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Quantity",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['quantity']}",
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(25.0),
+                              child: GestureDetector(
+                                  child: const Text(
+                                    'More > ',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onTap: () {
+                                    print(docid);
+                                    final dataq = 'string';
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              StockListItem(context, dataq)),
+                                    );
+                                  }),
+                            )
+                          ]),
+                        )),
+                      ));
+                    } else if (data['id']
+                        .toString()
+                        .startsWith(searchid.toLowerCase())) {
+                      return Center(
+                          child: ListTile(
+                        title: Center(
+                            child: Container(
+                          height: 270.0,
+                          width: 400.0,
+                          decoration: BoxDecoration(
+                              color: Color(0xFF232333),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 20.0,
+                                  left: 18.0,
+                                  right: 18.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    '11-02-2022',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  Text(
+                                    'Product id : ${data['id']}',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(
+                              height: 2.0,
+                              thickness: 3.0,
+                              color: Color.fromARGB(255, 78, 78, 78),
+                              indent: 18.0,
+                              endIndent: 18.0,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xFF373748),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 15.0, right: 15.0),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Product Name",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['name']}",
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xFF373748),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                ),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Vendor",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['vendor']}",
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xFF373748),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.only(
+                                  left: 18.0, right: 18.0, top: 10.0),
+                              height: 40.0,
+                              width: 400.0,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0),
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        "Quantity",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                      Text(
+                                        "${data['quantity']}",
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.0),
+                                      ),
+                                    ]),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(25.0),
+                              child: GestureDetector(
+                                  child: const Text(
+                                    'More > ',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  onTap: () {
+                                    print(docid);
+                                    final dataq = 'string';
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              StockListItem(context, dataq)),
+                                    );
+                                  }),
+                            )
+                          ]),
+                        )),
+                      ));
+                    } else {
+                      return Container();
+                    }
                   }),
             );
           } else {

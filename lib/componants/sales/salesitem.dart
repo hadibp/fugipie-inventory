@@ -3,6 +3,10 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fugipie_inventory/bloc/cart/cart_bloc.dart';
+import 'package:fugipie_inventory/bloc/checkout/checkout_bloc.dart';
+import 'package:fugipie_inventory/modals/stockmodel.dart';
 import 'package:fugipie_inventory/screens/sales.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,75 +21,66 @@ void sendtowhatsapp({@required mobnumber, @required name}) async {
 
 // double grandtotal=0.0;
 class SalesItem extends StatelessWidget {
-  SalesItem(context, this.data);
+  SalesItem(context, data);
   var data;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff181826),
-      appBar: AppBar(
-        toolbarHeight: 70.0,
         backgroundColor: Color(0xff181826),
-        title: const Text(
-          'Sales orders',
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: [
-          Padding(
-            padding:
-                const EdgeInsets.only(right: 10.0, top: 15.0, bottom: 15.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                color: Color(0xFF2A2A45),
-              ),
-              width: 130.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 15.0),
-                      child: TextField(
-                        enabled: true,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none,
-                          icon: Icon(
-                            Icons.search,
-                            color: Color(0xFF707091),
+        appBar: AppBar(
+          toolbarHeight: 70.0,
+          backgroundColor: Color(0xff181826),
+          title: const Text(
+            'Sales orders',
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            Padding(
+              padding:
+                  const EdgeInsets.only(right: 10.0, top: 15.0, bottom: 15.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Color(0xFF2A2A45),
+                ),
+                width: 130.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: const [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15.0),
+                        child: TextField(
+                          enabled: true,
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            enabledBorder: InputBorder.none,
+                            border: InputBorder.none,
+                            icon: Icon(
+                              Icons.search,
+                              color: Color(0xFF707091),
+                            ),
+                            iconColor: Colors.white,
+                            hintText: 'search product',
+                            hintStyle: TextStyle(color: Color(0xFF707091)),
+                            fillColor: Color(0xFF707091),
                           ),
-                          iconColor: Colors.white,
-                          hintText: 'search product',
-                          hintStyle: TextStyle(color: Color(0xFF707091)),
-                          fillColor: Color(0xFF707091),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-          stream: _stocklistfireref
-              .doc(userid)
-              .collection('cart-collection')
-              .snapshots(),
-          builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
-            var itemCount = _streamSnapshot.data?.docs.length;
-
-            if (_streamSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+          ],
+        ),
+        body: BlocBuilder<CartBloc, CartState>(
+          builder: (context, state) {
+            if (state is CartLoading) {
+              const Center(child: CircularProgressIndicator());
             }
-
-            if (_streamSnapshot.hasData) {
+            if (state is CartLoaded) {
               return Column(
                 children: [
                   Expanded(
@@ -93,14 +88,13 @@ class SalesItem extends StatelessWidget {
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: _streamSnapshot.data?.docs.length,
+                          itemCount: state.cart
+                              .products.length,
                           itemBuilder: (
                             context,
                             index,
                           ) {
-                            final DocumentSnapshot data =
-                                _streamSnapshot.data!.docs[index];
-
+                            final data = state.cart.products[index];
                             return ListTile(
                               title: Center(
                                   child: Container(
@@ -125,19 +119,20 @@ class SalesItem extends StatelessWidget {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
-                                              'Product id : ${data['id']}',
+                                              'Product id : ${data.id}',
                                               style: const TextStyle(
                                                   color: Colors.white),
                                               textAlign: TextAlign.left,
                                             ),
                                             IconButton(
-                                              icon: Icon(
+                                              icon: const Icon(
                                                 Icons.delete,
                                                 color: Colors.red,
                                               ),
                                               alignment: Alignment.topRight,
                                               onPressed: () {
-                                                _deleteitem(context, data.id);
+                                                context.read<CartBloc>().add(
+                                                    RemoveCartProduct(data));
                                               },
                                               splashColor: Colors.blue,
                                             ),
@@ -165,8 +160,8 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data['name'],
-                                                style: TextStyle(
+                                                data.productname.toString(),
+                                                style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
                                               ),
@@ -181,15 +176,15 @@ class SalesItem extends StatelessWidget {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
+                                              const Text(
                                                 "Vendor",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data['vendor'],
-                                                style: TextStyle(
+                                                data.vendor.toString(),
+                                                style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
                                               ),
@@ -202,15 +197,15 @@ class SalesItem extends StatelessWidget {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
+                                              const Text(
                                                 "Quantity",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data['quantity'].toString(),
-                                                style: TextStyle(
+                                                data.quantity.toString(),
+                                                style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
                                               ),
@@ -230,7 +225,7 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data['purchaseprize'],
+                                                data.purchaseprize.toString(),
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
@@ -251,8 +246,8 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data['sellingprize'],
-                                                style: TextStyle(
+                                                data.discount.toString(),
+                                                style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
                                               ),
@@ -272,8 +267,8 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data['discound'].toString(),
-                                                style: TextStyle(
+                                                data.discount.toString(),
+                                                style: const TextStyle(
                                                     color: Color.fromRGBO(
                                                         255, 255, 255, 1),
                                                     fontSize: 13.0),
@@ -303,7 +298,7 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data['total'].toString(),
+                                                state.cart.subtotal.toString(),
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
@@ -330,10 +325,8 @@ class SalesItem extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _streamSnapshot.hasData
-                                    ? 'items (${itemCount.toString()})'
-                                    : '0',
-                                style: TextStyle(
+                                state.cart.products.length.toString(),
+                                style: const TextStyle(
                                     color: Colors.white, fontSize: 18.0),
                                 textAlign: TextAlign.left,
                               ),
@@ -348,10 +341,8 @@ class SalesItem extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 10.0),
                             child: Text(
-                              _streamSnapshot.hasData
-                                  ? '\$ grandtotal'
-                                  : '\$ grandtotal',
-                              style: TextStyle(
+                              state.cart.subtotal.toString(),
+                              style: const TextStyle(
                                   color: Colors.white, fontSize: 25.0),
                               textAlign: TextAlign.right,
                             ),
@@ -394,110 +385,136 @@ class SalesItem extends StatelessWidget {
                 ],
               );
             } else {
-              return const Text('the Cart is empty',
-                  style: TextStyle(color: Colors.white));
+              return const Center(
+                child: Text('somthing is wrong'),
+              );
             }
-          }),
+          },
+        ));
+  }
+
+  TextEditingController _mobphonecontroller = TextEditingController();
+  TextEditingController _custamernamecontroller = TextEditingController();
+
+  void _whatsappmodal(context) {
+    showModalBottomSheet(
+        backgroundColor: Color.fromARGB(255, 33, 41, 72),
+        shape: const RoundedRectangleBorder(
+          // <-- SEE HERE
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0),
+          ),
+        ),
+        context: context,
+        builder: (BuildContext context) {
+          return Wrap(children: [
+            BlocBuilder<CheckoutBloc, CheckoutState>(
+              builder: (context, state) {
+                if (state is CheckoutLoading) {
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state is CheckoutLoaded) {
+                  return Container(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
+                    child: Column(
+                      children: [
+                        buildText('Customer Name'),
+                        textField((value) {
+                          context
+                              .read<CheckoutBloc>()
+                              .add(UpdateCheckOutEvent(name: value));
+                        }, _custamernamecontroller),
+                        buildText('phone'),
+                        textField((value) {
+                          context
+                              .read<CheckoutBloc>()
+                              .add(UpdateCheckOutEvent(phone: value));
+                        }, _mobphonecontroller),
+                        SizedBox(
+                          width: 320.0,
+                          child: ElevatedButton.icon(
+                            icon: const Icon(Icons.whatsapp),
+                            onPressed: () {
+                              
+
+                              final whatsappnum = _mobphonecontroller.text;
+                              final custname = _custamernamecontroller.text;
+
+                              sendtowhatsapp(
+                                  mobnumber: whatsappnum, name: custname);
+                            },
+                            label: const Text(
+                              'Send Bill',
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.green),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 1.0,
+                        ),
+                        SizedBox(
+                          width: 320.0,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context.read<CheckoutBloc>().add(
+                                  ConfirmCheckOutEvent(
+                                      checkout: state.checkOut));
+                                      print('added');
+
+                            
+                            },
+                            child: Text('Save Bill'),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                Color.fromARGB(255, 171, 47, 47),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                } else {
+                  return Text('somthing went wrong');
+                }
+              },
+            ),
+          ]);
+        });
+  }
+
+  Padding textField(
+    Function(String) onChanged,
+    TextEditingController controller,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 40.0, right: 40.0),
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        decoration: const InputDecoration(
+          contentPadding: EdgeInsets.all(10.0),
+          filled: true,
+          fillColor: Colors.grey,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 2.0),
+          ),
+        ),
+        cursorHeight: 30,
+        cursorColor: Colors.white,
+        style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+      ),
     );
   }
-}
-
-TextEditingController _mobphonecontroller = TextEditingController();
-TextEditingController _custamernamecontroller = TextEditingController();
-
-void _whatsappmodal(context) {
-  showModalBottomSheet(
-      backgroundColor: Color.fromARGB(255, 33, 41, 72),
-      shape: const RoundedRectangleBorder(
-        // <-- SEE HERE
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25.0),
-        ),
-      ),
-      context: context,
-      builder: (BuildContext context) {
-        return Wrap(children: [
-          Column(
-            children: [
-              buildText('Customer Name'),
-              Padding(
-                padding: const EdgeInsets.only(left: 40.0, right: 40.0),
-                child: TextField(
-                  controller: _custamernamecontroller,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                  ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                ),
-              ),
-              buildText('phone'),
-              Padding(
-                padding: const EdgeInsets.only(left: 40.0, right: 40.0),
-                child: TextField(
-                  controller: _mobphonecontroller,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                  ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                ),
-              ),
-              SizedBox(
-                width: 320.0,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.whatsapp),
-                  onPressed: () {
-                    final whatsappnum = _mobphonecontroller.text;
-                    final custname = _custamernamecontroller.text;
-
-                    sendtowhatsapp(mobnumber: whatsappnum, name: custname);
-                  },
-                  label: const Text(
-                    'Send Bill',
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 1.0,
-              ),
-              SizedBox(
-                width: 320.0,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Save Bill'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Color.fromARGB(255, 171, 47, 47),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ]);
-      });
 }
 
 Widget buildText(String text) => Container(

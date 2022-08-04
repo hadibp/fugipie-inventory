@@ -1,35 +1,57 @@
-// import 'dart:async';
+import 'dart:async';
 
-// // import 'package:bloc/bloc.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// // import 'package:fugipie_inventory/bloc/stock/bloc_provider.dart';
-// import 'package:meta/meta.dart';
-// // import 'package:flutter_bloc/flutter_bloc.dart';
-// // import './bloc_provider.dart';
-// // import 'bloc_provider.dart';
-// part 'stock_event.dart';
-// part 'stock_state.dart';
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:fugipie_inventory/modals/stockmodel.dart';
+import 'package:fugipie_inventory/repository/salesproduct/salesrepo.dart';
 
-// class StockBloc extends BlocBase {
-//   StockBloc(){
-//     // initial stream;
-//   }
-//   String id;
-//   final _idController = StreamController<String>();
-//   Stream<String> get OutId =>_idController.stream;
-//   Sink<String> get _InId=> _idController.sink;
-  
+part 'stock_event.dart';
+part 'stock_state.dart';
 
-//   final _firestorecontroller = StreamController<QuerySnapshot>();
-//   Stream<QuerySnapshot> get Outfirestore =>_firestorecontroller.stream;
-//   Sink<QuerySnapshot> get _Infirestore => _firestorecontroller.sink;
+class StockBloc extends Bloc<StockEvent, StockState> {
+  final SalesRepository _salesRepository;
+  StreamSubscription? _streamSubscription;
 
-//   @override
-//   void dispose(){
-//     _idController.close();
-//     _firestorecontroller.close();
-//   }
+  StockBloc({required SalesRepository salesRepository})
+      : _salesRepository = salesRepository,
+        super(StockLoading()) {
+    on<LoadProdects>(_mapLoadProductToState);
+    on<UpdateProdects>(_mapUpdateProductToState);
+  }
 
-// }
- 
+  void _mapLoadProductToState(LoadProdects event, Emitter<StockState> emit) {
+    _streamSubscription?.cancel();
+    _streamSubscription = _salesRepository.getAllproducts().listen((products) {
+      add(
+        UpdateProdects(products),
+      );
+    });
+  }
+
+  void _mapUpdateProductToState(UpdateProdects event, Emitter<StockState> emit) {
+    emit(StockLoaded(products: event.products));
+  }
+
+  // @override
+  // Stream<StockState> mapEventToState(
+  //   StockEvent event,
+  // ) async* {
+  //   if (event is LoadProdects) {
+  //     yield* _mapLoadProductToState();
+  //   }
+  //   if (event is UpdateProdects) {
+  //     yield* _mapUpdateProductToState(event);
+  //   }
+  // }
+  // Stream<StockState> _mapLoadProductToState() async* {
+  //   _streamSubscription?.cancel();
+  //   _streamSubscription = _salesRepository.getAllproducts().listen((products) {
+  //     add(UpdateProdects(products),);
+  //    });
+
+  // }
+
+  // Stream <StockState> _mapUpdateProductToState(UpdateProdects event) async* {
+  //   yield StockLoaded(products: event.products);
+  // }
+}

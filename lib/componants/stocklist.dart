@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
+import 'package:fugipie_inventory/componants/datepicker.dart';
 import 'package:fugipie_inventory/componants/servises/serviseitem.dart';
 import 'package:fugipie_inventory/componants/stocklistitem.dart';
 import 'package:fugipie_inventory/screens/stock.dart';
+import 'package:intl/intl.dart';
 
 import '../bloc/counter/counter_bloc.dart';
 
@@ -21,19 +25,22 @@ class _StockListState extends State<StockList> {
   final CollectionReference _todolistfireref =
       FirebaseFirestore.instance.collection('stocklist');
 
-  var userid = FirebaseAuth.instance.currentUser?.uid;
+  // var userid = FirebaseAuth.instance.currentUser?.uid;
 
   TextEditingController _searchcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _todolistfireref.where('uid', isEqualTo: userid).snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
-          if (_streamSnapshot.hasData) {
-            print(_streamSnapshot.data?.docs.length);
-            print(_streamSnapshot.data?.size);
+    return BlocBuilder<StockBloc, StockState>(
+      builder: (context, state) {
+        if (state is StockLoading) {
+          print('the state count is ${state.props.length}');
+          return Center(child: CircularProgressIndicator());
+        }
 
+        if (state is StockLoaded) {
+          final count = state.products.length;
+          if (state.products.isNotEmpty) {
             return Scaffold(
               backgroundColor: Color(0xff181826),
               appBar: AppBar(
@@ -97,8 +104,9 @@ class _StockListState extends State<StockList> {
                       child: FloatingActionButton(
                         heroTag: 'tag stock',
                         backgroundColor: Colors.blueAccent,
-                        onPressed: (() {
-                          _stockbottommodal(context);
+                        onPressed: (() async {
+                          DateTime date = DateTime.now();
+                          await bottomModal(context, date);
                         }),
                         child: Icon(
                           Icons.add,
@@ -111,15 +119,14 @@ class _StockListState extends State<StockList> {
                 ],
               ),
               body: ListView.builder(
-                  itemCount: _streamSnapshot.data?.docs.length,
+                  itemCount: count,
                   itemBuilder: (
                     context,
                     index,
                   ) {
-                    final data = _streamSnapshot.data?.docs[index].data()
-                        as Map<String, dynamic>;
+                    final data = state.products[index];
 
-                    final docid = data['id'];
+                    final docid = data.id;
                     if (searchid.isEmpty) {
                       return Center(
                           child: ListTile(
@@ -146,7 +153,7 @@ class _StockListState extends State<StockList> {
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   Text(
-                                    'Product id : ${data['id']}',
+                                    'Product id : ${data.id}',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ],
@@ -181,7 +188,7 @@ class _StockListState extends State<StockList> {
                                             fontSize: 13.0),
                                       ),
                                       Text(
-                                        "${data['name']}",
+                                        "${data.productname}",
                                         style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 13.0),
@@ -213,7 +220,7 @@ class _StockListState extends State<StockList> {
                                             fontSize: 13.0),
                                       ),
                                       Text(
-                                        "${data['vendor']}",
+                                        "${data.vendor}",
                                         style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 13.0),
@@ -243,7 +250,7 @@ class _StockListState extends State<StockList> {
                                             fontSize: 13.0),
                                       ),
                                       Text(
-                                        "${data['quantity']}",
+                                        "${data.quantity}",
                                         style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 13.0),
@@ -260,19 +267,20 @@ class _StockListState extends State<StockList> {
                                   ),
                                   onTap: () {
                                     print(docid);
-                                    final dataq =  _streamSnapshot.data?.docs[index];
+                                    // final dataq =
+                                    //     _streamSnapshot.data?.docs[index];
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              StockListItem(context, dataq)),
+                                              StockListItem(context, data)),
                                     );
                                   }),
                             )
                           ]),
                         )),
                       ));
-                    } else if (data['id']
+                    } else if (data.id
                         .toString()
                         .startsWith(searchid.toLowerCase())) {
                       return Center(
@@ -300,7 +308,7 @@ class _StockListState extends State<StockList> {
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   Text(
-                                    'Product id : ${data['id']}',
+                                    'Product id : ${data.id}',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ],
@@ -335,7 +343,7 @@ class _StockListState extends State<StockList> {
                                             fontSize: 13.0),
                                       ),
                                       Text(
-                                        "${data['name']}",
+                                        "${data.productname}",
                                         style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 13.0),
@@ -367,7 +375,7 @@ class _StockListState extends State<StockList> {
                                             fontSize: 13.0),
                                       ),
                                       Text(
-                                        "${data['vendor']}",
+                                        "${data.vendor}",
                                         style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 13.0),
@@ -397,7 +405,7 @@ class _StockListState extends State<StockList> {
                                             fontSize: 13.0),
                                       ),
                                       Text(
-                                        "${data['quantity']}",
+                                        "${data.quantity}",
                                         style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 13.0),
@@ -414,7 +422,8 @@ class _StockListState extends State<StockList> {
                                   ),
                                   onTap: () {
                                     print(docid);
-                                    final dataq =  _streamSnapshot.data?.docs[index];
+                                    final dataq = state.products[index];
+                                    //     _streamSnapshot.data?.docs[index];
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -435,33 +444,15 @@ class _StockListState extends State<StockList> {
           } else {
             return StockPage();
           }
-        });
-  }
-}
-
-Widget buildText(String text) => Container(
-      margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
-      child: Text(
-        text,
-        style: TextStyle(
-            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.grey),
-      ),
+        } else {
+          return const Text('something went wrong');
+        }
+      },
     );
+  }
 
-final _firebaseref = FirebaseFirestore.instance;
-final _firebaseauth = FirebaseAuth.instance;
-
-TextEditingController _productidcontroller = TextEditingController();
-TextEditingController _datecontroller = TextEditingController();
-TextEditingController _productnamecontroller = TextEditingController();
-TextEditingController _vendorcontroller = TextEditingController();
-TextEditingController _quatitycontroller = TextEditingController();
-TextEditingController _purchaseprizecontroller = TextEditingController();
-TextEditingController _sellingprizecontroller = TextEditingController();
-TextEditingController _discountcontroller = TextEditingController();
-
-void _stockbottommodal(context) {
-  showModalBottomSheet(
+  bottomModal(BuildContext context, DateTime date) async {
+    showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -474,15 +465,21 @@ void _stockbottommodal(context) {
       builder: (context) {
         return DraggableScrollableSheet(
           initialChildSize: 0.9,
-          builder: (_, controller) => Container(
+          builder: (_, controllers) => Container(
+            padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom),
             color: Color(0xFF232338),
             child: ListView(
-              controller: controller,
+              controller: controllers,
               padding: EdgeInsets.all(32),
               children: [
                 buildText('Product Id'),
                 TextField(
                   controller: _productidcontroller,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
@@ -501,28 +498,51 @@ void _stockbottommodal(context) {
                   toolbarOptions: ToolbarOptions(selectAll: true),
                 ),
                 buildText('Date'),
-                TextField(
-                  controller: _datecontroller,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                GestureDetector(
+                  onTap: () async {
+                    DateTime? selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(DateTime.now().year - 5),
+                        lastDate: DateTime(DateTime.now().year + 5));
+                    DatePickerEntryMode initialEntryMode =
+                        DatePickerEntryMode.calendar;
+                    if (selectedDate == null) return;
+                    if (selectedDate != null) {
+                      setState(() {
+                        date = selectedDate;
+                      });
+                    }
+
+                    _datecontroller.text =
+                        '${date.day}/${date.month}/${date.year}';
+
+                    print('date picked + ');
+                  },
+                  child: TextField(
+                    controller: _datecontroller,
+                    keyboardType: TextInputType.datetime,
+                    decoration:const InputDecoration(
+                      contentPadding: EdgeInsets.all(10.0),
+                      filled: true,
+                      fillColor: Colors.grey,
+                      border:  OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      focusedBorder:  OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 2.0),
+                      ),
+                      enabled: false,
+                      prefixIcon: Icon(
+                        Icons.date_range_rounded,
+                        color: Colors.white,
+                      ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.date_range_rounded,
-                      color: Colors.white,
-                    ),
+                    cursorHeight: 30,
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    toolbarOptions: ToolbarOptions(selectAll: true),
                   ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                  toolbarOptions: ToolbarOptions(selectAll: true),
                 ),
                 buildText('Product Name'),
                 TextField(
@@ -571,6 +591,10 @@ void _stockbottommodal(context) {
                 buildText('Quantitiy'),
                 TextField(
                   controller: _quatitycontroller,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   decoration: const InputDecoration(
                     // hintText: state.counterValue.toString(),
                     hintStyle:
@@ -594,6 +618,10 @@ void _stockbottommodal(context) {
                 buildText('Purchase Prize'),
                 TextField(
                   controller: _purchaseprizecontroller,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
@@ -614,6 +642,10 @@ void _stockbottommodal(context) {
                 buildText('Selling Price'),
                 TextField(
                   controller: _sellingprizecontroller,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
@@ -633,6 +665,10 @@ void _stockbottommodal(context) {
                 buildText('Discount'),
                 TextField(
                   controller: _discountcontroller,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10.0),
                     filled: true,
@@ -653,7 +689,7 @@ void _stockbottommodal(context) {
                 ElevatedButton(
                   onPressed: () {
                     final _id = _productidcontroller.text;
-                    final _date = _datecontroller.text;
+                    // final _date = _datecontroller.text;
                     final _name = _productnamecontroller.text;
                     final _vendor = _vendorcontroller.text;
                     final _quantity = _quatitycontroller.text;
@@ -662,15 +698,22 @@ void _stockbottommodal(context) {
                     final _discount = _discountcontroller.text;
 
                     if (_id.isNotEmpty &&
-                        _date.isNotEmpty &&
                         _name.isNotEmpty &&
                         _vendor.isNotEmpty &&
                         _quantity.isNotEmpty &&
                         _purchaseprize.isNotEmpty &&
                         _sellingprize.isNotEmpty &&
                         _discount.isNotEmpty) {
-                      _insertstokRecord(_id, _date, _name, _vendor, _quantity,
-                          _purchaseprize, _sellingprize, _discount);
+                      double quantity = double.parse(_quantity);
+                      double purchaseprize = double.parse(_purchaseprize);
+                      double lowestprize = double.parse(_sellingprize);
+                      double discount = double.parse(_discount);
+                      // DateTime storingdate = DateTime.parse(_date);
+                      // Timestamp date = Timestamp.fromDate(date)
+                      // ;
+
+                      _insertstokRecord(_id, date, _name, _vendor, quantity,
+                          purchaseprize, lowestprize, discount);
 
                       Navigator.of(context).pop();
                     } else {
@@ -699,19 +742,34 @@ void _stockbottommodal(context) {
             ),
           ),
         );
-      });
+      },
+    );
+  }
 }
+
+Widget buildText(String text) => Container(
+      margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
+      child: Text(
+        text,
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 18, color: Colors.grey),
+      ),
+    );
+
+final _firebaseref = FirebaseFirestore.instance;
+final _firebaseauth = FirebaseAuth.instance;
+
+TextEditingController _productidcontroller = TextEditingController();
+TextEditingController _datecontroller = TextEditingController();
+TextEditingController _productnamecontroller = TextEditingController();
+TextEditingController _vendorcontroller = TextEditingController();
+TextEditingController _quatitycontroller = TextEditingController();
+TextEditingController _purchaseprizecontroller = TextEditingController();
+TextEditingController _sellingprizecontroller = TextEditingController();
+TextEditingController _discountcontroller = TextEditingController();
 
 void _insertstokRecord(
     id, date, name, vendor, quantity, purchaseprize, sellingprize, discount) {
-  print(id +
-      name +
-      date +
-      vendor +
-      quantity +
-      purchaseprize +
-      sellingprize +
-      discount);
   var userid = _firebaseauth.currentUser?.uid;
 
   var uniqueId = _firebaseref.collection('stocklist').doc().id;

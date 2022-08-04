@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fugipie_inventory/modals/servicemodal.dart';
 import 'package:fugipie_inventory/provider/serviceprovider.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +12,6 @@ bool progresscolor = false;
 final CollectionReference _servicelistfireref =
     FirebaseFirestore.instance.collection('servises');
 var userid = FirebaseAuth.instance.currentUser?.uid;
-
 // final CollectionReference _bagfireref = _servicelistfireref
 //     .doc(userid)
 //     .collection('bag');
@@ -49,7 +49,7 @@ class ServicePage extends StatelessWidget {
                         border: Border.all(color: Colors.blue),
                         borderRadius: BorderRadius.circular(10)),
                     isScrollable: false,
-                    tabs: [
+                    tabs: const [
                       Tab(child: Text('Add a service', softWrap: false)),
                       Tab(
                           child: Text(
@@ -57,6 +57,7 @@ class ServicePage extends StatelessWidget {
                         softWrap: false,
                       )),
                       Tab(child: Text('Bag')),
+                      // Tab(child: Text('ruff')),
                     ]),
               ),
               Expanded(
@@ -64,6 +65,7 @@ class ServicePage extends StatelessWidget {
                   tabOne(context),
                   tabTwo(context),
                   tabThree(),
+                  // tabfour(context),
                 ]),
               ),
             ],
@@ -91,7 +93,9 @@ void _servicebottommodal(context) {
         return DraggableScrollableSheet(
           initialChildSize: 0.8,
           builder: (_, controller) => Container(
-            color: Color(0xFF232338),
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            color:const Color(0xFF232338),
             child: ListView(
               controller: controller,
               padding: EdgeInsets.all(32),
@@ -289,8 +293,8 @@ Widget tabTwo(context) {
         if (_streamSnapshot.hasData) {
           return Column(children: [
             Padding(
-              padding:
-                  const EdgeInsets.only(left: 40.0, right: 50.0, top: 15.0, bottom: 5.0),
+              padding: const EdgeInsets.only(
+                  left: 40.0, right: 50.0, top: 15.0, bottom: 5.0),
               child: SizedBox(
                 height: 40.0,
                 child: TextField(
@@ -556,14 +560,14 @@ Widget tabThree() {
         var itemCount = _streamSnapshot.data?.docs.length;
         print(itemCount);
         return Container(
-          padding: EdgeInsets.only(top:10.0,left: 2.0,right: 2.0),
+          padding: EdgeInsets.only(top: 10.0, left: 2.0, right: 2.0),
           child: ListView.builder(
               itemCount: itemCount,
               itemBuilder: (
                 context,
                 index,
               ) {
-                final  data = _streamSnapshot.data?.docs[index];
+                final data = _streamSnapshot.data?.docs[index];
                 return Center(
                     child: ListTile(
                   title: Center(
@@ -688,3 +692,192 @@ Widget tabThree() {
         );
       });
 }
+
+// Widget tabfour(context) {
+//   final Serviceprovider serviceprovider = Serviceprovider();
+
+//           final DocumentSnapshot data = _streamSnapshot.data!.docs[index];
+//   return Container(
+//     padding: EdgeInsets.all(3.0),
+//     child: ListView(
+
+//           return Center(
+//               child: ListTile(
+//             title: Center(
+//                 child: Container(
+//               height: 340.0,
+//               width: 400.0,
+//               decoration: BoxDecoration(
+//                   color: Color(0xFF232333),
+//                   borderRadius: BorderRadius.circular(10.0)),
+//               child: Column(children: [
+//                 Padding(
+//                   padding: const EdgeInsets.only(
+//                       top: 20.0, left: 18.0, right: 18.0, bottom: 5.0),
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.end,
+//                     children: [
+//                       Text(
+//                         'Product id : ${data['id']}',
+//                         style: TextStyle(color: Colors.white),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 const Divider(
+//                   height: 2.0,
+//                   thickness: 3.0,
+//                   color: Color.fromARGB(255, 78, 78, 78),
+//                   indent: 18.0,
+//                   endIndent: 18.0,
+//                 ),
+//                 Container(
+//                   decoration: BoxDecoration(
+//                       color: Color(0xFF373748),
+//                       borderRadius: BorderRadius.circular(10.0)),
+//                   margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
+//                   height: 40.0,
+//                   width: 400.0,
+//                   child: Padding(
+//                     padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+//                     child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Text(
+//                             "Return Date",
+//                             style:
+//                                 TextStyle(color: Colors.white, fontSize: 13.0),
+//                           ),
+//                           Text(
+//                             "${data['returndate']}",
+//                             style:
+//                                 TextStyle(color: Colors.white, fontSize: 13.0),
+//                           ),
+//                         ]),
+//                   ),
+//                 ),
+//                 Container(
+//                   decoration: BoxDecoration(
+//                       color: Color(0xFF373748),
+//                       borderRadius: BorderRadius.circular(10.0)),
+//                   margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
+//                   height: 40.0,
+//                   width: 400.0,
+//                   child: Padding(
+//                     padding: const EdgeInsets.only(
+//                       left: 15.0,
+//                       right: 15.0,
+//                     ),
+//                     child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Text(
+//                             "Isuue",
+//                             style:
+//                                 TextStyle(color: Colors.white, fontSize: 13.0),
+//                           ),
+//                           Text(
+//                             "${data['issue']}",
+//                             style: TextStyle(
+//                               color: Colors.white,
+//                               fontSize: 13.0,
+//                             ),
+//                             softWrap: true,
+//                           ),
+//                         ]),
+//                   ),
+//                 ),
+//                 Container(
+//                   decoration: BoxDecoration(
+//                       color: Color(0xFF373748),
+//                       borderRadius: BorderRadius.circular(10.0)),
+//                   margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
+//                   height: 40.0,
+//                   width: 400.0,
+//                   child: Padding(
+//                     padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+//                     child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Text(
+//                             "Name",
+//                             style:
+//                                 TextStyle(color: Colors.white, fontSize: 13.0),
+//                           ),
+//                           Text(
+//                             "${data['name']}",
+//                             style:
+//                                 TextStyle(color: Colors.white, fontSize: 13.0),
+//                           ),
+//                         ]),
+//                   ),
+//                 ),
+//                 Container(
+//                   decoration: BoxDecoration(
+//                       color: Color(0xFF373748),
+//                       borderRadius: BorderRadius.circular(10.0)),
+//                   margin: EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
+//                   height: 40.0,
+//                   width: 400.0,
+//                   child: Padding(
+//                     padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+//                     child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Text(
+//                             "Service Charge",
+//                             style:
+//                                 TextStyle(color: Colors.white, fontSize: 13.0),
+//                           ),
+//                           Text(
+//                             "\$ ${data['servicecharge']}",
+//                             style:
+//                                 TextStyle(color: Colors.white, fontSize: 13.0),
+//                           ),
+//                         ]),
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding:
+//                       const EdgeInsets.only(top: 15.0, left: 20.0, right: 35.0),
+//                   child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Text(
+//                         "OnProgress",
+//                         style: TextStyle(color: Colors.white),
+//                       ),
+//                       Container(
+//                         width: 10.0,
+//                         height: 10.0,
+//                         decoration: BoxDecoration(
+//                           shape: BoxShape.circle,
+//                           color: progresscolor
+//                               ? Color.fromARGB(255, 244, 16, 16)
+//                               : Color.fromARGB(255, 19, 164, 0),
+//                         ),
+//                       )
+//                     ],
+//                   ),
+//                 ),
+//                 Padding(
+//                   padding: const EdgeInsets.all(20.0),
+//                   child: GestureDetector(
+//                       child: Text(
+//                         'More >',
+//                         style: TextStyle(color: Colors.white),
+//                       ),
+//                       onTap: () {
+//                         Navigator.push(
+//                             context,
+//                             MaterialPageRoute(
+//                               builder: (context) => ServiceItem(data),
+//                             ));
+//                       }),
+//                 )
+//               ]),
+//             )),
+//           ));
+//         }),
+//   );
+// }

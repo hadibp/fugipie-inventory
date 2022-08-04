@@ -1,0 +1,16 @@
+StreamBuilder<QuerySnapshot>(
+          stream: _stocklistfireref
+              .doc(userid)
+              .collection('cart-collection')
+              .snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
+            var itemCount = _streamSnapshot.data?.docs.length;
+
+            if (_streamSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            if (_streamSnapshot.hasData) {
+              return 

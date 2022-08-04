@@ -138,8 +138,8 @@ class _HistoryPageState extends State<HistoryPage> {
     final DateTime? fromselected = await showDatePicker(
       context: context,
       initialDate: toselectedDate,
-      firstDate: DateTime(2010),
-      lastDate: DateTime(2025),
+      firstDate: DateTime(DateTime.now().year - 5),
+      lastDate: DateTime(DateTime.now().year + 5),
     );
     if (fromselected != null && fromselected != fromselectedDate) {
       setState(() {
@@ -152,8 +152,8 @@ class _HistoryPageState extends State<HistoryPage> {
     final DateTime? toselected = await showDatePicker(
       context: context,
       initialDate: toselectedDate,
-      firstDate: DateTime(2010),
-      lastDate: DateTime(2025),
+      firstDate: DateTime(DateTime.now().year - 5),
+      lastDate: DateTime(DateTime.now().year + 5),
     );
     if (toselected != null && toselected != toselectedDate) {
       setState(() {

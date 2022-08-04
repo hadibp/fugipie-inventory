@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -29,9 +27,9 @@ class AuthRepository {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-    }  on FirebaseException catch (e ) {
-        Fluttertoast.showToast(msg: e.code,gravity: ToastGravity.TOP);
-      
+    } on FirebaseException catch (e) {
+      Fluttertoast.showToast(msg: e.code, gravity: ToastGravity.TOP);
+
       print(e.code);
     }
   }
@@ -41,9 +39,9 @@ class AuthRepository {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-    } on FirebaseException catch (e ) {
-        Fluttertoast.showToast(msg: e.code,gravity: ToastGravity.TOP);
-      
+    } on FirebaseException catch (e) {
+      Fluttertoast.showToast(msg: e.code, gravity: ToastGravity.TOP);
+
       print(e.code);
     }
   }
@@ -51,9 +49,8 @@ class AuthRepository {
   Future<void> logout() async {
     try {
       await Future.wait([_firebaseAuth.signOut()]);
-    }  on FirebaseException catch (e ) {
-        Fluttertoast.showToast(msg: e.code,gravity: ToastGravity.TOP);
-      
+    } on FirebaseException catch (e) {
+      Fluttertoast.showToast(msg: e.code, gravity: ToastGravity.TOP);
       print(e.code);
     }
     ;

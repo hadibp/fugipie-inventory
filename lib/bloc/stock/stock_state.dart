@@ -1,6 +1,19 @@
-// part of 'stock_bloc.dart';
+part of 'stock_bloc.dart';
 
-// @immutable
-// abstract class StockState {}
+abstract class StockState extends Equatable {
+  const StockState();
+  
+  @override
+  List<Object> get props => [];
+}
 
-// class StockInitial extends StockState {}
+class StockLoading extends StockState {}
+class StockLoaded extends StockState {
+  final List<SalesProducts> products;
+
+  StockLoaded({this.products = const <SalesProducts> []});
+
+@override
+  List<Object> get props => [products];
+
+}

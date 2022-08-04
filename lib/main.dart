@@ -2,17 +2,20 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutterfire_ui/auth.dart';
+import 'package:fugipie_inventory/bloc/cart/cart_bloc.dart';
+import 'package:fugipie_inventory/bloc/checkout/checkout_bloc.dart';
+import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
 import 'package:fugipie_inventory/firebase_options.dart';
 import 'package:fugipie_inventory/modals/TodosModel.dart';
 import 'package:fugipie_inventory/provider/serviceprovider.dart';
 import 'package:fugipie_inventory/repository/authRepository.dart';
+import 'package:fugipie_inventory/repository/checkout/checkout_repository.dart';
+import 'package:fugipie_inventory/repository/salesproduct/salesrepo.dart';
 import 'package:provider/provider.dart';
 import 'bloc/auth/appobserver.dart';
 import 'bloc/auth/bloc/authapp_bloc.dart';
 import 'bloc/counter/counter_bloc.dart';
 import 'config/routes.dart';
-import 'screens/home.dart';
 
 Future<void> main() async {
   return BlocOverrides.runZoned(
@@ -64,12 +67,29 @@ class Appview extends StatelessWidget {
         ChangeNotifierProvider<Serviceprovider>(
           create: (context) => Serviceprovider(),
         ),
+        BlocProvider(
+          create: (context) => StockBloc(
+            salesRepository: SalesRepository(),
+          )..add(LoadProdects()),
+        ),
+        BlocProvider(
+          create: (_) => CartBloc()..add(LoadCart()),
+        ),
+        BlocProvider(
+          create: (context) => CheckoutBloc(
+            cartBloc: context.read<CartBloc>(),
+            checkoutrepository: Checkoutrepository(),
+          ),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: FlowBuilder(
-            state: context.select((AuthappBloc bloc) => bloc.state.status,),
-            onGeneratePages: onGenerateAppViewPage,),
+          state: context.select(
+            (AuthappBloc bloc) => bloc.state.status,
+          ),
+          onGeneratePages: onGenerateAppViewPage,
+        ),
       ),
     );
   }

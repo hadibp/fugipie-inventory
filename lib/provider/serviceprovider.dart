@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fugipie_inventory/modals/servicemodal.dart';
+import 'package:provider/provider.dart';
 
 CollectionReference servicedb =
     FirebaseFirestore.instance.collection('servises');
@@ -62,7 +63,7 @@ class Serviceprovider extends ChangeNotifier {
       FirebaseFirestore.instance.collection('servises').doc(uniqueId).set({
         'id': issueidcontroller.text,
         'uid': userid,
-        'issue':issuecontroller.text,
+        'issue': issuecontroller.text,
         'returndate': returndatecontroller.text,
         'servicecharge': servicechargecontroller.text,
         'name': namecontroller.text,
@@ -104,5 +105,24 @@ class Serviceprovider extends ChangeNotifier {
 
   List<ServiceModal> get getServiceModal {
     return servicelist;
+  }
+
+  List<ServiceModal> _servicelist(QuerySnapshot snapshot) {
+    return snapshot.docs.map((data) {
+      return ServiceModal(
+        
+        issueId: data['issueid'] ??'',
+        issue: data['issue'] ?? '',
+        date: data['date'] ?? '',
+        servicecharge: data['servicecharge'] ?? '',
+        name: data['name'] ?? '',
+        phone: data['phone'] ?? '',
+      );
+    }).toList();
+
+  }
+
+  Stream<List<ServiceModal>> get prod{
+    return servicedb.snapshots().map(_servicelist);
   }
 }

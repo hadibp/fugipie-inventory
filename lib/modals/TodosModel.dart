@@ -7,7 +7,7 @@ import 'package:fugipie_inventory/toDo/task.dart';
 class TodosModel extends ChangeNotifier {
   final List<Task> tasks = [];
 
-  void addTodo(Task todo) => FirebaseApi.createTodo(todo);
+  // void addTodo(Task todo) => FirebaseApi.createTodo(todo);
 
   void updateTodo(Task todo) async {
     var index = tasks.indexWhere((element) => element.id == todo.id);

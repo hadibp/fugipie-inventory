@@ -14,3 +14,28 @@ StreamBuilder<QuerySnapshot>(
 
             if (_streamSnapshot.hasData) {
               return 
+
+
+              _stockistfireref
+                                                  .doc(data.id)
+                                                  .update({
+                                                'id': _id,
+                                                'date': date,
+                                                'name': _name,
+                                                'vendor': _vendor,
+                                                'quantity': _quantity,
+                                                'purchaseprize': _purchaseprize,
+                                                'sellingprize': _sellingprize,
+                                                'discound': _discount
+                                              }).then((value) => ScaffoldMessenger
+                                                          .of(context)
+                                                      .showSnackBar(const SnackBar(
+                                                          content: Text(
+                                                              "updated  the textfields"))));
+                                              Navigator.of(context).pop();
+                                            } else {
+                                              Fluttertoast.showToast(
+                                                  msg:
+                                                      'fill all the text fields',
+                                                  gravity: ToastGravity.BOTTOM);
+                                            }

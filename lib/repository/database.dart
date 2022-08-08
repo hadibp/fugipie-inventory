@@ -4,13 +4,13 @@ import 'package:fugipie_inventory/toDo/task.dart';
 import '../config/utils.dart';
 
 
-class FirebaseApi {
-  static Future<String> createTodo(Task todo) async {
-    final docId = FirebaseFirestore.instance.collection("Todos").doc();
-    todo.id = docId.id;
-    await docId.set(todo.toJson());
-    return docId.id;
-  }
-}
+// class FirebaseApi {
+//   static Future<String> createTodo(Task todo) async {
+//     final docId = FirebaseFirestore.instance.collection("Todos").doc();
+//     todo.id = docId.id;
+//     await docId.set(todo.toJson());
+//     return docId.id;
+//   }
+// }
 
 

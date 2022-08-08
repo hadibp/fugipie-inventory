@@ -8,40 +8,25 @@ abstract class CheckoutEvent extends Equatable {
 }
 
 class UpdateCheckOutEvent extends CheckoutEvent {
-  final String? productname;
-  final String? vendor;
-  final int? quantity;
-  final double? purchaseprize;
-  final double? sellingprize;
-  final double? discount;
   final String? name;
   final String? phone;
+  final String? userid;
   final Cart? cart; //---warning check this----//
 
   const UpdateCheckOutEvent({
-    this.productname,
-    this.vendor,
-    this.quantity,
-    this.purchaseprize,
-    this.sellingprize,
-    this.discount,
     this.name,
     this.phone,
+    this.userid,
     this.cart,
   });
 
-   @override
+  @override
   List<Object?> get props => [
-    productname,
-        vendor,
-        quantity,
-        purchaseprize,
-        sellingprize,
-        discount,
         name,
         phone,
+        userid,
         cart,
-  ];
+      ];
 }
 
 class ConfirmCheckOutEvent extends CheckoutEvent {
@@ -49,7 +34,6 @@ class ConfirmCheckOutEvent extends CheckoutEvent {
 
   const ConfirmCheckOutEvent({required this.checkout});
 
-    @override
+  @override
   List<Object?> get props => [checkout];
-
 }

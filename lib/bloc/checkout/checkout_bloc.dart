@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fugipie_inventory/bloc/cart/cart_bloc.dart';
 import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
+import 'package:fugipie_inventory/componants/sales/salesitem.dart';
 import 'package:fugipie_inventory/modals/cartmodal.dart';
 import 'package:fugipie_inventory/modals/checkoutmodel.dart';
 import 'package:fugipie_inventory/modals/stockmodel.dart';
@@ -26,6 +28,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
         super(cartBloc.state is CartLoaded
             ? CheckoutLoaded(
                 products: (cartBloc.state as CartLoaded).cart.products,
+                total: (cartBloc.state as CartLoaded).cart.subtotal,
               )
             : CheckoutLoading()) {
     on<UpdateCheckOutEvent>(_onupdatecheckout);
@@ -42,30 +45,25 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     final state = this.state;
     if (state is CheckoutLoaded) {
       emit(CheckoutLoaded(
-          productname: event.productname ?? state.productname,
-          vendor: event.vendor ?? state.vendor,
-          quantity: event.quantity ?? state.quantity,
-          purchaseprize: event.purchaseprize ?? state.purchaseprize,
-          sellingprize: event.sellingprize ?? state.sellingprize,
-          discount: event.discount ?? state.discount,
-          products: event.cart?.products ?? state.products,
-          name: event.name ?? state.name,
-          phone: event.phone ?? state.phone));
+        products: event.cart?.products ?? state.products,
+        name: event.name ?? state.name,
+        phone: event.phone ?? state.phone,
+        total: event.cart?.subtotal ?? state.total,
+        userid: event.userid ?? state.userid
+      ));
     }
   }
 
   void _onconfirmcheckout(
     ConfirmCheckOutEvent event,
     Emitter<CheckoutState> emit,
-  ) async{
+  ) async {
     _checkoutSubscription?.cancel();
     if (state is CheckoutLoaded) {
       try {
         await _checkoutrepository.addCheckout(event.checkout);
         print('data uploaded');
-      } catch (_) {
-        
-      }
+      } catch (_) {}
     }
   }
 }

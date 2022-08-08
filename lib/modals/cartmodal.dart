@@ -9,27 +9,26 @@ class Cart extends Equatable {
   const Cart({this.products = const <SalesProducts>[]});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [products];
 
-  // Map productQuantity(product) {
-  //   final quantity = Map();
+  Map productQuantity(product) {
+    final quantity = Map();
 
-  //   products.forEach((product) {
-  //     if (!quantity.containsKey(product)) {
-  //       quantity[product] = 1;
-  //           print(' not exist');
+    products.forEach((product) {
+      if (!quantity.containsKey(product)) {
+        quantity[product] = 1;
+            print(' not exist');
 
-  //     } else {
-  //       quantity[product] += 1;
-  //       Fluttertoast.showToast(
-  //           msg: 'this product is already added', gravity: ToastGravity.BOTTOM);
-  //           print('already exist');
-  //     }
-  //   });
-  //   return quantity;
-  // }
+      } else {
+        quantity[product.quantity] += 1;
+        Fluttertoast.showToast(
+            msg: 'this product is already added', gravity: ToastGravity.BOTTOM);
+            print('already exist');
+      }
+    });
+    return quantity;
+  }
 
   double get subtotal => products.fold(
-      0, (total, current) => current.discount!.toDouble() - current.lowestprize!.toDouble());
+      0, (total, current) => current.lowestprize!.toDouble() + current.lowestprize!.toDouble());
 }

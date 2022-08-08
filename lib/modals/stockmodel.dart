@@ -3,6 +3,8 @@ import 'package:equatable/equatable.dart';
 
 class SalesProducts extends Equatable {
   final String? id;
+  final String? userId;
+  final String? docId;
   final String? productname;
   final String? vendor;
   final num? quantity;
@@ -11,8 +13,10 @@ class SalesProducts extends Equatable {
   final num? discount;
   final Timestamp? date;
 
-  SalesProducts({
+  const SalesProducts({
     required this.id,
+    required this.userId,
+    required this.docId,
     required this.productname,
     required this.vendor,
     required this.quantity,
@@ -25,6 +29,8 @@ class SalesProducts extends Equatable {
   @override
   List<Object?> get props => [
         id,
+        userId,
+        docId,
         productname,
         vendor,
         quantity,
@@ -36,7 +42,9 @@ class SalesProducts extends Equatable {
 
   static SalesProducts fromsnapshot(DocumentSnapshot snap) {
     SalesProducts products = SalesProducts(
-        id: snap['id'],
+        id: snap['productid'],
+        userId: snap['userId'],
+        docId: snap['docId'],
         productname: snap['name'],
         vendor: snap['vendor'],
         quantity: snap['quantity'],
@@ -47,6 +55,4 @@ class SalesProducts extends Equatable {
 
     return products;
   }
-  
-
 }

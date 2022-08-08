@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
 import 'package:fugipie_inventory/componants/datepicker.dart';
 import 'package:fugipie_inventory/componants/servises/serviseitem.dart';
@@ -25,7 +26,7 @@ class _StockListState extends State<StockList> {
   final CollectionReference _todolistfireref =
       FirebaseFirestore.instance.collection('stocklist');
 
-  // var userid = FirebaseAuth.instance.currentUser?.uid;
+  var userid = FirebaseAuth.instance.currentUser?.uid;
 
   TextEditingController _searchcontroller = TextEditingController();
 
@@ -34,12 +35,14 @@ class _StockListState extends State<StockList> {
     return BlocBuilder<StockBloc, StockState>(
       builder: (context, state) {
         if (state is StockLoading) {
-          print('the state count is ${state.props.length}');
           return Center(child: CircularProgressIndicator());
         }
 
         if (state is StockLoaded) {
-          final count = state.products.length;
+          final datas = state.products
+              .where((element) => element.userId == userid)
+              .toList();
+
           if (state.products.isNotEmpty) {
             return Scaffold(
               backgroundColor: Color(0xff181826),
@@ -108,7 +111,7 @@ class _StockListState extends State<StockList> {
                           DateTime date = DateTime.now();
                           await bottomModal(context, date);
                         }),
-                        child: Icon(
+                        child: const Icon(
                           Icons.add,
                           size: 35.0,
                           color: Color(0xFF232338),
@@ -119,14 +122,13 @@ class _StockListState extends State<StockList> {
                 ],
               ),
               body: ListView.builder(
-                  itemCount: count,
+                  itemCount: datas.length,
                   itemBuilder: (
                     context,
                     index,
                   ) {
-                    final data = state.products[index];
+                    final data = datas[index];
 
-                    final docid = data.id;
                     if (searchid.isEmpty) {
                       return Center(
                           child: ListTile(
@@ -148,8 +150,8 @@ class _StockListState extends State<StockList> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    '11-02-2022',
+                                  Text(
+                                    '${DateFormat('dd-MM-yyy').format(data.date?.toDate() ?? DateTime.now())}',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   Text(
@@ -266,7 +268,7 @@ class _StockListState extends State<StockList> {
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   onTap: () {
-                                    print(docid);
+                                    // print(docid);
                                     // final dataq =
                                     //     _streamSnapshot.data?.docs[index];
                                     Navigator.push(
@@ -421,14 +423,14 @@ class _StockListState extends State<StockList> {
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   onTap: () {
-                                    print(docid);
-                                    final dataq = state.products[index];
+                                    // print(docid);
+                                    // final dataq = index;
                                     //     _streamSnapshot.data?.docs[index];
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            StockListItem(context, dataq),
+                                            StockListItem(context, data),
                                       ),
                                     );
                                   }),
@@ -467,7 +469,7 @@ class _StockListState extends State<StockList> {
           initialChildSize: 0.9,
           builder: (_, controllers) => Container(
             padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom),
+                bottom: MediaQuery.of(context).viewInsets.bottom),
             color: Color(0xFF232338),
             child: ListView(
               controller: controllers,
@@ -508,11 +510,9 @@ class _StockListState extends State<StockList> {
                     DatePickerEntryMode initialEntryMode =
                         DatePickerEntryMode.calendar;
                     if (selectedDate == null) return;
-                    if (selectedDate != null) {
-                      setState(() {
-                        date = selectedDate;
-                      });
-                    }
+                    setState(() {
+                      date = selectedDate;
+                    });
 
                     _datecontroller.text =
                         '${date.day}/${date.month}/${date.year}';
@@ -522,14 +522,14 @@ class _StockListState extends State<StockList> {
                   child: TextField(
                     controller: _datecontroller,
                     keyboardType: TextInputType.datetime,
-                    decoration:const InputDecoration(
+                    decoration: const InputDecoration(
                       contentPadding: EdgeInsets.all(10.0),
                       filled: true,
                       fillColor: Colors.grey,
-                      border:  OutlineInputBorder(
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       ),
-                      focusedBorder:  OutlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white, width: 2.0),
                       ),
                       enabled: false,
@@ -717,8 +717,9 @@ class _StockListState extends State<StockList> {
 
                       Navigator.of(context).pop();
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("fill all the textfields")));
+                      Fluttertoast.showToast(
+                          msg: 'fill all the text fields',
+                          gravity: ToastGravity.BOTTOM);
                     }
                   },
                   style: ButtonStyle(
@@ -757,7 +758,6 @@ Widget buildText(String text) => Container(
     );
 
 final _firebaseref = FirebaseFirestore.instance;
-final _firebaseauth = FirebaseAuth.instance;
 
 TextEditingController _productidcontroller = TextEditingController();
 TextEditingController _datecontroller = TextEditingController();
@@ -767,15 +767,16 @@ TextEditingController _quatitycontroller = TextEditingController();
 TextEditingController _purchaseprizecontroller = TextEditingController();
 TextEditingController _sellingprizecontroller = TextEditingController();
 TextEditingController _discountcontroller = TextEditingController();
+final _firebaseauth = FirebaseAuth.instance;
 
 void _insertstokRecord(
     id, date, name, vendor, quantity, purchaseprize, sellingprize, discount) {
-  var userid = _firebaseauth.currentUser?.uid;
-
-  var uniqueId = _firebaseref.collection('stocklist').doc().id;
-  _firebaseref.collection('stocklist').doc(uniqueId).set({
-    'uid': userid,
-    'id': id,
+  var userId = _firebaseauth.currentUser?.uid;
+  var docId = _firebaseref.collection('stocklist').doc().id;
+  _firebaseref.collection('stocklist').doc(docId).set({
+    'docId': docId,
+    'userId': userId,
+    'productid': id,
     'date': date,
     'name': name,
     'vendor': vendor,
@@ -783,13 +784,10 @@ void _insertstokRecord(
     'purchaseprize': purchaseprize,
     'sellingprize': sellingprize,
     'discound': discount,
-  });
-  // .then((value) => {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(
-  //           content: Text("Inserted values"),
-  //         ),
-  //       )
-  //     });
-  print(uniqueId);
+  }).then((value) => {
+        Fluttertoast.showToast(
+            msg: 'value inserted succefully', gravity: ToastGravity.TOP),
+        print(userId),
+      });
+  print(docId);
 }

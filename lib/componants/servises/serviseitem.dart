@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,16 +7,21 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 
-
-
-  final CollectionReference _servicelistfireref =
-      FirebaseFirestore.instance.collection('servises');
+final CollectionReference _servicelistfireref =
+    FirebaseFirestore.instance.collection('servises');
 
 bool progresscolor = false;
 
-class ServiceItem extends StatelessWidget {
-  ServiceItem(this.datas);
+class ServiceItem extends StatefulWidget {
+  ServiceItem(this.datas, {Key? key}) : super(key: key);
   DocumentSnapshot? datas;
+
+  @override
+  State<ServiceItem> createState() => _ServiceItemState();
+}
+
+class _ServiceItemState extends State<ServiceItem> {
+  List<bool>? isSelected = [true, false];
 
   var userid = FirebaseAuth.instance.currentUser?.uid;
 
@@ -26,7 +33,7 @@ class ServiceItem extends StatelessWidget {
           // toolbarHeight: 70.0,
           backgroundColor: Color(0xff181826),
           title: Text(
-            'Servise > ' + 'Product ID : ${datas?['id']}',
+            'Servise > ' + 'Product ID : ${widget.datas?['id']}',
             style: const TextStyle(color: Colors.white, fontSize: 15.0),
           ),
         ),
@@ -34,6 +41,8 @@ class ServiceItem extends StatelessWidget {
             stream:
                 _servicelistfireref.where('uid', isEqualTo: userid).snapshots(),
             builder: (context, snapshot) {
+              print('${isSelected?[0]}');
+
               return Container(
                 height: 500.0,
                 width: 400.0,
@@ -48,7 +57,7 @@ class ServiceItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          'Issue id : ${datas?['id']}',
+                          'Issue id : ${widget.datas?['id']}',
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
@@ -79,7 +88,7 @@ class ServiceItem extends StatelessWidget {
                                   color: Colors.white, fontSize: 13.0),
                             ),
                             Text(
-                              "${datas?['returndate']}",
+                              "${widget.datas?['returndate']}",
                               style: TextStyle(
                                   color: Colors.white, fontSize: 13.0),
                             ),
@@ -107,7 +116,7 @@ class ServiceItem extends StatelessWidget {
                                   color: Colors.white, fontSize: 13.0),
                             ),
                             Text(
-                              "${datas?['issue']}",
+                              "${widget.datas?['issue']}",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 13.0,
@@ -135,7 +144,7 @@ class ServiceItem extends StatelessWidget {
                                   color: Colors.white, fontSize: 13.0),
                             ),
                             Text(
-                              "${datas?['name']}",
+                              "${widget.datas?['name']}",
                               style: TextStyle(
                                   color: Colors.white, fontSize: 13.0),
                             ),
@@ -160,7 +169,7 @@ class ServiceItem extends StatelessWidget {
                                   color: Colors.white, fontSize: 13.0),
                             ),
                             Text(
-                              "${datas?['phone']}",
+                              "${widget.datas?['phone']}",
                               style: TextStyle(
                                   color: Colors.white, fontSize: 13.0),
                             ),
@@ -185,17 +194,64 @@ class ServiceItem extends StatelessWidget {
                                   color: Colors.white, fontSize: 13.0),
                             ),
                             Text(
-                              "\$ ${datas?['servicecharge']}",
+                              "\$ ${widget.datas?['servicecharge']}",
                               style: TextStyle(
                                   color: Colors.white, fontSize: 13.0),
                             ),
                           ]),
                     ),
                   ),
-                  Complete(),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: ToggleButtons(
+                      borderRadius: BorderRadius.circular(10.0),
+                      fillColor: Colors.blue,
+                      isSelected: isSelected!,
+                      selectedColor: Colors.blueAccent,
+                      renderBorder: true,
+                      borderWidth: 2.0,
+                      borderColor: Colors.blueAccent,
+                      selectedBorderColor: Colors.blueAccent,
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: Text(
+                            'Completed',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: Text(
+                            'onProgress',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                      onPressed: (int newindex) {
+                        setState(() {
+                          for (int index = 0;
+                              index < isSelected!.length;
+                              index++) {
+                            if (index == newindex) {
+                              isSelected?[index] = true;
+                              // progresscolor = true;
+                              // print(progresscolor);
+                            } else {
+                              isSelected?[index] = false;
+                              // progresscolor = false;
+                              // print(progresscolor);
+                            }
+                          }
+                        });
+                      },
+                    ),
+                  ),
                   TextButton(
-                    onPressed: (() {
-                      _editbottommodal(context, datas);
+                    onPressed: (() async {
+                      print('$isSelected');
+                      await _editbottommodal(context);
                     }),
                     child: Text('Edit'),
                     // style: ButtonStyle(
@@ -205,24 +261,25 @@ class ServiceItem extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       var uniqueId = _servicelistfireref
-                            .doc(userid)
-                            .collection('bag')
-                            .doc()
-                            .id;
-
-                            _servicelistfireref
-                            .doc(userid)
-                            .collection('bag')
-                            .doc(uniqueId)
-                            .set({
-                          "id": datas?['id'],
-                          "issue": datas?['issue'],
-                          "name": datas?['name'],
-                          "returndate": datas?['returndate'],
-                          "servicecharge": datas?['servicecharge'],
-                          "phone": datas?['phone'],
-                          
-                        });
+                          .doc(userid)
+                          .collection('bag')
+                          .doc()
+                          .id;
+                      var selected = isSelected?[0];
+                      _servicelistfireref
+                          .doc(userid)
+                          .collection('bag')
+                          .doc(uniqueId)
+                          .set({
+                        "id": widget.datas?['id'],
+                        'userId': FirebaseAuth.instance.currentUser?.uid,
+                        "issue": widget.datas?['issue'],
+                        "name": widget.datas?['name'],
+                        "returndate": widget.datas?['returndate'],
+                        "servicecharge": widget.datas?['servicecharge'],
+                        "phone": widget.datas?['phone'],
+                        "progress": selected
+                      });
                       Navigator.of(context).pop();
                     },
                     child: Text('Add to bag'),
@@ -234,62 +291,234 @@ class ServiceItem extends StatelessWidget {
               );
             }));
   }
-}
 
-class Complete extends StatefulWidget {
-  @override
-  State<Complete> createState() => _CompleteState();
-}
-
-class _CompleteState extends State<Complete> {
-  List<bool>? isSelected = [true, false];
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: ToggleButtons(
-        borderRadius: BorderRadius.circular(10.0),
-        fillColor: Colors.blue,
-        isSelected: isSelected!,
-        selectedColor: Colors.blueAccent,
-        renderBorder: true,
-        borderWidth: 2.0,
-        borderColor: Colors.blueAccent,
-        selectedBorderColor: Colors.blueAccent,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Text(
-              'Completed',
-              style: TextStyle(color: Colors.white),
-            ),
+  _editbottommodal(BuildContext context) async {
+    if (widget.datas != null) {
+      _issueidcontroller.text = widget.datas?['id'];
+      _returndatecontroller.text = widget.datas?['returndate'];
+      _servicechargecontroller.text = widget.datas?['servicecharge'];
+      _namecontroller.text = widget.datas?['name'];
+      _phonecontroller.text = widget.datas?['phone'];
+    }
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(10.0),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Text(
-              'onProgress',
-              style: TextStyle(color: Colors.white),
+        ),
+        elevation: 2.0,
+        builder: (context) {
+          return DraggableScrollableSheet(
+            initialChildSize: 0.8,
+            builder: (_, controller) => Container(
+              color: Color(0xFF232338),
+              child: ListView(
+                controller: controller,
+                padding: EdgeInsets.all(32),
+                children: [
+                  buildText('Issue Id'),
+                  TextField(
+                    controller: _issueidcontroller,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(10.0),
+                      filled: true,
+                      fillColor: Colors.grey,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2.0),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.date_range_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                    cursorHeight: 30,
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    toolbarOptions: ToolbarOptions(selectAll: true),
+                  ),
+                  buildText('Return Date'),
+                  TextField(
+                    controller: _returndatecontroller,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(10.0),
+                      filled: true,
+                      fillColor: Colors.grey,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2.0),
+                      ),
+                    ),
+                    cursorHeight: 30,
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    toolbarOptions: ToolbarOptions(selectAll: true),
+                  ),
+                  buildText('Service charge'),
+                  TextField(
+                    controller: _servicechargecontroller,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(10.0),
+                      filled: true,
+                      fillColor: Colors.grey,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2.0),
+                      ),
+                    ),
+                    cursorHeight: 30,
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    toolbarOptions: ToolbarOptions(selectAll: true),
+                  ),
+                  buildText('Name'),
+                  TextField(
+                    controller: _namecontroller,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(10.0),
+                      filled: true,
+                      fillColor: Colors.grey,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2.0),
+                      ),
+                    ),
+                    cursorHeight: 30,
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    toolbarOptions: ToolbarOptions(selectAll: true),
+                  ),
+                  buildText('Phone'),
+                  TextField(
+                    controller: _phonecontroller,
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.all(10.0),
+                      filled: true,
+                      fillColor: Colors.grey,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2.0),
+                      ),
+                    ),
+                    cursorHeight: 30,
+                    cursorColor: Colors.white,
+                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                    toolbarOptions: ToolbarOptions(selectAll: true),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: ToggleButtons(
+                      borderRadius: BorderRadius.circular(10.0),
+                      fillColor: Colors.blue,
+                      isSelected: isSelected!,
+                      selectedColor: Colors.blueAccent,
+                      renderBorder: true,
+                      borderWidth: 2.0,
+                      borderColor: Colors.blueAccent,
+                      selectedBorderColor: Colors.blueAccent,
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: Text(
+                            'Completed',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        Padding(
+                          padding:
+                              const EdgeInsets.only(left: 20.0, right: 20.0),
+                          child: Text(
+                            'onProgress',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                      onPressed: (int newindex) {
+                        setState(() {
+                          for (int index = 0;
+                              index < isSelected!.length;
+                              index++) {
+                            if (index == newindex) {
+                              isSelected?[index] = true;
+                              // progresscolor = true;
+                              // print(progresscolor);
+                            } else {
+                              isSelected?[index] = false;
+                              // progresscolor = false;
+                              // print(progresscolor);
+                            }
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final firebaseauth = FirebaseAuth.instance;
+
+                      final id = _issueidcontroller.text;
+                      final returndate = _returndatecontroller.text;
+                      final servicecharge = _servicechargecontroller.text;
+                      final name = _namecontroller.text;
+                      final phone = _phonecontroller.text;
+                      var userId = firebaseauth.currentUser?.uid;
+
+                      await _servicelistfireref.doc(widget.datas?.id).update({
+                        'id': id,
+                        'returndate': returndate,
+                        'servicecharge': servicecharge,
+                        'name': name,
+                        'phone': phone,
+                        'userId':userId
+                      }).then((value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('successfully updated'),
+                          ),
+                        );
+                      });
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.green),
+                    ),
+                    child: Text('update'),
+                  ),
+                  const SizedBox(
+                    height: 5.0,
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('close'),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        Color.fromARGB(255, 171, 47, 47),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
-        onPressed: (int newindex) {
-          setState(() {
-            for (int index = 0; index < isSelected!.length; index++) {
-              if (index == newindex) {
-                isSelected?[index] = true;
-                progresscolor = true;
-                print(progresscolor);
-              } else {
-                isSelected?[index] = false;
-                // progresscolor = false;
-                print(progresscolor);
-              }
-            }
-          });
-        },
-      ),
-    );
+          );
+        });
   }
 }
 
@@ -298,185 +527,6 @@ TextEditingController _returndatecontroller = TextEditingController();
 TextEditingController _servicechargecontroller = TextEditingController();
 TextEditingController _namecontroller = TextEditingController();
 TextEditingController _phonecontroller = TextEditingController();
-
-Future<void> _editbottommodal(context, [DocumentSnapshot? data]) async {
-  if (data != null) {
-    _issueidcontroller.text = data['id'];
-    _returndatecontroller.text = data['returndate'];
-    _servicechargecontroller.text = data['servicecharge'];
-    _namecontroller.text = data['name'];
-    _phonecontroller.text = data['phone'];
-  }
-
-  showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(10.0),
-        ),
-      ),
-      elevation: 2.0,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.8,
-          builder: (_, controller) => Container(
-            color: Color(0xFF232338),
-            child: ListView(
-              controller: controller,
-              padding: EdgeInsets.all(32),
-              children: [
-                buildText('Issue Id'),
-                TextField(
-                  controller: _issueidcontroller,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.date_range_rounded,
-                      color: Colors.white,
-                    ),
-                  ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                  toolbarOptions: ToolbarOptions(selectAll: true),
-                ),
-                buildText('Return Date'),
-                TextField(
-                  controller: _returndatecontroller,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                  ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                  toolbarOptions: ToolbarOptions(selectAll: true),
-                ),
-                buildText('Service charge'),
-                TextField(
-                  controller: _servicechargecontroller,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                  ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                  toolbarOptions: ToolbarOptions(selectAll: true),
-                ),
-                buildText('Name'),
-                TextField(
-                  controller: _namecontroller,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                  ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                  toolbarOptions: ToolbarOptions(selectAll: true),
-                ),
-                buildText('Phone'),
-                TextField(
-                  controller: _phonecontroller,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10.0),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.white, width: 2.0),
-                    ),
-                  ),
-                  cursorHeight: 30,
-                  cursorColor: Colors.white,
-                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                  toolbarOptions: ToolbarOptions(selectAll: true),
-                ),
-                Complete(),
-                SizedBox(height: 20.0),
-                ElevatedButton(
-                  onPressed: () async {
-                    final id = _issueidcontroller.text;
-                    final returndate = _returndatecontroller.text;
-                    final servicecharge = _servicechargecontroller.text;
-                    final name = _namecontroller.text;
-                    final phone = _phonecontroller.text;
-
-                    await _servicelistfireref.doc(data?.id).update({
-                      'id':id,
-                      'returndate':returndate,
-                      'servicecharge':servicecharge,
-                      'name':name,
-                      'phone':phone
-                    }).then((value) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('successfully updated'),
-          ),
-        );});
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green),
-                  ),
-                  child: Text('update'),
-                ),
-                const SizedBox(
-                  height: 5.0,
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('close'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                      Color.fromARGB(255, 171, 47, 47),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      });
-}
 
 Widget buildText(String text) => Container(
       margin: EdgeInsets.fromLTRB(0, 8, 0, 8),

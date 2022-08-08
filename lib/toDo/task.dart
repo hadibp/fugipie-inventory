@@ -7,26 +7,26 @@ class TodoField {
 }
 
 class Task {
-  DateTime createdTime;
+  DateTime createTime;
   String? id;
   String? title;
   bool completed;
 
   Task(
-      {required this.createdTime,
+      {required this.createTime,
       this.id,
       @required this.title,
       this.completed = false});
 
   static Task fromjson(Map<String, dynamic> json) => Task(
-        createdTime: Utils.toDateTime(json['createTime']),
+        createTime: json['createTime'],
         title: json['title'],
         id: json['id'],
         completed: json['completed'],
       );
 
   Map<String, dynamic> toJson() => {
-        'createTime': Utils.fromDatetimetoJson(createdTime),
+        'createTime': DateTime.now(),
         'title': title,
         'id': id,
         'completed': completed,

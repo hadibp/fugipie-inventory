@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class carouselslider extends StatefulWidget {
-  const carouselslider({
-    Key? key,
-    required this.imgList,
-  }) : super(key: key);
+  
 
-  final List<String> imgList;
+final List<String> imgList = ['sales ', 'service', 'Current stock'];
+final List<String> strings =['hI ', 'HELLO' ,'WHAT'];
+
 
   @override
   State<carouselslider> createState() => _carouselsliderState();
@@ -31,10 +30,8 @@ class _carouselsliderState extends State<carouselslider> {
                 _current = index;
               });
             }),
-        items: widget.imgList.map((i) {
-          return Builder(
-            builder: (BuildContext context) {
-              return Padding(
+        items: [
+          Padding(
                 padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
                 child: Container(
                   width: MediaQuery.of(context).size.width,
@@ -48,16 +45,16 @@ class _carouselsliderState extends State<carouselslider> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          '$i ',
-                          style: TextStyle(
+                          '${widget.imgList[0]}',
+                          style:const TextStyle(
                             color: Colors.green,
                             fontWeight: FontWeight.w900,
                             fontSize: 25.0,
                           ),
                         ),
                         Text(
-                          '₹ 23220.0',
-                          style: TextStyle(
+                          '₹ ${widget.strings[0].toString()}',
+                          style:const TextStyle(
                             color: Colors.white,
                             height: 2.0,
                             fontSize: 28.0,
@@ -68,10 +65,123 @@ class _carouselsliderState extends State<carouselslider> {
                     ),
                   ),
                 ),
-              );
-            },
-          );
-        }).toList(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.symmetric(horizontal: 5.0),
+                  decoration: BoxDecoration(
+                      color: Color(0xFF232333),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${widget.imgList[1].toString()}',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 25.0,
+                          ),
+                        ),
+                        Text(
+                          '₹ ${widget.strings[1].toString()}',
+                          style:const TextStyle(
+                            color: Colors.white,
+                            height: 2.0,
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          
+                  
+                //3rd Image of Slider
+                Padding(
+                padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin:const EdgeInsets.symmetric(horizontal: 5.0),
+                  decoration: BoxDecoration(
+                      color: Color(0xFF232333),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${widget.imgList[2].toString()}',
+                          style:const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 25.0,
+                          ),
+                        ),
+                        Text(
+                          '₹ ${widget.strings[2].toString()}',
+                          style:const TextStyle(
+                            color: Colors.white,
+                            height: 2.0,
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+        ],
+        // items: widget.imgList.map((i) {
+        //   return Builder(
+        //     builder: (BuildContext context) {
+        //       return Padding(
+        //         padding: const EdgeInsets.only(top: 18.0, bottom: 18.0),
+        //         child: Container(
+        //           width: MediaQuery.of(context).size.width,
+        //           margin: EdgeInsets.symmetric(horizontal: 5.0),
+        //           decoration: BoxDecoration(
+        //               color: Color(0xFF232333),
+        //               borderRadius: BorderRadius.circular(10.0)),
+        //           child: Center(
+        //             child: Column(
+        //               mainAxisAlignment: MainAxisAlignment.center,
+        //               crossAxisAlignment: CrossAxisAlignment.center,
+        //               children: [
+        //                 Text(
+        //                   '$i ',
+        //                   style: TextStyle(
+        //                     color: Colors.green,
+        //                     fontWeight: FontWeight.w900,
+        //                     fontSize: 25.0,
+        //                   ),
+        //                 ),
+        //                 Text(
+        //                   '₹ {}}',
+        //                   style:const TextStyle(
+        //                     color: Colors.white,
+        //                     height: 2.0,
+        //                     fontSize: 28.0,
+        //                     fontWeight: FontWeight.w900,
+        //                   ),
+        //                 )
+        //               ],
+        //             ),
+        //           ),
+        //         ),
+        //       );
+        //     },
+        //   );
+        // }).toList(),
+        
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -97,11 +207,6 @@ class _carouselsliderState extends State<carouselslider> {
       ),
     ]);
 
-    // const Text(
-    //   "Hello back",
-    //   style: TextStyle(
-    //     color: Colors.white,
-    //   ),
-    // );
+    
   }
 }

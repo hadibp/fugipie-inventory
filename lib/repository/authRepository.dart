@@ -27,6 +27,8 @@ class AuthRepository {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
+      Fluttertoast.showToast(msg:'user created', gravity: ToastGravity.TOP);
+
     } on FirebaseException catch (e) {
       Fluttertoast.showToast(msg: e.code, gravity: ToastGravity.TOP);
 
@@ -39,6 +41,8 @@ class AuthRepository {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      Fluttertoast.showToast(msg: 'logged In', gravity: ToastGravity.TOP);
+
     } on FirebaseException catch (e) {
       Fluttertoast.showToast(msg: e.code, gravity: ToastGravity.TOP);
 

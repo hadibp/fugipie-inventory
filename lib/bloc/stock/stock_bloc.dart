@@ -11,17 +11,20 @@ part 'stock_state.dart';
 class StockBloc extends Bloc<StockEvent, StockState> {
   final SalesRepository _salesRepository;
   StreamSubscription? _streamSubscription;
+  StreamSubscription? _stockSubscription;
+
 
   StockBloc({required SalesRepository salesRepository})
       : _salesRepository = salesRepository,
         super(StockLoading()) {
     on<LoadProdects>(_mapLoadProductToState);
     on<UpdateProdects>(_mapUpdateProductToState);
+    // on<DeleteProdects>(_deleteProductToState);
   }
 
-  void _mapLoadProductToState(LoadProdects event, Emitter<StockState> emit) {
+  void _mapLoadProductToState(LoadProdects event, Emitter<StockState> emit)  {
     _streamSubscription?.cancel();
-    _streamSubscription = _salesRepository.getAllproducts().listen((products) {
+     _streamSubscription =  _salesRepository.getAllproducts().listen((products) {
       add(
         UpdateProdects(products),
       );
@@ -31,6 +34,18 @@ class StockBloc extends Bloc<StockEvent, StockState> {
   void _mapUpdateProductToState(UpdateProdects event, Emitter<StockState> emit) {
     emit(StockLoaded(products: event.products));
   }
+
+  // void _deleteProductToState(DeleteProdects event, Emitter<StockState> emit) 
+  //     async {
+  //   // _stockSubscription?.cancel();
+  //   if (state is StockLoaded) {
+  //     try {
+  //       await _salesRepository.deleteProduct(event.products.indexOf(docmen));
+  //       print('data uploaded');
+  //     } catch (_) {}
+  //   }
+  
+  // }
 
   // @override
   // Stream<StockState> mapEventToState(

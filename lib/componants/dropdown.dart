@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 
-
-
-class dropdowndate extends StatefulWidget {
-  const dropdowndate({
+class Dropdowndate extends StatefulWidget {
+  const Dropdowndate({
     Key? key,
-    required List<String> listitem,
-  })  : _listitem = listitem,
-        super(key: key);
+  }) : super(key: key);
 
-  final List<String> _listitem;
+  // final List<String> _listitem;
 
   @override
-  State<dropdowndate> createState() => _dropdowndateState();
+  State<Dropdowndate> createState() => _DropdowndateState();
 }
 
-class _dropdowndateState extends State<dropdowndate> {
+class _DropdowndateState extends State<Dropdowndate> {
   var _currentvalue = 'details/month';
+  final _listitem = ['one', 'two', 'three', 'four', 'details/month'];
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +31,7 @@ class _dropdowndateState extends State<dropdowndate> {
           child: DropdownButton<String>(
             elevation: 2,
             isExpanded: true,
-            items: widget._listitem.map((String dropdownitem) {
+            items: _listitem.map((String dropdownitem) {
               return DropdownMenuItem<String>(
                 value: dropdownitem,
                 child: Text(dropdownitem),
@@ -42,17 +39,17 @@ class _dropdowndateState extends State<dropdowndate> {
             }).toList(),
             onChanged: (String? newvalue) {
               setState(() {
-                this._currentvalue = newvalue!;
+                _currentvalue = newvalue!;
               });
             },
             value: _currentvalue,
             dropdownColor: Color.fromARGB(255, 41, 41, 65),
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_drop_down,
               color: Colors.white,
             ),
             iconSize: 30.0,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 10.0,
             ),

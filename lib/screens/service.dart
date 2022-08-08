@@ -95,7 +95,7 @@ void _servicebottommodal(context) {
           builder: (_, controller) => Container(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom),
-            color:const Color(0xFF232338),
+            color: const Color(0xFF232338),
             child: ListView(
               controller: controller,
               padding: EdgeInsets.all(32),
@@ -513,9 +513,7 @@ Widget tabTwo(context) {
                                     height: 10.0,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: progresscolor
-                                          ? Color.fromARGB(255, 244, 16, 16)
-                                          : Color.fromARGB(255, 19, 164, 0),
+                                      color: Color.fromARGB(255, 255, 0, 0),
                                     ),
                                   )
                                 ],
@@ -555,7 +553,7 @@ Widget tabTwo(context) {
 
 Widget tabThree() {
   return StreamBuilder<QuerySnapshot>(
-      stream: _servicelistfireref.doc(userid).collection('bag').snapshots(),
+      stream: _servicelistfireref.doc(userid).collection('bag').where('userId', isEqualTo: userid).snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
         var itemCount = _streamSnapshot.data?.docs.length;
         print(itemCount);
@@ -654,13 +652,16 @@ Widget tabThree() {
                               width: 10.0,
                               height: 10.0,
                               decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color.fromARGB(255, 255, 0, 0)),
+                                shape: BoxShape.circle,
+                                color: data?['progress'] ?? true
+                                    ? Colors.green
+                                    : Colors.red,
+                              ),
                             )
                           ],
                         ),
                       ),
-                      Divider(
+                      const Divider(
                         height: 5.0,
                         thickness: 5.0,
                         color: Color.fromARGB(255, 78, 78, 78),
@@ -673,14 +674,14 @@ Widget tabThree() {
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
+                              const Text(
                                 "Service Charge",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 13.0),
                               ),
                               Text(
                                 "${data?['servicecharge']}",
-                                style: TextStyle(
+                                style:const TextStyle(
                                     color: Colors.white, fontSize: 13.0),
                               ),
                             ]),

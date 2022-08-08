@@ -308,8 +308,9 @@ class _StockPageState extends State<StockPage> {
 
                       Navigator.of(context).pop();
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("fill all the textfields")));
+                      Fluttertoast.showToast(
+                          msg: 'fill all the text fields',
+                          gravity: ToastGravity.BOTTOM);
                     }
                   },
                   style: ButtonStyle(
@@ -364,14 +365,15 @@ Widget buildText(String text) => Container(
 
 void _insertstokRecord(
     id, date, name, vendor, quantity, purchaseprize, sellingprize, discount) {
-  var userid = _firebaseauth.currentUser?.uid;
+  var userId = _firebaseauth.currentUser?.uid;
 
-  var uniqueId = _firebaseref.collection('stocklist').doc().id;
-  _firebaseref.collection('stocklist').doc(uniqueId).set({
-    'id': id,
-    'uid': userid,
-    'name': name,
+  var docId = _firebaseref.collection('stocklist').doc().id;
+  _firebaseref.collection('stocklist').doc(docId).set({
+    'docId': docId,
+    'userId': userId,
+    'productid': id,
     'date': date,
+    'name': name,
     'vendor': vendor,
     'quantity': quantity,
     'purchaseprize': purchaseprize,
@@ -381,5 +383,5 @@ void _insertstokRecord(
         Fluttertoast.showToast(
             msg: 'value inserted succefully', gravity: ToastGravity.TOP),
       });
-  print(uniqueId);
+  print(docId);
 }

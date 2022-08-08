@@ -88,13 +88,14 @@ class SalesItem extends StatelessWidget {
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: state.cart
-                              .products.length,
+                          itemCount: state.cart.products.length,
                           itemBuilder: (
                             context,
                             index,
                           ) {
                             final data = state.cart.products[index];
+                            final total =
+                                data.lowestprize! - data.discount!.toDouble();
                             return ListTile(
                               title: Center(
                                   child: Container(
@@ -246,7 +247,7 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data.discount.toString(),
+                                                data.lowestprize.toString(),
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
@@ -261,7 +262,7 @@ class SalesItem extends StatelessWidget {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               const Text(
-                                                "Discount",
+                                                "Discount ",
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
@@ -298,7 +299,8 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                state.cart.subtotal.toString(),
+                                                // state.cart.subtotal.toString(),
+                                                '$total',
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
@@ -325,7 +327,7 @@ class SalesItem extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                state.cart.products.length.toString(),
+                                'Total items (${state.cart.products.length.toString()})',
                                 style: const TextStyle(
                                     color: Colors.white, fontSize: 18.0),
                                 textAlign: TextAlign.left,
@@ -357,6 +359,8 @@ class SalesItem extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         _whatsappmodal(context);
+                        state.cart.products.clear();
+
                         print('grandtotal');
                       },
                       //  () => Navigator.of(context).pop(),
@@ -374,9 +378,9 @@ class SalesItem extends StatelessWidget {
                     height: 35.0,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        state.cart.products.clear();
                       },
-                      child: Text('cancel'),
+                      child: Text('clear'),
                       style: ElevatedButton.styleFrom(
                         primary: Color.fromARGB(255, 220, 82, 72),
                       ),
@@ -438,8 +442,6 @@ class SalesItem extends StatelessWidget {
                           child: ElevatedButton.icon(
                             icon: const Icon(Icons.whatsapp),
                             onPressed: () {
-                              
-
                               final whatsappnum = _mobphonecontroller.text;
                               final custname = _custamernamecontroller.text;
 
@@ -463,11 +465,11 @@ class SalesItem extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {
                               context.read<CheckoutBloc>().add(
-                                  ConfirmCheckOutEvent(
-                                      checkout: state.checkOut));
-                                      print('added');
-
-                            
+                                    ConfirmCheckOutEvent(
+                                        checkout: state.checkOut),
+                                  );
+                              Navigator.of(context).pop();
+                              print('added');
                             },
                             child: Text('Save Bill'),
                             style: ButtonStyle(

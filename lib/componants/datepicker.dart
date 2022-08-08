@@ -78,6 +78,5 @@ class DatePickerController   {
   //   final date ='${selected!.day}/${selected.month}/${selected.year}';
   //   return date;
   // }
-// double get subtotal => ;
 
 }

@@ -1,15 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fugipie_inventory/repository/database.dart';
 import 'package:provider/provider.dart';
 import 'package:fugipie_inventory/toDo/task.dart';
 import '../modals/TodosModel.dart';
 
 class TaskList extends StatelessWidget {
-  
-  
-    var userid =  FirebaseAuth.instance.currentUser?.uid;
+  var userid = FirebaseAuth.instance.currentUser?.uid;
 
   final TextEditingController _textEditingFieldController =
       TextEditingController();
@@ -20,14 +19,16 @@ class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _todolistfireref.where('uid',isEqualTo: userid ).snapshots(),
+      stream: _todolistfireref
+          .where('uid', isEqualTo: userid)
+          // .orderBy('id', descending: true)
+          .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
-        if (_streamSnapshot.hasData ) {
-          // print(_streamSnapshot.data!.docs.isNotEmpty);
+        if (_streamSnapshot.hasData) {
           return ListView.builder(
               itemCount: _streamSnapshot.data?.docs.length,
               itemBuilder: (context, index) {
-                final  data = _streamSnapshot.data?.docs[index];
+                final data = _streamSnapshot.data?.docs[index];
                 return Padding(
                   padding: const EdgeInsets.only(
                       top: 10.0, bottom: 4.0, left: 10.0, right: 10.0),
@@ -70,8 +71,13 @@ class TaskList extends StatelessWidget {
                   ),
                 );
               });
-        } else{
-          return Container(child: Center(child: Text('not found',style: TextStyle(color: Colors.white),)));
+        } else {
+          return Container(
+              child: Center(
+                  child: Text(
+            'todo list is empty',
+            style: TextStyle(color: Colors.white),
+          )));
         }
       },
     );
@@ -121,12 +127,7 @@ class TaskList extends StatelessWidget {
   }
 
   Future<void> _delete(context, String productId) async {
-    await _todolistfireref
-    .doc(productId).delete();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("todo deleted"),
-      ),
-    );
+    await _todolistfireref.doc(productId).delete();
+    Fluttertoast.showToast(msg: 'todo deleted', gravity: ToastGravity.TOP);
   }
 }

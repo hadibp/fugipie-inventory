@@ -17,24 +17,27 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(CartLoading());
     try {
       await Future<void>.delayed(const Duration(seconds: 1));
-      emit(CartLoaded());
+      emit(const CartLoaded());
     } catch (_) {
       emit(CartError());
     }
   }
 
-  void _onAddProduct(AddCartProduct event, Emitter<CartState> emit)  {
+  void _onAddProduct(AddCartProduct event, Emitter<CartState> emit) {
     final state = this.state;
     if (state is CartLoaded) {
       try {
-        emit(CartLoaded(
+        emit(
+          CartLoaded(
             cart: Cart(
-                products: List.from(state.cart.products)..add(event.products))));
+              products: List.from(state.cart.products)..add(event.products),
+            ),
+          ),
+        );
       } on Exception {
         emit(CartError());
       }
     }
-   
   }
 
   void _onremoveProduct(RemoveCartProduct event, Emitter<CartState> emit) {
@@ -43,14 +46,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       try {
         emit(CartLoaded(
             cart: Cart(
-                products: List.from(state.cart.products)..remove(event.products))));
+                products: List.from(state.cart.products)
+                  ..remove(event.products))));
       } on Exception {
         emit(CartError());
       }
     }
   }
-
-   
-    
-  }
-
+}

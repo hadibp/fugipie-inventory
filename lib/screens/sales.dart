@@ -6,6 +6,7 @@ import 'package:fugipie_inventory/bloc/cart/cart_bloc.dart';
 import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
 import 'package:fugipie_inventory/componants/sales/salesitem.dart';
 import '../bloc/counter/counter_bloc.dart';
+import 'package:fugipie_inventory/modals/stockmodel.dart';
 
 // final CollectionReference _stocklistfireref =
 //     FirebaseFirestore.instance.collection('stocklist');
@@ -30,7 +31,7 @@ class _SalesPageState extends State<SalesPage> {
           toolbarHeight: 70.0,
           backgroundColor: Color(0xff181826),
           elevation: 6,
-          title:const Text(
+          title: const Text(
             'Sales Orders',
             style: TextStyle(color: Colors.white),
           ),
@@ -41,7 +42,7 @@ class _SalesPageState extends State<SalesPage> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20.0),
-                  color: Color(0xFF2A2A45),
+                  color: const Color(0xFF2A2A45),
                 ),
                 height: 100.0,
                 width: 180.0,
@@ -88,21 +89,25 @@ class _SalesPageState extends State<SalesPage> {
                       builder: (context) => SalesItem(context, name)),
                 );
               },
-              icon: Icon(Icons.shopping_cart_checkout),
+              icon: const Icon(Icons.shopping_cart_checkout),
             ),
           ],
         ),
         body: BlocBuilder<StockBloc, StockState>(builder: (context, state) {
           if (state is StockLoading) {
             print('the state count is ${state.props.length}');
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (state is StockLoaded) {
+            final datas = state.products
+                .where((element) => element.userId == userid)
+                .toList();
+
             print(state.products.length);
             return ListView.builder(
-              itemCount: state.products.length,
+              itemCount: datas.length,
               itemBuilder: ((context, index) {
-                final data = state.products[index];
+                final data = datas[index];
 
                 if (name.isEmpty) {
                   // print(data);
@@ -136,9 +141,7 @@ class _SalesPageState extends State<SalesPage> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                                // context
-                                //     .read<CartBloc>()
-                                //     .add(AddCartProduct(data));
+                                
 
                                 if (data != null) {
                                   _productidcontroller.text =
@@ -164,389 +167,8 @@ class _SalesPageState extends State<SalesPage> {
 
                                 final double totalamount =
                                     sellingprise - discountprise;
-                                print('you got here..');
-                                // final int totalamount = 10 + sellingprise;
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(10.0),
-                                    ),
-                                  ),
-                                  elevation: 2.0,
-                                  builder: (context) {
-                                    return DraggableScrollableSheet(
-                                      initialChildSize: 0.8,
-                                      builder: (_, controller) => Container(
-                                        color: Color(0xFF232338),
-                                        child: ListView(
-                                          controller: controller,
-                                          padding: EdgeInsets.all(32),
-                                          children: [
-                                            buildText('Product Id'),
-                                            TextField(
-                                              controller: _productidcontroller,
-                                              decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(10.0),
-                                                filled: true,
-                                                fillColor: Color(0xFF394371),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8.0)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2.0),
-                                                ),
-                                              ),
-                                              cursorHeight: 30,
-                                              cursorColor: Colors.white,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0)),
-                                              enabled: false,
-                                            ),
-                                            buildText('Product Name'),
-                                            TextField(
-                                              controller:
-                                                  _productnamecontroller,
-                                              decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(10.0),
-                                                filled: true,
-                                                fillColor: Color(0xFF394371),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8.0)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2.0),
-                                                ),
-                                              ),
-                                              cursorHeight: 30,
-                                              cursorColor: Colors.white,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0)),
-                                              enabled: false,
-                                            ),
-                                            buildText('Vendor'),
-                                            TextField(
-                                              controller: _vendorcontroller,
-                                              decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(10.0),
-                                                filled: true,
-                                                fillColor: Color(0xFF394371),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8.0)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2.0),
-                                                ),
-                                              ),
-                                              cursorHeight: 30,
-                                              cursorColor: Colors.white,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0)),
-                                              enabled: false,
-                                            ),
-                                            buildText('Quantity'),
-                                            Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  SizedBox(
-                                                    width: 130.0,
-                                                    child: BlocBuilder<
-                                                        CounterBloc,
-                                                        CounterState>(
-                                                      builder:
-                                                          (context, state) {
-                                                        _quatitycontroller
-                                                                .text =
-                                                            state.counterValue
-                                                                .toString();
-                                                        return TextField(
-                                                          controller:
-                                                              _quatitycontroller,
-                                                          decoration:
-                                                              const InputDecoration(
-                                                            hintStyle: TextStyle(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        255,
-                                                                        255,
-                                                                        255)),
-                                                            contentPadding:
-                                                                EdgeInsets.all(
-                                                                    10.0),
-                                                            filled: true,
-                                                            fillColor:
-                                                                Colors.grey,
-                                                            border:
-                                                                OutlineInputBorder(
-                                                              borderRadius: BorderRadius
-                                                                  .all(Radius
-                                                                      .circular(
-                                                                          8.0)),
-                                                            ),
-                                                            focusedBorder:
-                                                                OutlineInputBorder(
-                                                              borderSide: const BorderSide(
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          2,
-                                                                          2,
-                                                                          2),
-                                                                  width: 2.0),
-                                                            ),
-                                                            enabled: false,
-                                                          ),
-                                                          cursorHeight: 30,
-                                                          cursorColor:
-                                                              Colors.white,
-                                                          style: TextStyle(
-                                                              color: Color
-                                                                  .fromARGB(255,
-                                                                      0, 0, 0)),
-                                                          toolbarOptions:
-                                                              ToolbarOptions(
-                                                                  selectAll:
-                                                                      true),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                  ElevatedButton(
-                                                    style: ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStateProperty
-                                                              .all(
-                                                        Color.fromARGB(
-                                                            255, 164, 194, 15),
-                                                      ),
-                                                    ),
-                                                    onPressed: () => context
-                                                        .read<CounterBloc>()
-                                                        .add(DecrementEvent()),
-                                                    child: Icon(
-                                                        Icons.exposure_minus_1),
-                                                  ),
-                                                  ElevatedButton(
-                                                    onPressed: () => context
-                                                        .read<CounterBloc>()
-                                                        .add(IncrementEvent()),
-                                                    child: Icon(Icons.add),
-                                                    style: ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStateProperty
-                                                              .all(
-                                                        Color.fromARGB(
-                                                            255, 25, 15, 171),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ]),
-                                            buildText('purchase price'),
-                                            TextField(
-                                              controller:
-                                                  _purchaseprizecontroller,
-                                              decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(10.0),
-                                                filled: true,
-                                                fillColor: Colors.grey,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8.0)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2.0),
-                                                ),
-                                              ),
-                                              cursorHeight: 30,
-                                              cursorColor: Colors.white,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0)),
-                                              toolbarOptions: ToolbarOptions(
-                                                  selectAll: true),
-                                              enabled: false,
-                                            ),
-                                            buildText('Selling price'),
-                                            TextField(
-                                              controller:
-                                                  _sellingprizecontroller,
-                                              decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(10.0),
-                                                filled: true,
-                                                fillColor: Colors.grey,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8.0)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2.0),
-                                                ),
-                                              ),
-                                              cursorHeight: 30,
-                                              cursorColor: Colors.white,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0)),
-                                              toolbarOptions: ToolbarOptions(
-                                                  selectAll: true),
-                                              enabled: false,
-                                            ),
-                                            buildText('Discount'),
-                                            TextField(
-                                              controller: _discountcontroller,
-                                              decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(10.0),
-                                                filled: true,
-                                                fillColor: Colors.grey,
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8.0)),
-                                                ),
-                                                focusedBorder:
-                                                    OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.white,
-                                                      width: 2.0),
-                                                ),
-                                              ),
-                                              cursorHeight: 30,
-                                              cursorColor: Colors.white,
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 0, 0, 0)),
-                                              toolbarOptions: ToolbarOptions(
-                                                  selectAll: true),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(14.0),
-                                              child: BlocBuilder<CounterBloc,
-                                                  CounterState>(
-                                                builder: (context, state) {
-                                                  return Center(
-                                                    child: Text(
-                                                      '-----     \$ ${state.counterValue! * totalamount}    -----',
-                                                      style: TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: 28.0),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10.0),
-                                            BlocBuilder<CounterBloc,
-                                                CounterState>(
-                                              builder: (context, state) {
-                                                return ElevatedButton(
-                                                  onPressed: () {
-                                                    // var total =
-                                                    //     state.counterValue! *
-                                                    //         totalamount;
-                                                    // var uniqueId =
-                                                    //     _stocklistfireref
-                                                    //         .doc(userid)
-                                                    //         .collection(
-                                                    //             'cart-collection')
-                                                    //         .doc()
-                                                    //         .id;
 
-                                                    // _stocklistfireref
-                                                    //     .doc(userid)
-                                                    //     .collection(
-                                                    //         'cart-collection')
-                                                    //     .doc(uniqueId)
-                                                    //     .set({
-                                                    //   "id": data.id,
-                                                    //   "name": data.productname,
-                                                    //   "vendor": data.vendor,
-                                                    //   "purchaseprize":
-                                                    //       data.purchaseprize,
-                                                    //   "quantity":
-                                                    //       state.counterValue,
-                                                    //   "sellingprize":
-                                                    //       data.lowestprize,
-                                                    //   "discound": data.discount,
-                                                    //   "total": total,
-                                                    // });
-                                                    context
-                                                        .read<CartBloc>()
-                                                        .add(AddCartProduct(
-                                                            data));
-                                                            Navigator.of(context).pop();
-                                                  },
-                                                  style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all(Colors.green),
-                                                  ),
-                                                  child: const Text(
-                                                      'Add Item to cart'),
-                                                );
-                                              },
-                                            ),
-                                            const SizedBox(
-                                              height: 5.0,
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () =>
-                                                  Navigator.of(context).pop(),
-                                              child: Text('Cancel Item'),
-                                              style: ButtonStyle(
-                                                backgroundColor:
-                                                    MaterialStateProperty.all(
-                                                  Color.fromARGB(
-                                                      255, 171, 47, 47),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                                print('you touched me');
-                                // print(_streamSnapshot.data?.docs.length);
-                                print(data.date);
+                                _salesbottommodal(context, totalamount, data);
                               },
                             );
                           } else {
@@ -556,12 +178,31 @@ class _SalesPageState extends State<SalesPage> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                                context
-                                    .read<CartBloc>()
-                                    .add(AddCartProduct(data));
-                                // _salesbottommodal(context, data);
-                                // print(_streamSnapshot.data?.docs.length);
-                                print(data.date);
+                                if (data != null) {
+                                  _productidcontroller.text =
+                                      data.id.toString();
+                                  _datecontroller.text = data.date.toString();
+                                  _productnamecontroller.text =
+                                      data.productname.toString();
+                                  _vendorcontroller.text =
+                                      data.vendor.toString();
+                                  _quatitycontroller.text =
+                                      data.quantity.toString();
+                                  _purchaseprizecontroller.text =
+                                      data.purchaseprize.toString();
+                                  _sellingprizecontroller.text =
+                                      data.lowestprize.toString();
+                                  _discountcontroller.text =
+                                      data.discount.toString();
+                                }
+                                final double sellingprise =
+                                    double.parse(_sellingprizecontroller.text);
+                                final double discountprise =
+                                    double.parse(_discountcontroller.text);
+
+                                final double totalamount =
+                                    sellingprise - discountprise;
+                                _salesbottommodal(context, totalamount, data);
                               },
                             );
                           }
@@ -598,12 +239,31 @@ class _SalesPageState extends State<SalesPage> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                                context
-                                    .read<CartBloc>()
-                                    .add(AddCartProduct(data));
-                                // _salesbottommodal(context, data);
-                                // print(_streamSnapshot.data?.docs.length);
-                                print(data.date);
+                                if (data != null) {
+                                  _productidcontroller.text =
+                                      data.id.toString();
+                                  _datecontroller.text = data.date.toString();
+                                  _productnamecontroller.text =
+                                      data.productname.toString();
+                                  _vendorcontroller.text =
+                                      data.vendor.toString();
+                                  _quatitycontroller.text =
+                                      data.quantity.toString();
+                                  _purchaseprizecontroller.text =
+                                      data.purchaseprize.toString();
+                                  _sellingprizecontroller.text =
+                                      data.lowestprize.toString();
+                                  _discountcontroller.text =
+                                      data.discount.toString();
+                                }
+                                final double sellingprise =
+                                    double.parse(_sellingprizecontroller.text);
+                                final double discountprise =
+                                    double.parse(_discountcontroller.text);
+
+                                final double totalamount =
+                                    sellingprise - discountprise;
+                                _salesbottommodal(context, totalamount, data);
                               },
                             );
                           } else {
@@ -613,12 +273,31 @@ class _SalesPageState extends State<SalesPage> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                                context
-                                    .read<CartBloc>()
-                                    .add(AddCartProduct(data));
-                                // _salesbottommodal(context, data);
-                                // print(_streamSnapshot.data?.docs.length);
-                                print(data.date);
+                               if (data != null) {
+                                  _productidcontroller.text =
+                                      data.id.toString();
+                                  _datecontroller.text = data.date.toString();
+                                  _productnamecontroller.text =
+                                      data.productname.toString();
+                                  _vendorcontroller.text =
+                                      data.vendor.toString();
+                                  _quatitycontroller.text =
+                                      data.quantity.toString();
+                                  _purchaseprizecontroller.text =
+                                      data.purchaseprize.toString();
+                                  _sellingprizecontroller.text =
+                                      data.lowestprize.toString();
+                                  _discountcontroller.text =
+                                      data.discount.toString();
+                                }
+                                final double sellingprise =
+                                    double.parse(_sellingprizecontroller.text);
+                                final double discountprise =
+                                    double.parse(_discountcontroller.text);
+
+                                final double totalamount =
+                                    sellingprise - discountprise;
+                                _salesbottommodal(context, totalamount, data);
                               },
                             );
                           }
@@ -641,6 +320,285 @@ class _SalesPageState extends State<SalesPage> {
           }
         }));
   }
+
+  Future<dynamic> _salesbottommodal(
+      BuildContext context, double totalamount, SalesProducts data) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10.0),
+        ),
+      ),
+      elevation: 2.0,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          builder: (_, controller) => Container(
+            color: Color(0xFF232338),
+            child: ListView(
+              controller: controller,
+              padding: EdgeInsets.all(32),
+              children: [
+                buildText('Product Id'),
+                TextField(
+                  controller: _productidcontroller,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Color(0xFF394371),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  enabled: false,
+                ),
+                buildText('Product Name'),
+                TextField(
+                  controller: _productnamecontroller,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Color(0xFF394371),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  enabled: false,
+                ),
+                buildText('Vendor'),
+                TextField(
+                  controller: _vendorcontroller,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Color(0xFF394371),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  enabled: false,
+                ),
+                buildText('Quantity'),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: 130.0,
+                        child: BlocBuilder<CounterBloc, CounterState>(
+                          builder: (context, state) {
+                            _quatitycontroller.text =
+                                state.counterValue.toString();
+                            return TextField(
+                              controller: _quatitycontroller,
+                              decoration: const InputDecoration(
+                                hintStyle: TextStyle(
+                                    color: Color.fromARGB(255, 255, 255, 255)),
+                                contentPadding: EdgeInsets.all(10.0),
+                                filled: true,
+                                fillColor: Colors.grey,
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8.0)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Color.fromARGB(255, 2, 2, 2),
+                                      width: 2.0),
+                                ),
+                                enabled: false,
+                              ),
+                              cursorHeight: 30,
+                              cursorColor: Colors.white,
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 0, 0, 0)),
+                              toolbarOptions: ToolbarOptions(selectAll: true),
+                            );
+                          },
+                        ),
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            Color.fromARGB(255, 164, 194, 15),
+                          ),
+                        ),
+                        onPressed: () =>
+                            context.read<CounterBloc>().add(DecrementEvent()),
+                        child: Icon(Icons.exposure_minus_1),
+                      ),
+                      ElevatedButton(
+                        onPressed: () =>
+                            context.read<CounterBloc>().add(IncrementEvent()),
+                        child: Icon(Icons.add),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            Color.fromARGB(255, 25, 15, 171),
+                          ),
+                        ),
+                      ),
+                    ]),
+                buildText('purchase price'),
+                TextField(
+                  controller: _purchaseprizecontroller,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Colors.grey,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  toolbarOptions: ToolbarOptions(selectAll: true),
+                  enabled: false,
+                ),
+                buildText('Selling price'),
+                TextField(
+                  controller: _sellingprizecontroller,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Colors.grey,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  toolbarOptions: ToolbarOptions(selectAll: true),
+                  enabled: false,
+                ),
+                buildText('Discount'),
+                TextField(
+                  controller: _discountcontroller,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10.0),
+                    filled: true,
+                    fillColor: Colors.grey,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          const BorderSide(color: Colors.white, width: 2.0),
+                    ),
+                  ),
+                  cursorHeight: 30,
+                  cursorColor: Colors.white,
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                  toolbarOptions: ToolbarOptions(selectAll: true),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: BlocBuilder<CounterBloc, CounterState>(
+                    builder: (context, state) {
+                      return Center(
+                        child: Text(
+                          '-----     \$ ${state.counterValue! * totalamount}    -----',
+                          style: TextStyle(color: Colors.grey, fontSize: 28.0),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                BlocBuilder<CounterBloc, CounterState>(
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        // var total =
+                        //     state.counterValue! *
+                        //         totalamount;
+                        // var uniqueId =
+                        //     _stocklistfireref
+                        //         .doc(userid)
+                        //         .collection(
+                        //             'cart-collection')
+                        //         .doc()
+                        //         .id;
+
+                        // _stocklistfireref
+                        //     .doc(userid)
+                        //     .collection(
+                        //         'cart-collection')
+                        //     .doc(uniqueId)
+                        //     .set({
+                        //   "id": data.id,
+                        //   "name": data.productname,
+                        //   "vendor": data.vendor,
+                        //   "purchaseprize":
+                        //       data.purchaseprize,
+                        //   "quantity":
+                        //       state.counterValue,
+                        //   "sellingprize":
+                        //       data.lowestprize,
+                        //   "discound": data.discount,
+                        //   "total": total,
+                        // });
+                        context.read<CartBloc>().add(AddCartProduct(data));
+                        Navigator.of(context).pop();
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.green),
+                      ),
+                      child: const Text('Add Item to cart'),
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Cancel Item'),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      Color.fromARGB(255, 171, 47, 47),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 // textcontrolls
@@ -653,8 +611,6 @@ TextEditingController _quatitycontroller = TextEditingController();
 TextEditingController _purchaseprizecontroller = TextEditingController();
 TextEditingController _sellingprizecontroller = TextEditingController();
 TextEditingController _discountcontroller = TextEditingController();
-
-
 
 Widget buildText(String text) => Container(
       margin: EdgeInsets.fromLTRB(0, 8, 0, 8),

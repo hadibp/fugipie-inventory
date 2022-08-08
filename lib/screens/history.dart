@@ -3,14 +3,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fugipie_inventory/componants/datepicker.dart';
+import 'package:intl/intl.dart';
 
-final CollectionReference _todolistfireref =
+final CollectionReference _stocklistfireref =
     FirebaseFirestore.instance.collection('stocklist');
+
+final CollectionReference _salesstocklistfireref = FirebaseFirestore.instance
+    .collection('checkout');
     
-final CollectionReference _salesstocklistfireref =
-    FirebaseFirestore.instance.collection('stocklist').doc(userid)
-              .collection('cart-collection');
-              final CollectionReference _servicelistfireref =
+final CollectionReference _servicelistfireref =
     FirebaseFirestore.instance.collection('servises');
 
 var userid = FirebaseAuth.instance.currentUser?.uid;
@@ -116,7 +117,6 @@ class _HistoryPageState extends State<HistoryPage> {
                     ),
                   ),
                 ),
-                
                 Container(
                   child: Expanded(
                     child: TabBarView(children: [
@@ -167,17 +167,17 @@ Widget _tabOne() {
   return Container(
     padding: EdgeInsets.all(2.0),
     child: StreamBuilder<QuerySnapshot>(
-        stream: _todolistfireref.where('uid', isEqualTo: userid).snapshots(),
+        stream: _stocklistfireref.where('userId', isEqualTo: userid).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
           if (_streamSnapshot.hasData) {
             return Column(children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children:  [
+                children: [
                   Padding(
-                    padding:const EdgeInsets.only(left: 35.0, top: 5.0),
+                    padding: const EdgeInsets.only(left: 35.0, top: 5.0),
                     child: Text(
-                      '${_streamSnapshot.data?.docs.length }  results',
+                      '${_streamSnapshot.data?.docs.length}  results',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -213,12 +213,12 @@ Widget _tabOne() {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '11-02-2022',
+                                    'Date',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 14.0),
                                   ),
                                   Text(
-                                    'Product id : ${data?['id']}',
+                                    '${DateFormat('dd-MM-yyy').format(data?['date'].toDate() ?? DateTime.now())}',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 14.0),
                                   ),
@@ -404,296 +404,338 @@ Widget _tabOne() {
 
 Widget _tabTwo() {
   return Container(
-    padding: EdgeInsets.all(2.0),
+    padding: const EdgeInsets.all(2.0),
     child: StreamBuilder<QuerySnapshot>(
-      stream: _salesstocklistfireref.snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
-        return Column(
-          children: [
-            Row(
+        stream: _salesstocklistfireref.where('userId', isEqualTo: userid).snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
+          return Column(
+            children: [
+              Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children:  [
+                children: [
                   Padding(
-                    padding:const EdgeInsets.only(left: 35.0, top: 5.0),
+                    padding: const EdgeInsets.only(left: 35.0, top: 5.0),
                     child: Text(
-                      '${_streamSnapshot.data?.docs.length }  results',
+                      '${_streamSnapshot.data?.docs.length}  results',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
               ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: _streamSnapshot.data?.docs.length,
-                  itemBuilder: (
-                    context,
-                    index,
-                  ) {
+              Expanded(
+                child: ListView.builder(
+                    itemCount: _streamSnapshot.data?.docs.length,
+                    itemBuilder: (
+                      context,
+                      index,
+                    ) {
                       final data = _streamSnapshot.data?.docs[index];
 
-                    return Center(
-                        child: ListTile(
-                      title: Center(
-                          child: Container(
-                        // height: 250.0,
-                        width: 400.0,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF232333),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        child: Column(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 20.0, left: 18.0, right: 18.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  '11-02-2022',
-                                  style: TextStyle(color: Colors.white, fontSize: 14.0),
-                                ),
-                                Text(
-                                  'Product id : ${data?['id']}',
-                                  style: TextStyle(color: Colors.white, fontSize: 14.0),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(
-                            height: 2.0,
-                            thickness: 3.0,
-                            color: Color.fromARGB(255, 78, 78, 78),
-                            indent: 18.0,
-                            endIndent: 18.0,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 10.0, bottom: 5.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      return Center(
+                          child: ListTile(
+                        title: Center(
+                            child: Container(
+                          // height: 250.0,
+                          width: 400.0,
+                          decoration: BoxDecoration(
+                              color: Color(0xFF232333),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 20.0,
+                                  left: 18.0,
+                                  right: 18.0,
+                                  bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    "Product Name",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
+                                  const Text(
+                                    '11-02-2022',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 14.0),
                                   ),
                                   Text(
-                                    "${data?['name']}",
+                                    'Product id : ${data?['id']}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 14.0),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(
+                              height: 2.0,
+                              thickness: 3.0,
+                              color: Color.fromARGB(255, 78, 78, 78),
+                              indent: 18.0,
+                              endIndent: 18.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Product Name",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                    Text(
+                                      "${data?['name']}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13.0,
+                                      ),
+                                      softWrap: true,
+                                    ),
+                                  ]),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "Vendor",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                    Text(
+                                      "${data?['vendor']}",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                  ]),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Quantity",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13.0,
                                     ),
-                                    softWrap: true,
-                                  ),
-                                ]),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 10.0, bottom: 5.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "Vendor",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
                                   ),
                                   Text(
-                                    "${data?['vendor']}",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
+                                    "${data?['quantity']}",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
                                   ),
-                                ]),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 10.0, bottom: 5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Quantity",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                Text(
-                                  "${data?['quantity']}",
-                                  style:const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 10.0, bottom: 5.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "purchase prize",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                Text(
-                                  "\$ ${data?['purchaseprize']}",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 10.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Selling Prize",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                Text(
-                                  "\$ ${data?['sellingprize']}",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Padding(
-                          //   padding: const EdgeInsets.only(
-                          //       left: 15.0, right: 15.0, top: 10.0, bottom: 10.0),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: [
-                          //       Text(
-                          //         "lowest Prize",
-                          //         style: TextStyle(
-                          //           color: Colors.white,
-                          //           fontSize: 13.0,
-                          //         ),
-                          //       ),
-                          //       Text(
-                          //         "\$2000",
-                          //         style: TextStyle(
-                          //           color: Colors.white,
-                          //           fontSize: 13.0,
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),                         
-                          // Padding(
-                          //   padding: const EdgeInsets.only(
-                          //       left: 15.0, right: 15.0, top: 10.0, bottom: 10.0),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: [
-                          //       Text(
-                          //         "Discount",
-                          //         style: TextStyle(
-                          //           color: Colors.white,
-                          //           fontSize: 13.0,
-                          //         ),
-                          //       ),
-                          //       Text(
-                          //         "20%",
-                          //         style: TextStyle(
-                          //           color: Colors.white,
-                          //           fontSize: 13.0,
-                          //         ),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 10.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Name",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                Text(
-                                  "Aquibe",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 10.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Phone",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                Text(
-                                  "9876543210",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Divider(
-                            height: 5.0,
-                            thickness: 3.0,
-                            color: Color.fromARGB(255, 78, 78, 78),
-                            indent: 18.0,
-                            endIndent: 18.0,
-                          ),
-                          Padding(
-                            padding:const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 10.0, bottom: 15.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Total prize",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
+                                    "purchase prize",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
                                   ),
                                   Text(
-                                    "\$18000",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
+                                    "\$ ${data?['purchaseprize']}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
                                   ),
-                                ]),
-                          ),
-                        ]),
-                      )),
-                    ));
-                  }),
-            ),
-          ],
-        );
-      }
-    ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Selling Prize",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    "\$ ${data?['sellingprize']}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(
+                            //       left: 15.0, right: 15.0, top: 10.0, bottom: 10.0),
+                            //   child: Row(
+                            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //     children: [
+                            //       Text(
+                            //         "lowest Prize",
+                            //         style: TextStyle(
+                            //           color: Colors.white,
+                            //           fontSize: 13.0,
+                            //         ),
+                            //       ),
+                            //       Text(
+                            //         "\$2000",
+                            //         style: TextStyle(
+                            //           color: Colors.white,
+                            //           fontSize: 13.0,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(
+                            //       left: 15.0, right: 15.0, top: 10.0, bottom: 10.0),
+                            //   child: Row(
+                            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //     children: [
+                            //       Text(
+                            //         "Discount",
+                            //         style: TextStyle(
+                            //           color: Colors.white,
+                            //           fontSize: 13.0,
+                            //         ),
+                            //       ),
+                            //       Text(
+                            //         "20%",
+                            //         style: TextStyle(
+                            //           color: Colors.white,
+                            //           fontSize: 13.0,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Name",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Aquibe",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Phone",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    "9876543210",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(
+                              height: 5.0,
+                              thickness: 3.0,
+                              color: Color.fromARGB(255, 78, 78, 78),
+                              indent: 18.0,
+                              endIndent: 18.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 10.0,
+                                  bottom: 15.0),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Total prize",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                    Text(
+                                      "\$18000",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                  ]),
+                            ),
+                          ]),
+                        )),
+                      ));
+                    }),
+              ),
+            ],
+          );
+        }),
   );
 }
 
@@ -701,186 +743,221 @@ Widget _tabThree() {
   return Container(
     padding: EdgeInsets.all(2.0),
     child: StreamBuilder<QuerySnapshot>(
-      stream: _servicelistfireref.where('uid', isEqualTo: userid).snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
-        return Column(
-          children: [
-            Row(
+        stream: _servicelistfireref.doc(userid).collection('bag').where('userId', isEqualTo: userid).snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
+          return Column(
+            children: [
+              Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children:  [
+                children: [
                   Padding(
-                    padding:const EdgeInsets.only(left: 35.0, top: 5.0),
+                    padding: const EdgeInsets.only(left: 35.0, top: 5.0),
                     child: Text(
-                      '${_streamSnapshot.data?.docs.length }  results',
+                      '${_streamSnapshot.data?.docs.length}  results',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
               ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: _streamSnapshot.data?.docs.length,
-                  itemBuilder: (
-                    context,
-                    index,
-                  ) {
-                    final  data = _streamSnapshot.data?.docs[index];
-                    return Center(
-                        child: ListTile(
-                      title: Center(
-                          child: Container(
-                        // height: 250.0,
-                        width: 400.0,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF232333),
-                            borderRadius: BorderRadius.circular(10.0)),
-                        child: Column(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 15.0, right: 18.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Issue id :${data?['id']}',
-                                  style: TextStyle(color: Colors.white, fontSize: 15.0),
-                                ),
-                              ],
+              Expanded(
+                child: ListView.builder(
+                    itemCount: _streamSnapshot.data?.docs.length,
+                    itemBuilder: (
+                      context,
+                      index,
+                    ) {
+                      final data = _streamSnapshot.data?.docs[index];
+                      return Center(
+                          child: ListTile(
+                        title: Center(
+                            child: Container(
+                          // height: 250.0,
+                          width: 400.0,
+                          decoration: BoxDecoration(
+                              color: Color(0xFF232333),
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Column(children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 15.0, right: 18.0, bottom: 10.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Issue id :${data?['id']}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 15.0),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const Divider(
-                            height: 2.0,
-                            thickness: 3.0,
-                            color: Color.fromARGB(255, 78, 78, 78),
-                            indent: 18.0,
-                            endIndent: 18.0,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 15.0, bottom: 5.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            const Divider(
+                              height: 2.0,
+                              thickness: 3.0,
+                              color: Color.fromARGB(255, 78, 78, 78),
+                              indent: 18.0,
+                              endIndent: 18.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 15.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Date",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                    Text(
+                                      "${data?['returndate']}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13.0,
+                                      ),
+                                      softWrap: true,
+                                    ),
+                                  ]),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 5.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Isuue",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                    Text(
+                                      "${data?['issue']}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13.0,
+                                      ),
+                                      softWrap: true,
+                                    ),
+                                  ]),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 5.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Name",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                    Text(
+                                      "${data?['name']}",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                  ]),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 5.0,
+                                  bottom: 5.0),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Phone",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                    Text(
+                                      "${data?['phone']}",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                  ]),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 5.0,
+                                  left: 15.0,
+                                  right: 35.0,
+                                  bottom: 15.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Date",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                                  ),
-                                  Text(
-                                    "${data?['returndate']}",
+                                    "Completed",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13.0,
                                     ),
-                                    softWrap: true,
                                   ),
-                                ]),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 5.0, bottom: 5.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Isuue",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                                  ),
-                                  Text(
-                                    "${data?['issue']}",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 13.0,
-                                    ),
-                                    softWrap: true,
-                                  ),
-                                ]),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 5.0, bottom: 5.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Name",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                                  ),
-                                  Text(
-                                    "${data?['name']}",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                                  ),
-                                ]),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 5.0, bottom: 5.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Phone",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                                  ),
-                                  Text(
-                                    "${data?['phone']}",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                                  ),
-                                ]),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 5.0, left: 15.0, right: 35.0, bottom: 15.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Completed",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.0,
-                                  ),
-                                ),
-                                Container(
-                                  width: 10.0,
-                                  height: 10.0,
-                                  decoration: BoxDecoration(
+                                  Container(
+                                    width: 10.0,
+                                    height: 10.0,
+                                    decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Color.fromARGB(255, 255, 0, 0)),
-                                )
-                              ],
+                                      color: data?['progress'] ?? true
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          Divider(
-                            height: 5.0,
-                            thickness: 3.0,
-                            color: Color.fromARGB(255, 78, 78, 78),
-                            indent: 18.0,
-                            endIndent: 18.0,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 15.0, right: 15.0, top: 15.0, bottom: 20.0),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Service Charge",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                                  ),
-                                  Text(
-                                    "${data?['servicecharge']}",
-                                    style: TextStyle(color: Colors.white, fontSize: 13.0),
-                                  ),
-                                ]),
-                          ),
-                        ]),
-                      )),
-                    ));
-                  }),
-            ),
-          ],
-        );
-      }
-    ),
+                            const Divider(
+                              height: 5.0,
+                              thickness: 3.0,
+                              color: Color.fromARGB(255, 78, 78, 78),
+                              indent: 18.0,
+                              endIndent: 18.0,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15.0,
+                                  top: 15.0,
+                                  bottom: 20.0),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "Service Charge",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                    Text(
+                                      "${data?['servicecharge']}",
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 13.0),
+                                    ),
+                                  ]),
+                            ),
+                          ]),
+                        )),
+                      ));
+                    }),
+              ),
+            ],
+          );
+        }),
   );
 }

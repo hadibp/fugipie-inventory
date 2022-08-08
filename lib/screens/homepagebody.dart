@@ -11,13 +11,7 @@ import 'package:fugipie_inventory/toDo/tasklist.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-
-
-
-
 class HomePageBody extends StatefulWidget {
-
-
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
@@ -40,14 +34,11 @@ class HomePageBody extends StatefulWidget {
 }
 
 class _HomePageBodyState extends State<HomePageBody> {
-  final _listitem = ['one', 'two', 'three', 'four', 'details/month'];
 
-  final List<String> imgList = ['sales ', 'service', 'Current stock'];
 
   final _textFieldController = TextEditingController();
   final _firebaseref = FirebaseFirestore.instance;
   final _firebaseauth = FirebaseAuth.instance;
-  
 
   String newTask = '';
 
@@ -85,11 +76,12 @@ class _HomePageBodyState extends State<HomePageBody> {
         toolbarHeight: 80.0,
         title: Image.asset('assets/images/fugipielogo.png', fit: BoxFit.cover),
         actions: [
-          CircleAvatar(
-                  radius: 20.0,
-                  backgroundImage: user.photo != null ? NetworkImage(user.photo!):null,
-                  child: user.photo==null? const Icon(Icons.circle_sharp):null,
-                ),
+          // CircleAvatar(
+          //   radius: 20.0,
+          //   backgroundImage:
+          //       user.photo != null ? NetworkImage(user.photo!) : null,
+          //   child: user.photo == null ? const Icon(Icons.circle_sharp) : null,
+          // ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: IconButton(
@@ -110,15 +102,14 @@ class _HomePageBodyState extends State<HomePageBody> {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              children: [
+              children:const [
                 Padding(
-                  padding: const EdgeInsets.only(left: 18.0,top: 10.0),
-                  child: dropdowndate(listitem: _listitem),
+                  padding:  EdgeInsets.only(left: 18.0, top: 10.0),
+                  child: Dropdowndate(),
                 ),
-                
               ],
             ),
-            carouselslider(imgList: imgList),
+            carouselslider(),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Row(
@@ -159,7 +150,7 @@ class _HomePageBodyState extends State<HomePageBody> {
             ),
             Expanded(
               child: TaskList(
-                  // tasks: todos.allTasks,
+                 
 
                   ),
             ),
@@ -180,25 +171,23 @@ class _HomePageBodyState extends State<HomePageBody> {
               borderRadius: BorderRadius.circular(16),
             ),
             actionsAlignment: MainAxisAlignment.center,
-            title: const Text("Add a new Task",style: TextStyle(color:Colors.white)),
+            title: const Text("Add a new Task",
+                style: TextStyle(color: Colors.white)),
             content: TextField(
               controller: _textFieldController,
               autofocus: true,
-              style: TextStyle(color:Colors.white),
-              decoration: const InputDecoration(hintText: "Add New Task",hintStyle: TextStyle(color:Colors.white)),
+              style: TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                  hintText: "Add New Task",
+                  hintStyle: TextStyle(color: Colors.white)),
               onSubmitted: (_) => _submit(),
             ),
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  // context.read<TodosModel>().addTodo(Task(
-                  //     createdTime: DateTime.now(),
-                  // title: textController.text.toString()));
-                  print(_textFieldController.text + " wordsss");
+                 
                   if (_textFieldController.text.isNotEmpty) {
                     _insertRecord(_textFieldController.text);
-
-
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("values didnt inserted")));
@@ -216,14 +205,14 @@ class _HomePageBodyState extends State<HomePageBody> {
   }
 
   void _insertRecord(String title) {
-    print("value :" + title);
     var userid = _firebaseauth.currentUser?.uid;
-    // var id = 
+    var createTime = DateTime.now();
     var uniqueId = _firebaseref.collection('todolist').doc().id;
     _firebaseref.collection('todolist').doc(uniqueId).set({
       'id': uniqueId,
       'title': title,
       'uid': userid,
+      'createTime': createTime,
     }).then((value) => {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -231,17 +220,7 @@ class _HomePageBodyState extends State<HomePageBody> {
             ),
           )
         });
-    print(uniqueId);
 
-     // with out id's----
-    // firebaseref.collection('newtodotest').add({
-    //   'title': title,
-    // }).then((value) => {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(
-    //           content: Text("Inserted Id : + ${value.id}"),
-    //         ),
-    //       )
-    //     });
+
   }
 }

@@ -8,23 +8,26 @@ abstract class CheckoutEvent extends Equatable {
 }
 
 class UpdateCheckOutEvent extends CheckoutEvent {
+  // final String? docId;
+  final String? userId;
   final String? name;
   final String? phone;
-  final String? userid;
-  final Cart? cart; //---warning check this----//
+  final Cart? cart; 
 
   const UpdateCheckOutEvent({
+    // this.docId,
+    this.userId,
     this.name,
     this.phone,
-    this.userid,
     this.cart,
   });
 
   @override
   List<Object?> get props => [
+        // docId,
+        userid,
         name,
         phone,
-        userid,
         cart,
       ];
 }

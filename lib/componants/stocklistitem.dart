@@ -11,6 +11,7 @@ import 'package:fugipie_inventory/componants/sales/salesitem.dart';
 import 'package:fugipie_inventory/componants/stocklist.dart';
 import 'package:fugipie_inventory/modals/cartmodal.dart';
 import 'package:fugipie_inventory/modals/stockmodel.dart';
+import 'package:fugipie_inventory/repository/salesproduct/salesrepo.dart';
 import 'package:fugipie_inventory/screens/stock.dart';
 import 'package:intl/intl.dart';
 
@@ -195,7 +196,7 @@ class _StockListItemState extends State<StockListItem> {
                           style: TextStyle(color: Colors.white, fontSize: 13.0),
                         ),
                         Text(
-                          "\$ ${widget.data.lowestprize}",
+                          " ${widget.data.lowestprize}",
                           style: const TextStyle(
                               color: Colors.white, fontSize: 13.0),
                         ),
@@ -220,7 +221,32 @@ class _StockListItemState extends State<StockListItem> {
                           style: TextStyle(color: Colors.white, fontSize: 13.0),
                         ),
                         Text(
-                          "${widget.data.discount} %",
+                          "${widget.data.discount}",
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 13.0),
+                        ),
+                      ]),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    color: Color(0xFF373748),
+                    borderRadius: BorderRadius.circular(10.0)),
+                margin:
+                    const EdgeInsets.only(left: 18.0, right: 18.0, top: 10.0),
+                height: 40.0,
+                width: 400.0,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "total",
+                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        ),
+                        Text(
+                          "${widget.data.total}",
                           style: const TextStyle(
                               color: Colors.white, fontSize: 13.0),
                         ),
@@ -235,7 +261,7 @@ class _StockListItemState extends State<StockListItem> {
                     print(widget.data.id);
                     DateTime date = DateTime.now();
 
-                    await await _updatestockitem(context, date);
+                    await  _updatestockitem(context, date);
                   },
                   style: ButtonStyle(
                     backgroundColor:
@@ -247,20 +273,30 @@ class _StockListItemState extends State<StockListItem> {
               const SizedBox(
                 height: 5.0,
               ),
-              SizedBox(
-                width: 300.0,
-                height: 35.0,
-                child: ElevatedButton(
-                  onPressed: () {
-                    _delete(context, widget.data);
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
+              BlocBuilder<StockBloc, StockState>(builder: (context, state) {
+                // if (state is LoadProdects) {
+                return SizedBox(
+                  width: 300.0,
+                  height: 35.0,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      SalesProducts.deleteData(widget.data.docId);
+                      // context
+                      //     .read<StockBloc>()
+                      //     .add();
+                      // _delete(context, widget.data);
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
+                    ),
+                    child: Text('Delete'),
                   ),
-                  child: Text('Delete'),
-                ),
-              )
+                );
+                // }else {
+                //   return Container();
+                // }
+              })
             ]),
           ),
         ),

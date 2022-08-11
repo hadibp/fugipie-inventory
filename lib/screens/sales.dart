@@ -311,11 +311,9 @@ class _SalesPageState extends State<SalesPage> {
               }),
             );
           } else {
-            return Container(
-              child: Text(
-                'no product available',
-                style: TextStyle(color: Colors.white),
-              ),
+            return const Text(
+              'no product available',
+              style: TextStyle(color: Colors.white),
             );
           }
         }));

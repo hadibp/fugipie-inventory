@@ -1,57 +1,42 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fugipie_inventory/modals/stockmodel.dart';
 
 class CheckOut extends Equatable {
-  var userid = FirebaseAuth.instance.currentUser?.uid;
-
-  final String? productname;
-  final String? vendor;
-  final int? quantity;
-  final double? purchaseprize;
-  final double? sellingprize;
-  final double? discount;
-  final List<SalesProducts>? products;
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+  // final String? docId;
   final String? name;
   final String? phone;
   final double? total;
+  final List<SalesProducts>? products;
 
-  CheckOut(
-      {required this.userid,
-      required this.productname,
-      required this.vendor,
-      required this.quantity,
-      required this.purchaseprize,
-      required this.sellingprize,
-      required this.discount,
-      required this.products,
-      required this.name,
-      required this.phone,
-      required this.total});
+  CheckOut({
+    required userId,
+    // required this.docId,
+    required this.name,
+    required this.phone,
+    required this.total,
+    required this.products,
+  });
 
   @override
   List<Object?> get props => [
-        productname,
-        vendor,
-        quantity,
-        purchaseprize,
-        sellingprize,
-        discount,
-        products,
+        userId,
+        // docId,
         name,
         phone,
-        total
+        total,
+        products,
       ];
 
-  Map<String, dynamic> toDocument() {
+  Map<String, Object> toDocument() {
     return {
-      'uid': userid,
-      'productname': productname,
-      'vendor': vendor,
-      'quantity': quantity,
-      'purchaseprize': purchaseprize,
-      'sellingprize': sellingprize,
-      'discount': discount,
+      'userId': userId!,
+      // 'docId': docId!,
+      'name': name!,
+      'phone': phone!,
+      'total': total!,
       'products': products!.map(
         (product) {
           product.productname;
@@ -64,9 +49,6 @@ class CheckOut extends Equatable {
           product.vendor;
         },
       ).toList(),
-      'name': name,
-      'phone': phone,
-      'total':total,
     };
   }
 }

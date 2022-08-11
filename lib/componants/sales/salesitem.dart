@@ -88,14 +88,23 @@ class SalesItem extends StatelessWidget {
                       child: ListView.builder(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          itemCount: state.cart.products.length,
+                          itemCount: state.cart
+                              .productQuantity(state.cart.products)
+                              .keys
+                              .length,
                           itemBuilder: (
                             context,
                             index,
                           ) {
-                            final data = state.cart.products[index];
-                            final total =
-                                data.lowestprize! - data.discount!.toDouble();
+                            final data = state.cart
+                                .productQuantity(state.cart.products)
+                                .keys
+                                .elementAt(index);
+                            final quantity = state.cart
+                                .productQuantity(state.cart.products)
+                                .values
+                                .elementAt(index);
+
                             return ListTile(
                               title: Center(
                                   child: Container(
@@ -121,6 +130,7 @@ class SalesItem extends StatelessWidget {
                                           children: [
                                             Text(
                                               'Product id : ${data.id}',
+                                              // '',
                                               style: const TextStyle(
                                                   color: Colors.white),
                                               textAlign: TextAlign.left,
@@ -205,7 +215,7 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                data.quantity.toString(),
+                                                quantity.toString(),
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
@@ -299,8 +309,7 @@ class SalesItem extends StatelessWidget {
                                                     fontSize: 13.0),
                                               ),
                                               Text(
-                                                // state.cart.subtotal.toString(),
-                                                '$total',
+                                                data.total.toString(),
                                                 style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 13.0),
@@ -359,9 +368,6 @@ class SalesItem extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         _whatsappmodal(context);
-                        state.cart.products.clear();
-
-                        print('grandtotal');
                       },
                       //  () => Navigator.of(context).pop(),
                       style: ElevatedButton.styleFrom(
@@ -469,21 +475,20 @@ class SalesItem extends StatelessWidget {
                                         checkout: state.checkOut),
                                   );
                               Navigator.of(context).pop();
-                              print('added');
                             },
-                            child: Text('Save Bill'),
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                 Color.fromARGB(255, 171, 47, 47),
                               ),
                             ),
+                            child: const Text('Save Bill'),
                           ),
                         )
                       ],
                     ),
                   );
                 } else {
-                  return Text('somthing went wrong');
+                  return const Text('somthing went wrong');
                 }
               },
             ),
@@ -491,10 +496,7 @@ class SalesItem extends StatelessWidget {
         });
   }
 
-  Padding textField(
-    Function(String) onChanged,
-    TextEditingController controller,
-  ) {
+  Padding textField(Function(String) onChanged, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(left: 40.0, right: 40.0),
       child: TextField(

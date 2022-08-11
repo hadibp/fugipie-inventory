@@ -550,6 +550,7 @@ Widget tabTwo(context) {
 // } else {
 //   return Text('no data');
 // }
+final count =_servicelistfireref.doc(userid).collection('bag').where('userId', isEqualTo: userid).snapshots().length;
 
 Widget tabThree() {
   return StreamBuilder<QuerySnapshot>(
@@ -642,7 +643,7 @@ Widget tabThree() {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Completed",
+                              "status",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 13.0,

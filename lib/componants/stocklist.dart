@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -454,6 +456,15 @@ class _StockListState extends State<StockList> {
   }
 
   bottomModal(BuildContext context, DateTime date) async {
+    
+TextEditingController _productidcontroller = TextEditingController();
+TextEditingController _datecontroller = TextEditingController();
+TextEditingController _productnamecontroller = TextEditingController();
+TextEditingController _vendorcontroller = TextEditingController();
+TextEditingController _quatitycontroller = TextEditingController();
+TextEditingController _purchaseprizecontroller = TextEditingController();
+TextEditingController _sellingprizecontroller = TextEditingController();
+TextEditingController _discountcontroller = TextEditingController();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -704,7 +715,7 @@ class _StockListState extends State<StockList> {
                         _purchaseprize.isNotEmpty &&
                         _sellingprize.isNotEmpty &&
                         _discount.isNotEmpty) {
-                      double quantity = double.parse(_quantity);
+                    int quantity = int.parse(_quantity);
                       double purchaseprize = double.parse(_purchaseprize);
                       double lowestprize = double.parse(_sellingprize);
                       double discount = double.parse(_discount);
@@ -759,14 +770,6 @@ Widget buildText(String text) => Container(
 
 final _firebaseref = FirebaseFirestore.instance;
 
-TextEditingController _productidcontroller = TextEditingController();
-TextEditingController _datecontroller = TextEditingController();
-TextEditingController _productnamecontroller = TextEditingController();
-TextEditingController _vendorcontroller = TextEditingController();
-TextEditingController _quatitycontroller = TextEditingController();
-TextEditingController _purchaseprizecontroller = TextEditingController();
-TextEditingController _sellingprizecontroller = TextEditingController();
-TextEditingController _discountcontroller = TextEditingController();
 final _firebaseauth = FirebaseAuth.instance;
 
 void _insertstokRecord(

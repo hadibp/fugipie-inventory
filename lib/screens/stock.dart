@@ -44,6 +44,15 @@ class _StockPageState extends State<StockPage> {
   }
 
   _bottommodal(BuildContext context, DateTime date) async {
+    
+TextEditingController _datecontroller = TextEditingController();
+TextEditingController _productidcontroller = TextEditingController();
+TextEditingController _productnamecontroller = TextEditingController();
+TextEditingController _vendorcontroller = TextEditingController();
+TextEditingController _quatitycontroller = TextEditingController();
+TextEditingController _purchaseprizecontroller = TextEditingController();
+TextEditingController _sellingprizecontroller = TextEditingController();
+TextEditingController _discountcontroller = TextEditingController();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -296,7 +305,7 @@ class _StockPageState extends State<StockPage> {
                         _purchaseprize.isNotEmpty &&
                         _sellingprize.isNotEmpty &&
                         _discount.isNotEmpty) {
-                      double quantity = double.parse(_quantity);
+                      int quantity = int.parse(_quantity);
                       double purchaseprize = double.parse(_purchaseprize);
                       double lowestprize = double.parse(_sellingprize);
                       double discount = double.parse(_discount);
@@ -342,14 +351,6 @@ class _StockPageState extends State<StockPage> {
 final _firebaseref = FirebaseFirestore.instance;
 final _firebaseauth = FirebaseAuth.instance;
 
-TextEditingController _datecontroller = TextEditingController();
-TextEditingController _productidcontroller = TextEditingController();
-TextEditingController _productnamecontroller = TextEditingController();
-TextEditingController _vendorcontroller = TextEditingController();
-TextEditingController _quatitycontroller = TextEditingController();
-TextEditingController _purchaseprizecontroller = TextEditingController();
-TextEditingController _sellingprizecontroller = TextEditingController();
-TextEditingController _discountcontroller = TextEditingController();
 
 Widget buildText(String text) => Container(
       margin: const EdgeInsets.fromLTRB(0, 8, 0, 8),

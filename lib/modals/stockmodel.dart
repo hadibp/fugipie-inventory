@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fugipie_inventory/repository/salesproduct/salesrepo.dart';
 
 class SalesProducts extends Equatable {
   final String? id;
@@ -7,13 +10,14 @@ class SalesProducts extends Equatable {
   final String? docId;
   final String? productname;
   final String? vendor;
-  final num? quantity;
+  final int? quantity;
   final num? purchaseprize;
   final num? lowestprize;
   final num? discount;
+  final num? total;
   final Timestamp? date;
 
-  const SalesProducts({
+  SalesProducts({
     required this.id,
     required this.userId,
     required this.docId,
@@ -24,6 +28,7 @@ class SalesProducts extends Equatable {
     required this.lowestprize,
     required this.discount,
     required this.date,
+    required this.total,
   });
 
   @override
@@ -37,7 +42,8 @@ class SalesProducts extends Equatable {
         purchaseprize,
         lowestprize,
         discount,
-        date
+        date,
+        total,
       ];
 
   static SalesProducts fromsnapshot(DocumentSnapshot snap) {
@@ -51,8 +57,16 @@ class SalesProducts extends Equatable {
         purchaseprize: snap['purchaseprize'],
         lowestprize: snap['sellingprize'],
         discount: snap['discound'],
+        total: snap['sellingprize'] - snap['discound'],
         date: snap['date']);
 
     return products;
+  }
+
+  static Future<void> deleteData(docId) {
+    return FirebaseFirestore.instance
+        .collection('stocklist').doc(docId)
+        .delete();
+    
   }
 }

@@ -10,39 +10,25 @@ abstract class CheckoutState extends Equatable {
 class CheckoutLoading extends CheckoutState {}
 
 class CheckoutLoaded extends CheckoutState {
-  var userid = FirebaseAuth.instance.currentUser?.uid;
-  final String? productname;
-  final String? vendor;
-  final int? quantity;
-  final double? purchaseprize;
-  final double? sellingprize;
-  final double? discount;
+  var userId = FirebaseAuth.instance.currentUser?.uid;
+  // final String? docId;
+
   final List<SalesProducts>? products;
   final String? name;
   final String? phone;
-  final CheckOut checkOut;
   final double? total;
+  final CheckOut checkOut;
 
   CheckoutLoaded({
-    this.userid,
-    this.productname,
-    this.vendor,
-    this.quantity,
-    this.purchaseprize,
-    this.sellingprize,
-    this.discount,
+    this.userId,
+    // this.docId,
     this.products,
     this.name,
     this.phone,
     this.total,
   }) : checkOut = CheckOut(
-          userid: userid,
-          productname: productname,
-          vendor: vendor,
-          quantity: quantity,
-          purchaseprize: purchaseprize,
-          sellingprize: sellingprize,
-          discount: discount,
+          userId: userId,
+          // docId: docId,
           products: products,
           name: name,
           phone: phone,
@@ -52,15 +38,10 @@ class CheckoutLoaded extends CheckoutState {
   @override
   List<Object?> get props => [
         userid,
-        productname,
-        vendor,
-        quantity,
-        purchaseprize,
-        sellingprize,
-        discount,
+        // docId,
         products,
         name,
         phone,
-        total
+        total,
       ];
 }

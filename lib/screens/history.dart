@@ -8,9 +8,9 @@ import 'package:intl/intl.dart';
 final CollectionReference _stocklistfireref =
     FirebaseFirestore.instance.collection('stocklist');
 
-final CollectionReference _salesstocklistfireref = FirebaseFirestore.instance
-    .collection('checkout');
-    
+final CollectionReference _salesstocklistfireref =
+    FirebaseFirestore.instance.collection('checkout');
+
 final CollectionReference _servicelistfireref =
     FirebaseFirestore.instance.collection('servises');
 
@@ -59,7 +59,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           border: Border.all(color: Colors.blue),
                           borderRadius: BorderRadius.circular(10)),
                       isScrollable: false,
-                      tabs: [
+                      tabs: const [
                         Tab(child: Text('stock')),
                         Tab(child: Text('sales')),
                         Tab(child: Text('service')),
@@ -92,7 +92,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                 ],
                               )),
                         ]),
-                        Text(
+                        const Text(
                           'To',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -106,7 +106,7 @@ class _HistoryPageState extends State<HistoryPage> {
                               },
                               child: Row(
                                 children: [
-                                  Icon(Icons.calendar_month_outlined),
+                                  const Icon(Icons.calendar_month_outlined),
                                   Text(
                                     '    ${toselectedDate.year}/${toselectedDate.month}/${toselectedDate.day}        ',
                                   ),
@@ -167,7 +167,8 @@ Widget _tabOne() {
   return Container(
     padding: EdgeInsets.all(2.0),
     child: StreamBuilder<QuerySnapshot>(
-        stream: _stocklistfireref.where('userId', isEqualTo: userid).snapshots(),
+        stream:
+            _stocklistfireref.where('userId', isEqualTo: userid).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
           if (_streamSnapshot.hasData) {
             return Column(children: [
@@ -406,7 +407,9 @@ Widget _tabTwo() {
   return Container(
     padding: const EdgeInsets.all(2.0),
     child: StreamBuilder<QuerySnapshot>(
-        stream: _salesstocklistfireref.where('userId', isEqualTo: userid).snapshots(),
+        stream: _salesstocklistfireref
+            .where('userId', isEqualTo: userid)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
           return Column(
             children: [
@@ -457,8 +460,9 @@ Widget _tabTwo() {
                                         color: Colors.white, fontSize: 14.0),
                                   ),
                                   Text(
-                                    'Product id : ${data?['id']}',
-                                    style: TextStyle(
+                                    // 'Product id : ${data?['id']}',
+                                    '',
+                                    style: const TextStyle(
                                         color: Colors.white, fontSize: 14.0),
                                   ),
                                 ],
@@ -512,7 +516,8 @@ Widget _tabTwo() {
                                           color: Colors.white, fontSize: 13.0),
                                     ),
                                     Text(
-                                      "${data?['vendor']}",
+                                      // "${data?['vendor']}",
+                                      '',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 13.0),
                                     ),
@@ -536,7 +541,8 @@ Widget _tabTwo() {
                                     ),
                                   ),
                                   Text(
-                                    "${data?['quantity']}",
+                                    // "${data?['quantity']}",
+                                    '',
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 13.0,
@@ -563,7 +569,8 @@ Widget _tabTwo() {
                                     ),
                                   ),
                                   Text(
-                                    "\$ ${data?['purchaseprize']}",
+                                    // "\$ ${data?['purchaseprize']}",
+                                    '',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13.0,
@@ -590,7 +597,8 @@ Widget _tabTwo() {
                                     ),
                                   ),
                                   Text(
-                                    "\$ ${data?['sellingprize']}",
+                                    // "\$ ${data?['sellingprize']}",
+                                    '',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13.0,
@@ -663,7 +671,7 @@ Widget _tabTwo() {
                                     ),
                                   ),
                                   Text(
-                                    "Aquibe",
+                                    "${data?['name']}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13.0,
@@ -690,7 +698,7 @@ Widget _tabTwo() {
                                     ),
                                   ),
                                   Text(
-                                    "9876543210",
+                                    "${data?['phone']}",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13.0,
@@ -722,7 +730,7 @@ Widget _tabTwo() {
                                           color: Colors.white, fontSize: 13.0),
                                     ),
                                     Text(
-                                      "\$18000",
+                                      "${data?['total']}",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 13.0),
                                     ),
@@ -741,9 +749,13 @@ Widget _tabTwo() {
 
 Widget _tabThree() {
   return Container(
-    padding: EdgeInsets.all(2.0),
+    padding:const EdgeInsets.all(2.0),
     child: StreamBuilder<QuerySnapshot>(
-        stream: _servicelistfireref.doc(userid).collection('bag').where('userId', isEqualTo: userid).snapshots(),
+        stream: _servicelistfireref
+            .doc(userid)
+            .collection('bag')
+            .where('userId', isEqualTo: userid)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> _streamSnapshot) {
           return Column(
             children: [

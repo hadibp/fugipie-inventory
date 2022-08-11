@@ -25,32 +25,41 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     required Checkoutrepository checkoutrepository,
   })  : _cartBloc = cartBloc,
         _checkoutrepository = checkoutrepository,
-        super(cartBloc.state is CartLoaded
-            ? CheckoutLoaded(
-                products: (cartBloc.state as CartLoaded).cart.products,
-                total: (cartBloc.state as CartLoaded).cart.subtotal,
-              )
-            : CheckoutLoading()) {
+        super(
+          cartBloc.state is CartLoaded
+              ? CheckoutLoaded(
+                  products: (cartBloc.state as CartLoaded).cart.products,
+                  total: (cartBloc.state as CartLoaded).cart.subtotal,
+                )
+              : CheckoutLoading(),
+        ) {
     on<UpdateCheckOutEvent>(_onupdatecheckout);
     on<ConfirmCheckOutEvent>(_onconfirmcheckout);
 
     _cartSubscription = cartBloc.stream.listen((state) {
-      if (state is CartLoaded) {}
+      if (state is CartLoaded) {
+        add(UpdateCheckOutEvent(cart: state.cart));
+      }
     });
   }
+
   void _onupdatecheckout(
     UpdateCheckOutEvent event,
     Emitter<CheckoutState> emit,
   ) {
     final state = this.state;
     if (state is CheckoutLoaded) {
-      emit(CheckoutLoaded(
-        products: event.cart?.products ?? state.products,
-        name: event.name ?? state.name,
-        phone: event.phone ?? state.phone,
-        total: event.cart?.subtotal ?? state.total,
-        userid: event.userid ?? state.userid
-      ));
+      emit(
+        CheckoutLoaded(
+          userId: event.userId ?? state.userId,
+          // docId: event.docId ?? state.docId,
+          products:  event.cart?.products ?? state.products,
+          // state.checkOut.products,
+          name: event.name ?? state.name,
+          phone: event.phone ?? state.phone,
+          total: event.cart?.subtotal ?? state.total,
+        ),
+      );
     }
   }
 
@@ -62,7 +71,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     if (state is CheckoutLoaded) {
       try {
         await _checkoutrepository.addCheckout(event.checkout);
-        print('data uploaded');
+        print('done');
       } catch (_) {}
     }
   }

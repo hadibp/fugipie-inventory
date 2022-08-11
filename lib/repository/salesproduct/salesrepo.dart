@@ -12,12 +12,10 @@ class SalesRepository extends BaseSalesRepository {
   var userid = FirebaseAuth.instance.currentUser?.uid;
 
   @override
-  Stream<List<SalesProducts>> getAllproducts()  {
-
+  Stream<List<SalesProducts>> getAllproducts() {
     return _firebaseFirestore
         .collection('stocklist')
-        // .where('userId', isEqualTo: userid)
-        .orderBy('date',descending: true)
+        .orderBy('date', descending: true)
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
@@ -25,8 +23,12 @@ class SalesRepository extends BaseSalesRepository {
           .toList();
     });
   }
-  @override
-  Future<void> deleteProduct(SalesProducts salesProducts) {
-    return _firebaseFirestore.collection('checkout').doc().delete();
+
+  Future<void> deleteProduct() async {
+    return await FirebaseFirestore.instance
+        .collection('stocklist').doc()
+        .delete();
   }
 }
+
+SalesRepository db = SalesRepository();

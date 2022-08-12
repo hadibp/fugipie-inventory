@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,13 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
-import 'package:fugipie_inventory/componants/datepicker.dart';
-import 'package:fugipie_inventory/componants/servises/serviseitem.dart';
 import 'package:fugipie_inventory/componants/stocklistitem.dart';
 import 'package:fugipie_inventory/screens/stock.dart';
 import 'package:intl/intl.dart';
 
-import '../bloc/counter/counter_bloc.dart';
 
 class StockList extends StatefulWidget {
   StockList({Key? key}) : super(key: key);
@@ -456,15 +452,14 @@ class _StockListState extends State<StockList> {
   }
 
   bottomModal(BuildContext context, DateTime date) async {
-    
-TextEditingController _productidcontroller = TextEditingController();
-TextEditingController _datecontroller = TextEditingController();
-TextEditingController _productnamecontroller = TextEditingController();
-TextEditingController _vendorcontroller = TextEditingController();
-TextEditingController _quatitycontroller = TextEditingController();
-TextEditingController _purchaseprizecontroller = TextEditingController();
-TextEditingController _sellingprizecontroller = TextEditingController();
-TextEditingController _discountcontroller = TextEditingController();
+    TextEditingController _productidcontroller = TextEditingController();
+    TextEditingController _datecontroller = TextEditingController();
+    TextEditingController _productnamecontroller = TextEditingController();
+    TextEditingController _vendorcontroller = TextEditingController();
+    TextEditingController _quatitycontroller = TextEditingController();
+    TextEditingController _purchaseprizecontroller = TextEditingController();
+    TextEditingController _sellingprizecontroller = TextEditingController();
+    TextEditingController _discountcontroller = TextEditingController();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -715,7 +710,7 @@ TextEditingController _discountcontroller = TextEditingController();
                         _purchaseprize.isNotEmpty &&
                         _sellingprize.isNotEmpty &&
                         _discount.isNotEmpty) {
-                    int quantity = int.parse(_quantity);
+                      int quantity = int.parse(_quantity);
                       double purchaseprize = double.parse(_purchaseprize);
                       double lowestprize = double.parse(_sellingprize);
                       double discount = double.parse(_discount);
@@ -790,7 +785,7 @@ void _insertstokRecord(
   }).then((value) => {
         Fluttertoast.showToast(
             msg: 'value inserted succefully', gravity: ToastGravity.TOP),
-        print(userId),
+        // print(userId),
       });
-  print(docId);
+  // print(docId);
 }

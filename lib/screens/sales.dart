@@ -86,7 +86,7 @@ class _SalesPageState extends State<SalesPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SalesItem(context, name)),
+                      builder: (context) => SalesItem(context)),
                 );
               },
               icon: const Icon(Icons.shopping_cart_checkout),

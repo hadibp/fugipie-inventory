@@ -50,7 +50,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       borderRadius: BorderRadius.circular(10)),
                   width: 350.0,
                   height: 40.0,
-                  margin: EdgeInsets.only(top: 5.0),
+                  margin:const EdgeInsets.only(top: 5.0),
                   child: TabBar(
                       controller: _controller,
                       labelColor: Colors.white,
@@ -81,7 +81,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                   backgroundColor: Colors.black26),
                               onPressed: () {
                                 fromselectDate(context);
-                                print(fromselectedDate);
+                                // print(fromselectedDate);
                               },
                               child: Row(
                                 children: [
@@ -165,7 +165,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
 Widget _tabOne() {
   return Container(
-    padding: EdgeInsets.all(2.0),
+    padding:const EdgeInsets.all(2.0),
     child: StreamBuilder<QuerySnapshot>(
         stream:
             _stocklistfireref.where('userId', isEqualTo: userid).snapshots(),
@@ -179,7 +179,7 @@ Widget _tabOne() {
                     padding: const EdgeInsets.only(left: 35.0, top: 5.0),
                     child: Text(
                       '${_streamSnapshot.data?.docs.length}  results',
-                      style: TextStyle(color: Colors.white),
+                      style:const TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
@@ -191,7 +191,7 @@ Widget _tabOne() {
                       context,
                       index,
                     ) {
-                      print(_streamSnapshot.data?.docs.length);
+                      // print(_streamSnapshot.data?.docs.length);
                       final data = _streamSnapshot.data?.docs[index];
                       return Center(
                           child: ListTile(
@@ -200,7 +200,7 @@ Widget _tabOne() {
                           // height: 250.0,
                           width: 400.0,
                           decoration: BoxDecoration(
-                              color: Color(0xFF232333),
+                              color:const Color(0xFF232333),
                               borderRadius: BorderRadius.circular(10.0)),
                           child: Column(children: [
                             Padding(
@@ -213,14 +213,14 @@ Widget _tabOne() {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
+                                 const Text(
                                     'Date',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 14.0),
                                   ),
                                   Text(
                                     '${DateFormat('dd-MM-yyy').format(data?['date'].toDate() ?? DateTime.now())}',
-                                    style: TextStyle(
+                                    style:const TextStyle(
                                         color: Colors.white, fontSize: 14.0),
                                   ),
                                 ],

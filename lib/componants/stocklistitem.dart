@@ -1,27 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: use_key_in_widget_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
-import 'package:fugipie_inventory/componants/sales/salesitem.dart';
-import 'package:fugipie_inventory/componants/stocklist.dart';
-import 'package:fugipie_inventory/modals/cartmodal.dart';
 import 'package:fugipie_inventory/modals/stockmodel.dart';
-import 'package:fugipie_inventory/repository/salesproduct/salesrepo.dart';
-import 'package:fugipie_inventory/screens/stock.dart';
+import 'package:fugipie_inventory/screens/home.dart';
 import 'package:intl/intl.dart';
-
-import '../bloc/counter/counter_bloc.dart';
 
 final CollectionReference _stockistfireref =
     FirebaseFirestore.instance.collection('stocklist');
 
 class StockListItem extends StatefulWidget {
-  StockListItem(context, this.data);
+  const StockListItem(context, this.data);
 
   final SalesProducts data;
 
@@ -261,7 +255,7 @@ class _StockListItemState extends State<StockListItem> {
                     print(widget.data.id);
                     DateTime date = DateTime.now();
 
-                    await  _updatestockitem(context, date);
+                    await _updatestockitem(context, date);
                   },
                   style: ButtonStyle(
                     backgroundColor:
@@ -568,12 +562,12 @@ class _StockListItemState extends State<StockListItem> {
                         _purchaseprize.isNotEmpty &&
                         _sellingprize.isNotEmpty &&
                         _discount.isNotEmpty) {
-                      double quantity = double.parse(_quantity);
+                      int quantity = int.parse(_quantity);
                       double purchaseprize = double.parse(_purchaseprize);
                       double lowestprize = double.parse(_sellingprize);
                       double discount = double.parse(_discount);
 
-                      print(widget.data.docId);
+                      // print(widget.data.docId);
                       _stockistfireref.doc(widget.data.docId).update({
                         'productid': _id,
                         'date': date,
@@ -586,7 +580,15 @@ class _StockListItemState extends State<StockListItem> {
                       }).then((value) => Fluttertoast.showToast(
                           msg: 'value updated succefully',
                           gravity: ToastGravity.TOP));
-                      Navigator.of(context).pop();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              HomePage(selectedindexfrom: 1),
+                        ),
+                        (route) => false,
+                      );
+                      // Navigator.of(context).pop();
                     } else {
                       Fluttertoast.showToast(
                           msg: 'fill all the text fields',

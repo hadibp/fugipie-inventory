@@ -8,23 +8,29 @@ import '../screens/sales.dart';
 import '../screens/service.dart';
 
 class HomeRoute extends StatelessWidget {
-  const HomeRoute({Key? key}) : super(key: key);
-  static MaterialPage page() =>const MaterialPage(child: HomeRoute());
-
+  const HomeRoute( {Key? key}) : super(key: key);
+  static MaterialPage page() => const MaterialPage(
+        child: HomeRoute(),
+      );
 
   @override
   Widget build(BuildContext context) {
-    return HomePage();
+    return HomePage(selectedindexfrom: 0);
   }
 }
 
 class HomePage extends StatefulWidget {
+final int selectedindexfrom ;
+
+   HomePage({Key? key, required this.selectedindexfrom}) : super(key: key);
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  static int _selectedIndex = 0;
+  // widget.selectedindexfrom;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -38,7 +44,6 @@ class _HomePageState extends State<HomePage> {
     SalesPage(),
     ServicePage(),
     HistoryPage(),
-
   ];
 
   @override
@@ -55,7 +60,7 @@ class _HomePageState extends State<HomePage> {
           // color: Colors.blueAccent,
           height: 80.0,
           child: BottomNavigationBar(
-            backgroundColor: Color(0xff181826),
+            backgroundColor: const Color(0xff181826),
             type: BottomNavigationBarType.fixed,
             showSelectedLabels: false,
             showUnselectedLabels: false,
@@ -77,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(40.0),
                     color: Colors.blueAccent,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.home_outlined,
                     size: 35.0,
                   ),
@@ -145,7 +150,6 @@ class _HomePageState extends State<HomePage> {
                     size: 28.0,
                   ),
                 ),
-                
               ),
               BottomNavigationBarItem(
                 // backgroundColor: Color(0xff181826),

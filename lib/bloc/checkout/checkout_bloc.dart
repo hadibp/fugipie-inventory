@@ -71,7 +71,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     if (state is CheckoutLoaded) {
       try {
         await _checkoutrepository.addCheckout(event.checkout);
-        print('done');
+        // print('done');
       } catch (_) {}
     }
   }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fugipie_inventory/bloc/cart/cart_bloc.dart';
 import 'package:fugipie_inventory/bloc/checkout/checkout_bloc.dart';
+import 'package:fugipie_inventory/bloc/counter/counter_bloc.dart';
 import 'package:fugipie_inventory/modals/stockmodel.dart';
 import 'package:fugipie_inventory/screens/sales.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,8 +22,8 @@ void sendtowhatsapp({@required mobnumber, @required name}) async {
 
 // double grandtotal=0.0;
 class SalesItem extends StatelessWidget {
-  SalesItem(context, data);
-  var data;
+  SalesItem(context, {Key? key}) : super(key: key);
+  // var data;
 
   @override
   Widget build(BuildContext context) {
@@ -84,243 +85,249 @@ class SalesItem extends StatelessWidget {
               return Column(
                 children: [
                   Expanded(
-                    child: Container(
-                      child: ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: state.cart
+                    child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: state.cart
+                            .productQuantity(state.cart.products)
+                            .keys
+                            .length,
+                        itemBuilder: (
+                          context,
+                          index,
+                        ) {
+                          final SalesProducts data = state.cart
                               .productQuantity(state.cart.products)
                               .keys
-                              .length,
-                          itemBuilder: (
-                            context,
-                            index,
-                          ) {
-                            final data = state.cart
-                                .productQuantity(state.cart.products)
-                                .keys
-                                .elementAt(index);
-                            final quantity = state.cart
-                                .productQuantity(state.cart.products)
-                                .values
-                                .elementAt(index);
+                              .elementAt(index);
+                          final quantity = state.cart
+                              .productQuantity(state.cart.products)
+                              .values
+                              .elementAt(index);
 
-                            return ListTile(
-                              title: Center(
-                                  child: Container(
-                                height: 270.0,
-                                width: 400.0,
-                                decoration: BoxDecoration(
-                                    color: const Color(0xFF232333),
-                                    borderRadius: BorderRadius.circular(10.0)),
-                                child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          top: 5.0,
-                                          left: 18.0,
-                                          right: 10.0,
-                                          bottom: 0.0,
-                                        ),
-                                        child: Row(
+                          return ListTile(
+                            title: Center(
+                                child: Container(
+                              height: 270.0,
+                              width: 400.0,
+                              decoration: BoxDecoration(
+                                  color: const Color(0xFF232333),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 5.0,
+                                        left: 18.0,
+                                        right: 10.0,
+                                        bottom: 0.0,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Product id : ${data.id}',
+                                            // '',
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                            ),
+                                            alignment: Alignment.topRight,
+                                            onPressed: () {
+                                              context.read<CartBloc>().add(
+                                                  RemoveCartProduct(data));
+                                            },
+                                            splashColor: Colors.blue,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Divider(
+                                      height: 2.0,
+                                      thickness: 3.0,
+                                      color: Color.fromARGB(255, 78, 78, 78),
+                                      indent: 18.0,
+                                      endIndent: 18.0,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 15.0),
+                                      child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
+                                            const Text(
+                                              "Product Name",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
                                             Text(
-                                              'Product id : ${data.id}',
-                                              // '',
+                                              data.productname.toString(),
                                               style: const TextStyle(
-                                                  color: Colors.white),
-                                              textAlign: TextAlign.left,
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
                                             ),
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                              alignment: Alignment.topRight,
-                                              onPressed: () {
-                                                context.read<CartBloc>().add(
-                                                    RemoveCartProduct(data));
+                                          ]),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 15.0,
+                                        right: 15.0,
+                                      ),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              "Vendor",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                            Text(
+                                              data.vendor.toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                          ]),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 15.0),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              "Quantity",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                            BlocBuilder<CounterBloc,
+                                                CounterState>(
+                                              builder: (context, state) {
+                                                var oquantitiy = state.counterValue! + quantity!;
+                                                print('quantitiy = ${quantity}');
+                                                print('staet = ${state.counterValue}');
+                                                return Text(
+                                                  oquantitiy .toString(),
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 13.0),
+                                                );
                                               },
-                                              splashColor: Colors.blue,
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      const Divider(
-                                        height: 2.0,
-                                        thickness: 3.0,
-                                        color: Color.fromARGB(255, 78, 78, 78),
-                                        indent: 18.0,
-                                        endIndent: 18.0,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 15.0),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                "Product Name",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                              Text(
-                                                data.productname.toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                            ]),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
+                                          ]),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 15.0),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              "Purchase Prize",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                            Text(
+                                              data.purchaseprize.toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                          ]),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 15.0),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              "Selling Prize",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                            Text(
+                                              data.lowestprize.toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                          ]),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 15.0, right: 15.0),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              "Discount ",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                            Text(
+                                              data.discount.toString(),
+                                              style: const TextStyle(
+                                                  color: Color.fromRGBO(
+                                                      255, 255, 255, 1),
+                                                  fontSize: 13.0),
+                                            ),
+                                          ]),
+                                    ),
+                                    const Divider(
+                                      height: 2.0,
+                                      thickness: 3.0,
+                                      color: Color.fromARGB(255, 78, 78, 78),
+                                      indent: 18.0,
+                                      endIndent: 18.0,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
                                           left: 15.0,
                                           right: 15.0,
-                                        ),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                "Vendor",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                              Text(
-                                                data.vendor.toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                            ]),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 15.0),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                "Quantity",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                              Text(
-                                                quantity.toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                            ]),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 15.0),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                "Purchase Prize",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                              Text(
-                                                data.purchaseprize.toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                            ]),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 15.0),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                "Selling Prize",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                              Text(
-                                                data.lowestprize.toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                            ]),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0, right: 15.0),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                "Discount ",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                              Text(
-                                                data.discount.toString(),
-                                                style: const TextStyle(
-                                                    color: Color.fromRGBO(
-                                                        255, 255, 255, 1),
-                                                    fontSize: 13.0),
-                                              ),
-                                            ]),
-                                      ),
-                                      const Divider(
-                                        height: 2.0,
-                                        thickness: 3.0,
-                                        color: Color.fromARGB(255, 78, 78, 78),
-                                        indent: 18.0,
-                                        endIndent: 18.0,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 15.0,
-                                            right: 15.0,
-                                            bottom: 10.0),
-                                        child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(
-                                                "Total",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                              Text(
-                                                data.total.toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13.0),
-                                              ),
-                                            ]),
-                                      ),
-                                    ]),
-                              )),
-                            );
-                          }),
-                    ),
+                                          bottom: 10.0),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              "Total",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                            Text(
+                                              data.total.toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13.0),
+                                            ),
+                                          ]),
+                                    ),
+                                  ]),
+                            )),
+                          );
+                        }),
                   ),
                   Container(
                     height: 80.0,
@@ -452,7 +459,9 @@ class SalesItem extends StatelessWidget {
                               final custname = _custamernamecontroller.text;
 
                               sendtowhatsapp(
-                                  mobnumber: whatsappnum, name: custname);
+                                mobnumber: whatsappnum,
+                                name: custname,
+                              );
                             },
                             label: const Text(
                               'Send Bill',
@@ -478,7 +487,7 @@ class SalesItem extends StatelessWidget {
                             },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
-                                Color.fromARGB(255, 171, 47, 47),
+                                const Color.fromARGB(255, 171, 47, 47),
                               ),
                             ),
                             child: const Text('Save Bill'),
@@ -496,7 +505,8 @@ class SalesItem extends StatelessWidget {
         });
   }
 
-  Padding textField(Function(String) onChanged, TextEditingController controller) {
+  Padding textField(
+      Function(String) onChanged, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(left: 40.0, right: 40.0),
       child: TextField(
@@ -534,15 +544,15 @@ Widget buildText(String text) => Container(
       ),
     );
 
-Future<void> _deleteitem(context, String productId) async {
-  await _stocklistfireref
-      .doc(userid)
-      .collection('cart-collection')
-      .doc(productId)
-      .delete();
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text("removed from cart"),
-    ),
-  );
-}
+// Future<void> _deleteitem(context, String productId) async {
+//   await _stocklistfireref
+//       .doc(userid)
+//       .collection('cart-collection')
+//       .doc(productId)
+//       .delete();
+//   ScaffoldMessenger.of(context).showSnackBar(
+//     const SnackBar(
+//       content: Text("removed from cart"),
+//     ),
+//   );
+// }

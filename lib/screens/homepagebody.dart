@@ -70,6 +70,7 @@ class _HomePageBodyState extends State<HomePageBody> {
   Widget build(BuildContext context) {
     final user = context.select((AuthappBloc bloc) => bloc.state.user);
     return Scaffold(
+      backgroundColor: const Color(0xFF181826),
       appBar: AppBar(
         backgroundColor: const Color(0xff181826),
         elevation: 5.0,
@@ -97,66 +98,66 @@ class _HomePageBodyState extends State<HomePageBody> {
         ],
       ),
       body: Container(
-        color: const Color(0xFF181826),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children:const [
-                Padding(
-                  padding:  EdgeInsets.only(left: 18.0, top: 10.0),
-                  child: Dropdowndate(),
-                ),
-              ],
-            ),
-            carouselslider(),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.calendar_today,
-                    color: Colors.white,
-                    size: 30.0,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "Todo",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                  ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children:const [
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: FloatingActionButton(
-                      heroTag: 'tag homebody',
-                      backgroundColor: Colors.blueAccent,
-                      onPressed: (() {
-                        _showAddTextDialog();
-                      }),
-                      child: Icon(
-                        Icons.add,
-                        size: 40.0,
-                        color: Color(0xFF232338),
-                      ),
-                    ),
+                    padding:  EdgeInsets.only(left: 18.0, top: 10.0),
+                    child: Dropdowndate(),
                   ),
                 ],
               ),
-            ),
-            Expanded(
-              child: TaskList(
-                 
-
-                  ),
-            ),
-          ],
+              carouselslider(),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      color: Colors.white,
+                      size: 30.0,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text(
+                        "Todo",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: FloatingActionButton(
+                        heroTag: 'tag homebody',
+                        backgroundColor: Colors.blueAccent,
+                        onPressed: (() {
+                          _showAddTextDialog();
+                        }),
+                        child: Icon(
+                          Icons.add,
+                          size: 40.0,
+                          color: Color(0xFF232338),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: TaskList(
+                   
+          
+                    ),
+              ),
+            ],
+          ),
         ),
-      ),
+      
     );
   }
 

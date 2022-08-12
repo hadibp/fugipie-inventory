@@ -2,9 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:firebase_auth/firebase_auth.dart' as firebas_auth;
-import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:fugipie_inventory/componants/errorhandlingdialougebox.dart';
 import 'package:fugipie_inventory/modals/usermodal.dart';
 
 class AuthRepository {

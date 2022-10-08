@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:fugipie_inventory/bloc/checkout/checkout_bloc.dart';
 import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
 import 'package:fugipie_inventory/firebase_options.dart';
 import 'package:fugipie_inventory/modals/TodosModel.dart';
+import 'package:fugipie_inventory/provider/dynamic_linkprovider.dart';
 import 'package:fugipie_inventory/provider/serviceprovider.dart';
 import 'package:fugipie_inventory/repository/authRepository.dart';
 import 'package:fugipie_inventory/repository/checkout/checkout_repository.dart';
@@ -31,7 +33,7 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final AuthRepository _authRepository;
   const MyApp({
     Key? key,
@@ -40,11 +42,25 @@ class MyApp extends StatelessWidget {
         super(key: key);
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // String Url = '';
+
+  @override
+  void initState() {
+    DynamicLinkService.initdyanamiclink(context);
+    super.initState();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-      value: _authRepository,
+      value: widget._authRepository,
       child: BlocProvider(
-        create: (_) => AuthappBloc(authRepository: _authRepository),
+        create: (_) => AuthappBloc(authRepository: widget._authRepository),
         child: const Appview(),
       ),
     );

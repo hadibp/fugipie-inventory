@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "516065011435-es8b5lnb9cs1gevv9ss3o89ggri6o8ov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fugipie_inventory",
+            "certificate_hash": "0eff1839d057e17b050b97f76385452b7722ae9e"
+          }
+        },
+        {
           "client_id": "516065011435-o549grmmrdci6uc6p1g4je2p9jc5uhl3.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "516065011435-o549grmmrdci6uc6p1g4je2p9jc5uhl3.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "516065011435-uedvm914pkbdeotfhgtgp3im8emvsml6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fugipieInventory"
+              }
             }
           ]
         }

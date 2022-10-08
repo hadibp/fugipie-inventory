@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../config/utils.dart';
-
 class TodoField {
   static const createdTime = 'created time';
 }

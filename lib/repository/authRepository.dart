@@ -15,7 +15,7 @@ class AuthRepository {
 
   Stream<Users> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
-      final user = firebaseUser == null ? Users.empty : firebaseUser.toUser;
+      final  user = firebaseUser == null ? Users.empty : firebaseUser.toUser;
       currentuser = user;
       return user;
     });

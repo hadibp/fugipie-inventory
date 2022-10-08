@@ -21,7 +21,7 @@ class SalesPage extends StatefulWidget {
 
 class _SalesPageState extends State<SalesPage> {
   String name = '';
-  TextEditingController _searchcontroller = TextEditingController();
+  final TextEditingController _searchcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class _SalesPageState extends State<SalesPage> {
         backgroundColor: Color(0xFF181826),
         appBar: AppBar(
           toolbarHeight: 70.0,
-          backgroundColor: Color(0xff181826),
+          backgroundColor: const Color(0xff181826),
           elevation: 6,
           title: const Text(
             'Sales Orders',
@@ -85,8 +85,7 @@ class _SalesPageState extends State<SalesPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => SalesItem(context)),
+                  MaterialPageRoute(builder: (context) => SalesItem(context)),
                 );
               },
               icon: const Icon(Icons.shopping_cart_checkout),
@@ -103,7 +102,7 @@ class _SalesPageState extends State<SalesPage> {
                 .where((element) => element.userId == userid)
                 .toList();
 
-            print(state.products.length);
+            // print(state.products.length);
             return ListView.builder(
               itemCount: datas.length,
               itemBuilder: ((context, index) {
@@ -141,8 +140,6 @@ class _SalesPageState extends State<SalesPage> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                                
-
                                 if (data != null) {
                                   _productidcontroller.text =
                                       data.id.toString();
@@ -273,7 +270,7 @@ class _SalesPageState extends State<SalesPage> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                               if (data != null) {
+                                if (data != null) {
                                   _productidcontroller.text =
                                       data.id.toString();
                                   _datecontroller.text = data.date.toString();
@@ -438,6 +435,11 @@ class _SalesPageState extends State<SalesPage> {
                           },
                         ),
                       ),
+                      // LayoutBuilder(builder: (context,constraints){
+                      //   return Container(
+                      //     child: constraints.,
+                      //   );
+                      // }),
                       ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(

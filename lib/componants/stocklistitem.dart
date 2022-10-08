@@ -8,14 +8,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fugipie_inventory/bloc/stock/stock_bloc.dart';
 import 'package:fugipie_inventory/modals/stockmodel.dart';
+import 'package:fugipie_inventory/provider/dynamic_linkprovider.dart';
 import 'package:fugipie_inventory/screens/home.dart';
 import 'package:intl/intl.dart';
 
-final CollectionReference _stockistfireref =
-    FirebaseFirestore.instance.collection('stocklist');
+final CollectionReference _stockistfireref = FirebaseFirestore.instance.collection('stocklist');
 
 class StockListItem extends StatefulWidget {
-  const StockListItem(context, this.data);
+  const StockListItem({required this.data});
 
   final SalesProducts data;
 
@@ -24,6 +24,15 @@ class StockListItem extends StatefulWidget {
 }
 
 class _StockListItemState extends State<StockListItem> {
+
+  @override
+  void initState() {
+    super.initState();
+    // DynamicLinkService.initdyanamiclink(context);
+    // initdynamiclink();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // final SalesProducts data = widget.datas ;
@@ -36,6 +45,18 @@ class _StockListItemState extends State<StockListItem> {
           'Stock > Product ID : ${widget.data.id}',
           style: const TextStyle(color: Colors.white, fontSize: 15.0),
         ),
+        actions: [
+          ElevatedButton(
+            onPressed: () async  {
+              String genratedeeplink =await DynamicLinkService.CreateDynamic(false, widget.data);
+              Clipboard.setData(ClipboardData(text: genratedeeplink));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('link copied')));
+              print(genratedeeplink);
+            },
+            child: const Icon(Icons.share),
+          ),
+        ],
       ),
       body: Column(children: [
         Expanded(

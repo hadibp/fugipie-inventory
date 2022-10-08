@@ -273,7 +273,7 @@ class _StockListState extends State<StockList> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              StockListItem(context, data)),
+                                              StockListItem( data : data)),
                                     );
                                   }),
                             )
@@ -428,7 +428,7 @@ class _StockListState extends State<StockList> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            StockListItem(context, data),
+                                            StockListItem( data :data),
                                       ),
                                     );
                                   }),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fugipie_inventory/componants/stocklist.dart';
+import 'package:fugipie_inventory/provider/dynamic_linkprovider.dart';
 import 'package:fugipie_inventory/screens/history.dart';
 import '../screens/homepagebody.dart';
-import '../screens/stock.dart';
 import '../screens/sales.dart';
 import '../screens/service.dart';
 
@@ -15,14 +15,14 @@ class HomeRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomePage(selectedindexfrom: 0);
+    return const HomePage(selectedindexfrom: 0);
   }
 }
 
 class HomePage extends StatefulWidget {
 final int selectedindexfrom ;
 
-   HomePage({Key? key, required this.selectedindexfrom}) : super(key: key);
+   const HomePage({Key? key, required this.selectedindexfrom}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -31,6 +31,12 @@ final int selectedindexfrom ;
 class _HomePageState extends State<HomePage> {
   static int _selectedIndex = 0;
   // widget.selectedindexfrom;
+  @override
+  void initState() {
+    super.initState();
+    DynamicLinkService.initdyanamiclink(context);
+    // initdynamiclink();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -38,7 +44,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final Screens = [
+  final screens = [
     HomePageBody(),
     StockList(),
     SalesPage(),
@@ -54,9 +60,10 @@ class _HomePageState extends State<HomePage> {
         resizeToAvoidBottomInset: true,
         body: IndexedStack(
           index: _selectedIndex,
-          children: Screens,
+          children: screens,
         ),
-        bottomNavigationBar: Container(
+        bottomNavigationBar: SizedBox
+        (
           // color: Colors.blueAccent,
           height: 80.0,
           child: BottomNavigationBar(

@@ -41,7 +41,7 @@ class ServicePage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10)),
                 width: 350.0,
                 height: 40.0,
-                margin: EdgeInsets.only(top: 25.0),
+                margin:const EdgeInsets.only(top: 25.0),
                 child: TabBar(
                     labelColor: Colors.white,
                     indicator: BoxDecoration(

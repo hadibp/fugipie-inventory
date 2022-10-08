@@ -1,15 +1,18 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fugipie_inventory/bloc/auth/bloc/authapp_bloc.dart';
-import 'package:fugipie_inventory/modals/usermodal.dart';
-import 'package:fugipie_inventory/toDo/task.dart';
-import 'package:fugipie_inventory/modals/TodosModel.dart';
 import 'package:fugipie_inventory/componants/slider.dart';
 import 'package:fugipie_inventory/componants/dropdown.dart';
 import 'package:fugipie_inventory/toDo/tasklist.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:fugipie_inventory/constants/razor_credential.dart'as razorpaycredntial;
+
+import 'package:http/http.dart' as http;
+
 
 class HomePageBody extends StatefulWidget {
   static const TextStyle optionStyle =
@@ -34,17 +37,23 @@ class HomePageBody extends StatefulWidget {
 }
 
 class _HomePageBodyState extends State<HomePageBody> {
-
-
   final _textFieldController = TextEditingController();
   final _firebaseref = FirebaseFirestore.instance;
   final _firebaseauth = FirebaseAuth.instance;
+  final _razorpay = Razorpay();
 
   String newTask = '';
 
   //creating initState() for adding listener to controller
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+    });
+
     super.initState();
     _textFieldController.addListener(() {
       newTask = _textFieldController.text;
@@ -55,6 +64,7 @@ class _HomePageBodyState extends State<HomePageBody> {
   @override
   void dispose() {
     _textFieldController.dispose();
+    _razorpay.clear();
     super.dispose();
   }
 
@@ -65,6 +75,70 @@ class _HomePageBodyState extends State<HomePageBody> {
     //cancelling the dialog
     Navigator.pop(context);
   }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    // Do something when payment succeeds
+    print(response);
+
+
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    // Do something when payment fails
+    print(response);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.message ?? '')));
+    
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    // Do something when an external wallet is selected
+    print(response);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.walletName ?? '')));
+
+  }
+
+void createOrder() async{
+  const String username = razorpaycredntial.keyId;
+  const String password = razorpaycredntial.keySecret;
+  
+  final String Auth = 'Basic ${base64Encode(utf8.encode('$username:$password'))}';
+  Map<String , dynamic> body={
+    "amount":100,
+    "currency":"INR",
+    "recipt": "rcptid_11"
+
+  };
+  var res = await http.post(
+    Uri.https("api.razorpay.com","v1/orders"),
+    headers: <String,String>{
+      "Content-Type":"application/json",
+      "authorization":Auth,
+    },
+    body: jsonEncode(body),
+  );
+
+  if(res.statusCode == 200){
+    openGateway(jsonDecode(res.body)['id']);
+  }
+  print(res.body);
+}
+
+
+openGateway(String orderId){
+  var options={
+    'key':razorpaycredntial.keyId,
+    'amount':100,
+    'name':' hadi',
+    'order_id':orderId,
+    'description': ' fine t shirt',
+    'timeout':60*5,
+    'profile':{
+      'contact':'7034037653',
+      'email':'abcd@gmail.com'
+    }
+  };
+  _razorpay.open(options);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -98,66 +172,62 @@ class _HomePageBodyState extends State<HomePageBody> {
         ],
       ),
       body: Container(
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children:const [
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Padding(
+                  padding: EdgeInsets.only(left: 18.0, top: 10.0),
+                  child: Dropdowndate(),
+                ),
+              ],
+            ),
+            carouselslider(),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.calendar_today,
+                    color: Colors.white,
+                    size: 30.0,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(
+                      "Todo",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
                   Padding(
-                    padding:  EdgeInsets.only(left: 18.0, top: 10.0),
-                    child: Dropdowndate(),
+                    padding: const EdgeInsets.all(10.0),
+                    child: FloatingActionButton(
+                      heroTag: 'tag homebody',
+                      backgroundColor: Colors.blueAccent,
+                      onPressed: (() {
+                        _showAddTextDialog();
+                      }),
+                      child: Icon(
+                        Icons.add,
+                        size: 40.0,
+                        color: Color(0xFF232338),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              carouselslider(),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.calendar_today,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        "Todo",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: FloatingActionButton(
-                        heroTag: 'tag homebody',
-                        backgroundColor: Colors.blueAccent,
-                        onPressed: (() {
-                          _showAddTextDialog();
-                        }),
-                        child: Icon(
-                          Icons.add,
-                          size: 40.0,
-                          color: Color(0xFF232338),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: TaskList(
-                   
-          
-                    ),
-              ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: TaskList(),
+            ),
+          ],
         ),
-      
+      ),
     );
   }
 
@@ -186,7 +256,6 @@ class _HomePageBodyState extends State<HomePageBody> {
             actions: [
               ElevatedButton(
                 onPressed: () {
-                 
                   if (_textFieldController.text.isNotEmpty) {
                     _insertRecord(_textFieldController.text);
                   } else {
@@ -221,7 +290,5 @@ class _HomePageBodyState extends State<HomePageBody> {
             ),
           )
         });
-
-
   }
 }

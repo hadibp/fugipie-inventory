@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'package:fugipie_inventory/componants/datepicker.dart';
 import 'package:intl/intl.dart';
 
 final CollectionReference _stocklistfireref =
@@ -30,9 +29,9 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF181826),
+      backgroundColor: const Color(0xFF181826),
       appBar: AppBar(
-        title: Text('History'),
+        title: const Text('History'),
         backgroundColor: Color(0xFF181826),
         elevation: 0.0,
       ),

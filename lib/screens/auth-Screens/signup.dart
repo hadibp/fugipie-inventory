@@ -1,8 +1,5 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fugipie_inventory/bloc/cubit/cubit/signup/signup_cubit.dart';
 import 'package:fugipie_inventory/repository/authRepository.dart';
@@ -60,19 +57,19 @@ class SignUPForm extends StatelessWidget {
               child: Image.asset('assets/images/fugipielogo.png',
                   fit: BoxFit.cover),
             ),
-            SizedBox(
+          const  SizedBox(
               height: 40.0,
             ),
-            _EmailInput(),
-            SizedBox(
+          const  _EmailInput(),
+          const  SizedBox(
               height: 20.0,
             ),
-            _PasswordInput(),
-            SizedBox(
+          const  _PasswordInput(),
+          const  SizedBox(
               height: 20.0,
             ),
-            _SignupButton(),
-            SizedBox(
+           const _SignupButton(),
+          const  SizedBox(
               height: 20.0,
             ),
           ],

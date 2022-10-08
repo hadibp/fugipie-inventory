@@ -41,7 +41,6 @@ class LoginForm extends StatelessWidget {
         if (state.status == LoginStatus.error) {
           print('you are not authrorized');
         }
-        // TODO: implement listener
       },
       child: Form(
         key: _formkey,

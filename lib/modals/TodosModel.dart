@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:fugipie_inventory/repository/database.dart';
 import 'package:fugipie_inventory/toDo/task.dart';
 
 class TodosModel extends ChangeNotifier {

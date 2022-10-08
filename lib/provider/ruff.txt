@@ -1,0 +1,20 @@
+//   iosParameters: IOSParameters(
+    //     fallbackUrl: Uri.parse("https://www.goalphin.com"),
+    //     bundleId: "com.example.app.ios",
+    //     appStoreId: "123456789",
+    //     minimumVersion: "1.0.1",
+    //   ),
+    //   googleAnalyticsParameters: const GoogleAnalyticsParameters(
+    //     source: "twitter",
+    //     medium: "social",
+    //     campaign: "example-promo",
+    //   ),
+    //   socialMetaTagParameters: SocialMetaTagParameters(
+    //     title: "Example of a Dynamic Link",
+    //     imageUrl: Uri.parse("https://example.com/image.png"),
+    //   ),
+    // );
+    // final dynamicLink =
+    //     await FirebaseDynamicLinks.instance.buildShortLink(dynamicLinkParams);
+
+    // return dynamicLink.toString();

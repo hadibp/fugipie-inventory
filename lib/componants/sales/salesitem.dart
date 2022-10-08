@@ -393,10 +393,10 @@ class SalesItem extends StatelessWidget {
                       onPressed: () {
                         state.cart.products.clear();
                       },
-                      child: Text('clear'),
                       style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 220, 82, 72),
+                        backgroundColor: Color.fromARGB(255, 220, 82, 72),
                       ),
+                      child:const Text('clear'),
                     ),
                   ),
                 ],

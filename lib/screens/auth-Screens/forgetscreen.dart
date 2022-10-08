@@ -1,9 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class Forgetpage extends StatelessWidget {
@@ -21,7 +18,7 @@ class Forgetpage extends StatelessWidget {
         showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(
+              return const AlertDialog(
                 content: Text('check you inbox and spam'),
               );
             });
@@ -44,12 +41,12 @@ class Forgetpage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Enter you email and we will send \n you a password reset link',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             Container(

@@ -453,7 +453,7 @@ class SalesItem extends StatelessWidget {
                         SizedBox(
                           width: 320.0,
                           child: ElevatedButton.icon(
-                            icon: const Icon(Icons.whatsapp),
+                            icon: const Icon(Icons.whatshot),
                             onPressed: () {
                               final whatsappnum = _mobphonecontroller.text;
                               final custname = _custamernamecontroller.text;
